@@ -1,0 +1,61 @@
+
+version: 2
+
+sources:
+  - name: estore_raw
+    schema: estore_raw
+    tables:
+      - name: events_sampled
+
+models:
+  - name: stg_events
+    description: >
+      Staging model for raw eCommerce events. Cleans and standardizes event fields
+      from estore_raw.events_sampled.
+    # config:
+    #   materialized: incremental
+    #   partition_by: {field: event_date, data_type: date}
+    #   incremental_strategy: insert_overwrite
+    columns:
+      - name: event_time
+        description: "Timestamp of the event"
+        tests:
+          - not_null
+
+      - name: event_type
+        description: "Type of event (view, cart, purchase, etc.)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['view', 'cart', 'purchase', 'remove_from_cart']
+
+      - name: product_id
+        description: "Unique identifier for the product (string-cast from raw integer)"
+        tests:
+          - not_null
+
+      - name: category_id
+        description: "Unique identifier for the product category (string-cast from raw integer)"
+
+      - name: category_code
+        description: "Hierarchical category code (e.g. electronics.smartphone)"
+
+      - name: brand
+        description: "Brand of the product"
+
+      - name: price
+        description: "Price of the product at the time of event"
+
+      - name: user_id
+        description: "Unique identifier for the user (string-cast from raw integer)"
+        tests:
+          - not_null
+
+      - name: user_session
+        description: "Session identifier for grouping related events"
+        tests:
+          - not_null
+
+      - name: event_date
+        description: "Date portion of event_time (for partitioning/aggregations)"
