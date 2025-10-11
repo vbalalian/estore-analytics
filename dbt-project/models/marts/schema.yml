@@ -67,7 +67,7 @@ models:
           - not_null
           - unique
 
-      - name: first_event_timestamp
+      - name: first_event_time
         description: "Timestamp of the user's first interaction with the platform"
         tests:
           - not_null
@@ -77,7 +77,7 @@ models:
         tests:
           - not_null
 
-      - name: last_event_timestamp
+      - name: last_event_time
         description: "Timestamp of the user's most recent interaction with the platform"
         tests:
           - not_null

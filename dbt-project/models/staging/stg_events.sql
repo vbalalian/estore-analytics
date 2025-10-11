@@ -1,8 +1,7 @@
 
 {{ config(
-    materialized="table"  -- simple now
-    -- later: switch to incremental + partition_by
-) }}
+    materialized="table" 
+) }} -- change to incremental later when full data lands
 
 with source as (
 
