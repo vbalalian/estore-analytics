@@ -10,7 +10,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 ## Pipeline Architecture
 
-1. **Raw Data** → CSV files in Google Cloud Storage *(manual, will be automated)*
+1. **Raw Data** → CSV files in Google Cloud Storage
 2. **Data Warehouse** → BigQuery *(manual load, will be automated)*
 3. **Transformation** → dbt Core for staging and modeling
 4. **Orchestration** → Dagster for scheduling dbt jobs
@@ -21,7 +21,6 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - Dagster
 
 ## Roadmap
-- [ ] Automate CSV ingestion to GCS
 - [ ] Automate GCS → BigQuery loading
 - [ ] Complete dbt models for key metrics
 - [ ] Build analytics dashboards
