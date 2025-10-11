@@ -2,4 +2,4 @@
 .env
 logs/
 .tmp*
-dbt_project/profiles.yml
+dbt-project/profiles.yml
