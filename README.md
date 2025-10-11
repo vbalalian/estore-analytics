@@ -1,14 +1,27 @@
-# E-Store Marketing Analytics (In-Progress)
+# E-Store Marketing Analytics 
 
-## Current stages:
+**Status:** Work in progress
 
-### 1) Raw csv files manually stored in Cloud Storage bucket, and...
+## Overview
 
-### 2) ...manually loaded into BigQuery. (These steps will soon be automated)
+Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/). 
 
-### 3) Data staging and modeling with dbt core.
+**Goal:** Produce actionable insights and metrics including customer LTV, churn rate, and purchase behavior.
 
-### 4) dbt jobs scheduled with Dagster.
+## Pipeline Architecture
 
+1. **Raw Data** → CSV files in Google Cloud Storage *(manual, will be automated)*
+2. **Data Warehouse** → BigQuery *(manual load, will be automated)*
+3. **Transformation** → dbt Core for staging and modeling
+4. **Orchestration** → Dagster for scheduling dbt jobs
 
-Data source: [REES46 Marketing Platform](https://rees46.com/) via [Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store)
+## Tech Stack
+- Google Cloud Platform (Cloud Storage, BigQuery)
+- dbt Core
+- Dagster
+
+## Roadmap
+- [ ] Automate CSV ingestion to GCS
+- [ ] Automate GCS → BigQuery loading
+- [ ] Complete dbt models for key metrics
+- [ ] Build analytics dashboards
