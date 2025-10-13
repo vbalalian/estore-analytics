@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to GCP VM
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          cd /home/vbalalian/estore-analytics
+          git pull origin main
+          
+          source .venv/bin/activate
+          
+          pip install -r requirements.txt
+          pip install -e .[dev]
+          
+          cd dbt-project
+          dbt deps
+          
+          echo "Deployment complete! Dagster will auto-reload code locations."
