@@ -26,8 +26,8 @@ jobs:
     - name: Set up dbt profile
       run: |
         mkdir -p ~/.dbt
-        echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
-        echo "${{ secrets.BQ_KEYFILE_JSON }}" > /tmp/bq-keyfile.json
+        echo ${{ secrets.DBT_PROFILES_YML }} > ~/.dbt/profiles.yml
+        echo ${{ secrets.BQ_KEYFILE_JSON }} > /tmp/bq-keyfile.json
         cat /tmp/bq-keyfile.json
         python -m json.tool /tmp/bq-keyfile.json
 
