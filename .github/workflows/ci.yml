@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install dbt-bigquery dagster dagster-dbt
+    
+    - name: Set up dbt profile
+      run: |
+        mkdir -p ~/.dbt
+        echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+        echo "${{ secrets.BQ_KEYFILE_JSON }}" > /tmp/bq-keyfile.json
+    
+    - name: dbt deps
+      run: |
+        cd dbt-project
+        dbt deps
+    
+    - name: dbt compile
+      run: |
+        cd dbt-project
+        dbt compile --target ci
+    
+    - name: dbt test (data tests)
+      run: |
+        cd dbt-project
+        dbt test
