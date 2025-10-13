@@ -18,7 +18,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 4. **Orchestration** → Dagster for scheduling dbt jobs
 
 ## Tech Stack
-- Google Cloud Platform (Cloud Storage, BigQuery)
+- GCP (Compute Engine, Cloud Storage, BigQuery)
 - dbt Core
 - Dagster
 
