@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
   push:
     branches: [ dev ]
 
@@ -28,7 +28,9 @@ jobs:
         mkdir -p ~/.dbt
         echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
         echo "${{ secrets.BQ_KEYFILE_JSON }}" > /tmp/bq-keyfile.json
-    
+        cat /tmp/bq-keyfile.json
+        python -m json.tool /tmp/bq-keyfile.json
+
     - name: dbt deps
       run: |
         cd dbt-project
