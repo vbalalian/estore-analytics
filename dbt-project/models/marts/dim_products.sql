@@ -1,34 +1,60 @@
 with 
 
+events_source as (
+
+    select * from {{ ref('stg_events') }}
+
+),
+
+categories as (
+
+    select * from {{ ref('dim_categories') }}
+
+),
+
 product_attributes as (
+
     select
+
         product_id,
         brand,
         category_id,
         count(*) as frequency
-    from {{ ref('stg_events') }}
+
+    from events_source
+
     group by product_id, brand, category_id
+
 ),
 
-ranked as (
-    select *,
-           row_number() over (partition by product_id order by frequency desc) as rank
+distinct_products_ranked as (
+
+    select 
+
+        *,
+        row_number() over (partition by product_id order by frequency desc) as rank
+
     from product_attributes
+
 ),
 
 final as (
 
     select
-        p.product_id,
-        p.brand,
-        c.category_code,
-        c.category_lvl_1,
-        c.category_lvl_2,
-        c.category_lvl_3,
-        c.category_lvl_4
-    from ranked p
-    left join {{ ref('dim_categories') }} c
-    on p.category_id = c.raw_category_id
+
+        distinct_products_ranked.product_id,
+        distinct_products_ranked.brand,
+        categories.category_code,
+        categories.category_lvl_1,
+        categories.category_lvl_2,
+        categories.category_lvl_3,
+        categories.category_lvl_4
+
+    from distinct_products_ranked
+
+    left join categories
+    on distinct_products_ranked.category_id = categories.raw_category_id
+    
     where rank = 1
 
 )
