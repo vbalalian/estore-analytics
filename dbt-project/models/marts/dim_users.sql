@@ -1,5 +1,11 @@
 with 
 
+source as (
+
+    select * from {{ ref('stg_events') }}
+
+),
+
 final as (
 
     select

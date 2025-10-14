@@ -3,7 +3,15 @@
     materialized="table" 
 ) }} -- change to incremental later when full data lands
 
-with source as (
+with 
+
+source as (
+
+    select * from {{ source('estore_raw', 'events_sampled') }}
+
+),
+
+transformed as (
 
     select
         event_time,
@@ -15,7 +23,8 @@ with source as (
         price,
         cast(user_id as string) as user_id,
         user_session
-    from {{ source('estore_raw', 'events_sampled') }}
+        
+    from source
 
 ),
 
@@ -25,7 +34,7 @@ multi_brand_products as (
 
     select
         product_id
-    from source
+    from transformed
     where brand is not null
     group by product_id
     having count(distinct brand) > 1
