@@ -33,9 +33,13 @@ transformed as (
 multi_brand_products as (
 
     select
+
         product_id
+
     from transformed
+
     where brand is not null
+
     group by product_id
     having count(distinct brand) > 1
         
@@ -44,6 +48,7 @@ multi_brand_products as (
 final as (
 
     select
+
         event_time,
         event_type,
         product_id,
@@ -54,7 +59,9 @@ final as (
         user_id,
         user_session,
         cast(event_time as date) as event_date
-    from source
+
+    from transformed
+
     where product_id not in (select product_id from multi_brand_products)
     and product_id is not null
 
