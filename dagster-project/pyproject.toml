@@ -5,13 +5,13 @@ version = "0.1.0"
 dependencies = [
     "dagster==1.11.14",
     "dagster-dbt==0.27.14",
+    "dagster-webserver",
     "dbt-bigquery==1.10.2"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "dagster-webserver",
-    "dagster-dg-cli",
+    "dagster-dg-cli"
 ]
 
 [build-system]
