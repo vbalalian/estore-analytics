@@ -18,7 +18,7 @@ final as (
         count(distinct user_session) as session_count,
         count(*) as event_count
 
-    from {{ ref('stg_events') }}
+    from source
     
     group by user_id
 
