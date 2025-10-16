@@ -24,9 +24,9 @@ jobs:
           cd dagster-project
           pip install -e .[dev]
           
-          # Prepare and package dbt project with fresh manifest
-          cd /home/vbalalian/estore-analytics
-          dagster-dbt project prepare-and-package --file dagster-project/src/dagster_project/definitions.py
+          # Prepare and package dbt project with fresh manifest (Components)
+          cd /home/vbalalian/estore-analytics/dagster-project
+          dagster-dbt project prepare-and-package --components .
           
           # Trigger code location reload via GraphQL API
           curl -X POST \
