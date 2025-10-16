@@ -22,11 +22,16 @@ jobs:
           source .venv/bin/activate
           
           cd dagster-project
-
           pip install -e .[dev]
           
-          cd ../dbt-project
-          dbt deps
-          dbt parse
+          # Prepare and package dbt project with fresh manifest (Components)
+          cd /home/vbalalian/estore-analytics/dagster-project
+          dagster-dbt project prepare-and-package --components .
           
-          echo "Deployment complete!"
+          # Trigger code location reload via GraphQL API
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
+            http://localhost:3000/graphql
+          
+          echo "Deployment complete! Code location reloaded."
