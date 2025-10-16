@@ -13,6 +13,7 @@ source as (
 transformed as (
 
     select
+
         event_time,
         event_type,
         cast(product_id as string) as product_id,
@@ -21,7 +22,8 @@ transformed as (
         cast(user_id as string) as user_id,
         user_session,
         lower(category_code) as category_code,
-        lower(brand) as brand
+        lower(brand) as brand,
+        {{ dbt_utils.generate_surrogate_key(['event_time', 'event_type', 'user_id']) }} as event_id
 
     from source
 
@@ -46,6 +48,7 @@ final as (
 
     select
 
+        event_id,
         event_time,
         event_type,
         product_id,

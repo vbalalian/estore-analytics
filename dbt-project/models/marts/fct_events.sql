@@ -10,6 +10,7 @@ final_events as (
 
     select
 
+        event_id,
         event_time,
         event_date,
         event_type,
