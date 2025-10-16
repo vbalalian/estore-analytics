@@ -24,7 +24,7 @@ stg_sessions as (
 
     from fct_events
 
-    group by user_session, user_id
+    group by user_session
 
 ),
 

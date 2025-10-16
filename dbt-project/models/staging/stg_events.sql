@@ -23,7 +23,7 @@ transformed as (
         user_session,
         lower(category_code) as category_code,
         lower(brand) as brand,
-        {{ dbt_utils.generate_surrogate_key(['event_time', 'event_type', 'user_id', 'product_id']) }} as event_id
+        {{ dbt_utils.generate_surrogate_key(['event_time', 'event_type', 'user_id', 'product_id', 'user_session']) }} as event_id
 
     from source
 
