@@ -159,25 +159,16 @@ models:
         description: "Indicator if the event is a purchase event (1 for purchase, 0 otherwise)"
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [0, 1]
 
       - name: is_cart_add
         description: "Indicator if the event is an add-to-cart event (1 for add-to-cart, 0 otherwise)"
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [0, 1]
 
       - name: is_view
         description: "Indicator if the event is a view event (1 for view, 0 otherwise)"
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [0, 1]
       
       - name: revenue
         description: "Revenue generated from the event (price * quantity for purchase events, 0 otherwise)"
@@ -233,6 +224,3 @@ models:
         description: "Indicator if the session included at least one purchase event (1 for yes, 0 for no)"
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [0, 1]

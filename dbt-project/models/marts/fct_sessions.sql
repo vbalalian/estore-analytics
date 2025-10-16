@@ -11,7 +11,7 @@ stg_sessions as (
     select
 
         user_session as session_id,
-        user_id,
+        max(user_id) as user_id,
         min(event_time) as session_start_time,
         max(event_time) as session_end_time,
         count(*) as event_count,
