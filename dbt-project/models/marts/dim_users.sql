@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -19,7 +19,7 @@ final as (
         count(*) as event_count
 
     from source
-    
+
     group by user_id
 
 )

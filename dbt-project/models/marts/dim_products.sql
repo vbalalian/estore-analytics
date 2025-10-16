@@ -1,4 +1,4 @@
-with 
+with
 
 events_source as (
 
@@ -29,10 +29,12 @@ product_attributes as (
 
 distinct_products_ranked as (
 
-    select 
+    select
 
         *,
-        row_number() over (partition by product_id order by frequency desc) as rank
+        row_number()
+            over (partition by product_id order by frequency desc)
+            as rank
 
     from product_attributes
 
@@ -53,9 +55,9 @@ final as (
     from distinct_products_ranked
 
     left join categories
-    on distinct_products_ranked.category_id = categories.raw_category_id
-    
-    where rank = 1
+        on distinct_products_ranked.category_id = categories.raw_category_id
+
+    where distinct_products_ranked.rank = 1
 
 )
 

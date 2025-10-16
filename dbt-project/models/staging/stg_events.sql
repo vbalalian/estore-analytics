@@ -1,9 +1,8 @@
-
 {{ config(
     materialized="table" 
 ) }} -- change to incremental later when full data lands
 
-with 
+with
 
 source as (
 
@@ -18,23 +17,21 @@ transformed as (
         event_type,
         cast(product_id as string) as product_id,
         cast(category_id as string) as category_id,
-        lower(category_code) as category_code,
-        lower(brand) as brand,
         price,
         cast(user_id as string) as user_id,
-        user_session
-        
+        user_session,
+        lower(category_code) as category_code,
+        lower(brand) as brand
+
     from source
 
 ),
 
--- filter out products associated with multiple brands since they're likely data errors 
+-- filter out products associated with multiple brands as likely data errors 
 
-multi_brand_products as (
+multi_brand_product_ids as (
 
-    select
-
-        product_id
+    select product_id
 
     from transformed
 
@@ -42,7 +39,7 @@ multi_brand_products as (
 
     group by product_id
     having count(distinct brand) > 1
-        
+
 ),
 
 final as (
@@ -62,13 +59,17 @@ final as (
 
     from transformed
 
-    where product_id not in (select product_id from multi_brand_products)
-    and product_id is not null
+    where
+        product_id not in (
+            select multi_brand_product_ids.product_id
+            from multi_brand_product_ids
+        )
+        and product_id is not null
 
-    {% if is_incremental() %}
+        {% if is_incremental() %}
         -- later, when full data lands
-        and event_date >= date_sub(current_date(), interval 2 day)
-    {% endif %}
+            and event_date >= date_sub(current_date(), interval 2 day)
+        {% endif %}
 
 )
 
