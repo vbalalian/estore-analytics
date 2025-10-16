@@ -22,24 +22,11 @@ transformed as (
         cast(user_id as string) as user_id,
         user_session,
         lower(category_code) as category_code,
-        lower(brand) as brand,
-        {{ dbt_utils.generate_surrogate_key(['event_time', 'event_type', 'user_id', 'product_id', 'user_session']) }} as event_id
+        lower(brand) as brand
 
     from source
 
 ),
-
-deduplicated as (
-
-    select 
-        *,
-        row_number() over (
-            partition by event_id
-            order by event_time desc
-        ) as row_num
-
-    from transformed
-),  
 
 -- filter out products associated with multiple brands as likely data errors 
 
@@ -47,7 +34,7 @@ multi_brand_product_ids as (
 
     select product_id
 
-    from deduplicated
+    from transformed
 
     where brand is not null
 
@@ -60,7 +47,6 @@ final as (
 
     select
 
-        event_id,
         event_time,
         event_type,
         product_id,
@@ -72,11 +58,9 @@ final as (
         user_session,
         cast(event_time as date) as event_date
 
-    from deduplicated
+    from transformed
 
     where
-        row_num = 1 -- keep only deduplicated records
-        and
         product_id not in (
             select multi_brand_product_ids.product_id
             from multi_brand_product_ids
