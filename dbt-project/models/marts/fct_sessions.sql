@@ -12,12 +12,13 @@ stg_sessions as (
 
         user_session as session_id,
         user_id,
-        min(event_time) as session_start,
-        max(event_time) as session_end,
-        count(*) as total_events,
+        min(event_time) as session_start_time,
+        max(event_time) as session_end_time,
+        count(*) as event_count,
+        count(distinct product_id) as unique_product_count,
         sum(is_cart_add) as cart_additions,
-        sum(is_purchase) as total_purchases,
-        sum(is_view) as total_views,
+        sum(is_purchase) as purchase_count,
+        sum(is_view) as view_count,
         sum(revenue) as total_revenue,
         max(is_purchase) as converted
 
@@ -33,15 +34,16 @@ final_sessions as (
 
         session_id,
         user_id,
-        session_start,
-        session_end,
-        total_events,
+        session_start_time,
+        session_end_time,
+        event_count,
+        unique_product_count,
         cart_additions,
-        total_purchases,
-        total_views,
+        purchase_count,
+        view_count,
         total_revenue,
         converted,
-        datetime_diff(session_end, session_start, second) as session_length
+        datetime_diff(session_end_time, session_start_time, second) as session_length
 
     from stg_sessions
 

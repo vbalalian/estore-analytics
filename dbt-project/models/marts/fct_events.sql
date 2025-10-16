@@ -45,6 +45,7 @@ final_events as (
         case
             when event_type = 'purchase'
                 then price
+            else null
         end as revenue
 
     from stg_events
