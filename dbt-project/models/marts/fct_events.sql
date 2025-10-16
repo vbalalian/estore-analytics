@@ -6,6 +6,16 @@ stg_events as (
 
 ),
 
+numbered as (
+
+    select
+        *,
+        row_number() over (order by event_time, user_id, user_session, product_id) as _row_num
+
+    from stg_events
+),
+
+
 final_events as (
 
     select
@@ -44,9 +54,19 @@ final_events as (
         case
             when event_type = 'purchase'
                 then price
-        end as revenue
+            else null
+        end as revenue,
 
-    from stg_events
+        {{ dbt_utils.generate_surrogate_key([
+            'event_time',
+            'event_type',
+            'user_id',
+            'product_id',
+            'user_session',
+            '_row_num'
+        ]) }} as event_id
+
+    from numbered
 
 )
 

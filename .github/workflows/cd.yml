@@ -21,10 +21,12 @@ jobs:
           
           source .venv/bin/activate
           
-          pip install -r requirements.txt
+          cd dagster-project
+
           pip install -e .[dev]
           
-          cd dbt-project
+          cd ../dbt-project
           dbt deps
+          dbt parse
           
-          echo "Deployment complete! Dagster will auto-reload code locations."
+          echo "Deployment complete!"

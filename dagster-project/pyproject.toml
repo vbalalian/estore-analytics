@@ -32,3 +32,6 @@ root_module = "dagster_project"
 registry_modules = [
     "dagster_project.components.*",
 ]
+
+[tool.dagster]
+module_name = "dagster_project.definitions"
