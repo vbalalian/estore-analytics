@@ -29,13 +29,25 @@ transformed as (
 
 ),
 
+deduplicated as (
+
+    select 
+        *,
+        row_number() over (
+            partition by event_id
+            order by event_time desc
+        ) as row_num
+
+    from transformed
+),  
+
 -- filter out products associated with multiple brands as likely data errors 
 
 multi_brand_product_ids as (
 
     select product_id
 
-    from transformed
+    from deduplicated
 
     where brand is not null
 
@@ -60,7 +72,7 @@ final as (
         user_session,
         cast(event_time as date) as event_date
 
-    from transformed
+    from deduplicated
 
     where
         product_id not in (
