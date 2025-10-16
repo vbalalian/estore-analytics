@@ -75,6 +75,8 @@ final as (
     from deduplicated
 
     where
+        row_num = 1 -- keep only deduplicated records
+        and
         product_id not in (
             select multi_brand_product_ids.product_id
             from multi_brand_product_ids
