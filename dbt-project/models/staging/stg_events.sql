@@ -13,6 +13,7 @@ source as (
 transformed as (
 
     select
+
         event_time,
         event_type,
         cast(product_id as string) as product_id,
