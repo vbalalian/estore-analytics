@@ -1,3 +1,10 @@
+{{ config(
+    materialized="incremental",
+    partition_by={"field": "event_date", "data_type": "date"},
+    cluster_by=["user_id", "event_type"],
+    incremental_strategy="insert_overwrite"
+) }}
+
 with
 
 stg_events as (
@@ -10,11 +17,12 @@ numbered as (
 
     select
         *,
-        row_number() over (order by event_time, user_id, user_session, product_id) as _row_num
+        row_number() over (
+            order by event_time, user_id, user_session, product_id
+        ) as _row_num
 
     from stg_events
 ),
-
 
 final_events as (
 
@@ -31,7 +39,6 @@ final_events as (
         category_id,
         price,
         1 as quantity,
-        extract(hour from event_time) as event_hour,
 
         case
             when event_type = 'purchase'
@@ -54,7 +61,6 @@ final_events as (
         case
             when event_type = 'purchase'
                 then price
-            else null
         end as revenue,
 
         {{ dbt_utils.generate_surrogate_key([
@@ -67,6 +73,12 @@ final_events as (
         ]) }} as event_id
 
     from numbered
+
+    {% if is_incremental() %}
+
+        where event_date >= date_sub(current_date(), interval 3 day)
+
+    {% endif %}
 
 )
 

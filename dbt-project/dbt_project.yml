@@ -20,7 +20,7 @@ snapshot-paths: ["snapshots"]
 
 clean-targets:         # directories to be removed by `dbt clean`
   - "target"
-  - "dbt_packages"
+  # - "dbt_packages"
 
 
 # Configuring models
@@ -33,7 +33,7 @@ models:
   estore:
     staging:
       +schema: staging
-      +materialized: table
+      +materialized: view
     marts:
       +schema: marts
       +materialized: table
