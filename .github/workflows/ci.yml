@@ -41,11 +41,12 @@ jobs:
       run: |
         cd dbt-project
         dbt compile --target ci
-    
-    - name: dbt test (data tests)
-      run: |
-        cd dbt-project
-        dbt test
+
+    # Uncomment the following to run data tests as part of CI, requires test data to be present in the target dataset
+    # - name: dbt test (data tests)
+    #   run: |
+    #     cd dbt-project
+    #     dbt test
 
     - name: Lint dbt models with SQLFluff
       run: |
