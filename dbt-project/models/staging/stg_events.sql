@@ -1,7 +1,3 @@
-{{ config(
-    materialized="table" 
-) }} -- change to incremental later when full data lands
-
 with
 
 source as (
@@ -66,11 +62,6 @@ final as (
             from multi_brand_product_ids
         )
         and product_id is not null
-
-        {% if is_incremental() %}
-        -- later, when full data lands
-            and event_date >= date_sub(current_date(), interval 2 day)
-        {% endif %}
 
 )
 
