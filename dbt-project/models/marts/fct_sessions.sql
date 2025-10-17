@@ -19,7 +19,7 @@ with
 fct_events as (
     select * from {{ ref('fct_events') }}
     {% if is_incremental() %}
-        where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
+        where fct_events.event_date >= date_sub((select max(t.session_start_date) from {{ this }} as t), interval 2 day)
     {% endif %}
 ),
 
