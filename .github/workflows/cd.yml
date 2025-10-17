@@ -28,10 +28,10 @@ jobs:
           cd /home/vbalalian/estore-analytics/dagster-project
           dagster-dbt project prepare-and-package --components .
           
-          # # Trigger code location reload via GraphQL API
-          # curl -X POST \
-          #   -H "Content-Type: application/json" \
-          #   -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
-          #   http://localhost:3000/graphql
+          # Trigger code location reload via GraphQL API
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
+            http://localhost:3000/graphql
           
           echo "Deployment complete! Code location reloaded."
