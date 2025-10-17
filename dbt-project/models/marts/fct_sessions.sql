@@ -1,8 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'session_id',
-    partition_by = {"field": "session_date", "data_type": "date"},
-    cluster_by = ['session_id'],
+    partition_by = {"field": "session_start_date", "data_type": "date"},
+    cluster_by = ['user_id', 'session_start_date'],
     incremental_strategy = 'insert_overwrite'
 ) }}
 
@@ -12,6 +12,12 @@ fct_events as (
 
     select * from {{ ref('fct_events') }}
 
+    {% if is_incremental() %}
+
+        where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
+
+    {% endif %}
+
 ),
 
 stg_sessions as (
@@ -19,9 +25,9 @@ stg_sessions as (
     select
 
         user_session as session_id,
-        min(event_date) as session_date,
-        max(user_id) as user_id,
         min(event_time) as session_start_time,
+        date(min(event_time)) as session_start_date,
+        max(user_id) as user_id,
         max(event_time) as session_end_time,
         count(*) as event_count,
         count(distinct product_id) as unique_product_count,
@@ -29,7 +35,8 @@ stg_sessions as (
         sum(is_purchase) as purchase_count,
         sum(is_view) as view_count,
         sum(revenue) as total_revenue,
-        max(is_purchase) as converted
+        max(is_purchase) as converted,
+        datetime_diff(max(event_time), min(event_time), second) as session_length
 
     from fct_events
 
@@ -42,9 +49,9 @@ final_sessions as (
     select
 
         session_id,
-        session_date,
-        user_id,
         session_start_time,
+        session_start_date,
+        user_id,
         session_end_time,
         event_count,
         unique_product_count,
@@ -53,15 +60,9 @@ final_sessions as (
         view_count,
         total_revenue,
         converted,
-        datetime_diff(session_end_time, session_start_time, second) as session_length
+        session_length
 
     from stg_sessions
-
-    {% if is_incremental() %}
-
-        where session_date >= date_sub(current_date(), interval 3 day)
-
-    {% endif %}
 
 )
 

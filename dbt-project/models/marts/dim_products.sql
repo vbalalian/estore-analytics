@@ -8,9 +8,25 @@
 
 with
 
+{% if is_incremental() %}
+max_event_date as (
+
+    select
+
+        max(event_date) as max_date
+
+    from {{ ref('stg_events') }}
+),
+{% endif %}
+
 events_source as (
 
     select * from {{ ref('stg_events') }}
+    {% if is_incremental() %}
+
+        where event_date >= (select date_sub(date(max_date), interval 2 day) from max_event_date)
+
+    {% endif %}
 
 ),
 
@@ -19,6 +35,7 @@ categories as (
     select * from {{ ref('dim_categories') }}
 
 ),
+
 
 product_attributes as (
 
@@ -50,7 +67,7 @@ distinct_products_ranked as (
 
 final as (
 
-    select
+    select distinct
 
         distinct_products_ranked.product_id,
         distinct_products_ranked.brand,
