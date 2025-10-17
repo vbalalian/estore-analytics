@@ -1,8 +1,8 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'session_id',
-    partition_by = {"field": "session_date", "data_type": "date"},
-    cluster_by = ['user_id', 'session_date'],
+    partition_by = {"field": "session_start_date", "data_type": "date"},
+    cluster_by = ['user_id', 'session_start_date'],
     incremental_strategy = 'insert_overwrite'
 ) }}
 
@@ -25,9 +25,9 @@ stg_sessions as (
     select
 
         user_session as session_id,
-        min(event_date) as session_date,
-        max(user_id) as user_id,
         min(event_time) as session_start_time,
+        date(min(event_time)) as session_start_date,
+        max(user_id) as user_id,
         max(event_time) as session_end_time,
         count(*) as event_count,
         count(distinct product_id) as unique_product_count,
@@ -49,9 +49,9 @@ final_sessions as (
     select
 
         session_id,
-        session_date,
-        user_id,
         session_start_time,
+        session_start_date,
+        user_id,
         session_end_time,
         event_count,
         unique_product_count,
