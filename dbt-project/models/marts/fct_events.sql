@@ -13,7 +13,11 @@ stg_events as (
 
     {% if is_incremental() %}
 
-        where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
+        where
+            stg_events.event_date
+            >= date_sub(
+                (select max(t.event_date) from {{ this }} as t), interval 2 day
+            )
 
     {% endif %}
 

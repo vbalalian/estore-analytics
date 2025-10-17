@@ -8,15 +8,13 @@
 
 with
 
-{%  if is_incremental() %}
-max_event_date as (
+{% if is_incremental() %}
+    max_event_date as (
 
-    select
+        select max(event_date) as max_date
 
-        max(event_date) as max_date
-
-    from {{ ref('stg_events') }}
-),
+        from {{ ref('stg_events') }}
+    ),
 {% endif %}
 
 source as (
@@ -24,7 +22,12 @@ source as (
     select * from {{ ref('stg_events') }}
     {% if is_incremental() %}
 
-        where event_date >= (select date_sub(date(max_date), interval 2 day) from max_event_date)
+        where
+            event_date
+            >= (
+                select date_sub(date(max_event_date.max_date), interval 2 day)
+                from max_event_date
+            )
 
     {% endif %}
 
@@ -35,7 +38,7 @@ grouped as (
     select
 
         category_id,
-        ANY_VALUE(category_code) as category_code
+        any_value(category_code) as category_code
 
     from source
 

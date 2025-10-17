@@ -3,27 +3,28 @@
     unique_key = 'session_id',
     partition_by = {"field": "session_start_date", "data_type": "date"},
     cluster_by = ['user_id', 'session_start_date'],
-    incremental_strategy = 'insert_overwrite'
+    incremental_strategy = 'merge'
 ) }}
 
 with
-
+{% if is_incremental() %}
+    existing_sessions as (
+        select
+            session_id,
+            session_start_date,
+            session_start_time
+        from {{ this }}
+    ),
+{% endif %}
 fct_events as (
-
     select * from {{ ref('fct_events') }}
-
     {% if is_incremental() %}
-
         where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
-
     {% endif %}
-
 ),
 
 stg_sessions as (
-
     select
-
         user_session as session_id,
         min(event_time) as session_start_time,
         date(min(event_time)) as session_start_date,
@@ -36,34 +37,43 @@ stg_sessions as (
         sum(is_view) as view_count,
         sum(revenue) as total_revenue,
         max(is_purchase) as converted,
-        datetime_diff(max(event_time), min(event_time), second) as session_length
-
+        datetime_diff(max(event_time), min(event_time), second)
+            as session_length
     from fct_events
-
     group by user_session
-
 ),
 
 final_sessions as (
-
     select
-
-        session_id,
-        session_start_time,
-        session_start_date,
-        user_id,
-        session_end_time,
-        event_count,
-        unique_product_count,
-        cart_additions,
-        purchase_count,
-        view_count,
-        total_revenue,
-        converted,
-        session_length
-
+        stg_sessions.session_id,
+        {% if is_incremental() %}
+            coalesce(
+                existing_sessions.session_start_time,
+                stg_sessions.session_start_time
+            ) as session_start_time,
+            coalesce(
+                existing_sessions.session_start_date,
+                stg_sessions.session_start_date
+            ) as session_start_date,
+        {% else %}
+        stg_sessions.session_start_time,
+        stg_sessions.session_start_date,
+        {% endif %}
+        stg_sessions.user_id,
+        stg_sessions.session_end_time,
+        stg_sessions.event_count,
+        stg_sessions.unique_product_count,
+        stg_sessions.cart_additions,
+        stg_sessions.purchase_count,
+        stg_sessions.view_count,
+        stg_sessions.total_revenue,
+        stg_sessions.converted,
+        stg_sessions.session_length
     from stg_sessions
-
+    {% if is_incremental() %}
+        left join existing_sessions
+            on stg_sessions.session_id = existing_sessions.session_id
+    {% endif %}
 )
 
 select * from final_sessions

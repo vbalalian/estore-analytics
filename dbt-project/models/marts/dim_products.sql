@@ -9,14 +9,12 @@
 with
 
 {% if is_incremental() %}
-max_event_date as (
+    max_event_date as (
 
-    select
+        select max(event_date) as max_date
 
-        max(event_date) as max_date
-
-    from {{ ref('stg_events') }}
-),
+        from {{ ref('stg_events') }}
+    ),
 {% endif %}
 
 events_source as (
@@ -24,7 +22,12 @@ events_source as (
     select * from {{ ref('stg_events') }}
     {% if is_incremental() %}
 
-        where event_date >= (select date_sub(date(max_date), interval 2 day) from max_event_date)
+        where
+            event_date
+            >= (
+                select date_sub(date(max_event_date.max_date), interval 2 day)
+                from max_event_date
+            )
 
     {% endif %}
 
@@ -35,7 +38,6 @@ categories as (
     select * from {{ ref('dim_categories') }}
 
 ),
-
 
 product_attributes as (
 
