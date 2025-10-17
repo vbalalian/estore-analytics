@@ -1,6 +1,5 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = 'session_id',
     partition_by = {"field": "session_date", "data_type": "date"},
     cluster_by = ['session_id'],
     incremental_strategy = 'insert_overwrite'
@@ -11,6 +10,12 @@ with
 fct_events as (
 
     select * from {{ ref('fct_events') }}
+
+    {% if is_incremental() %}
+
+        where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
+
+    {% endif %}
 
 ),
 
@@ -56,12 +61,6 @@ final_sessions as (
         datetime_diff(session_end_time, session_start_time, second) as session_length
 
     from stg_sessions
-
-    {% if is_incremental() %}
-
-        where session_date >= date_sub(current_date(), interval 3 day)
-
-    {% endif %}
 
 )
 

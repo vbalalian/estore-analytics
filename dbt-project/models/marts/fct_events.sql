@@ -1,7 +1,6 @@
 {{ config(
     materialized="incremental",
     partition_by={"field": "event_date", "data_type": "date"},
-    cluster_by=["user_id", "event_type"],
     incremental_strategy="insert_overwrite"
 ) }}
 
@@ -10,6 +9,12 @@ with
 stg_events as (
 
     select * from {{ ref('stg_events') }}
+
+    {% if is_incremental() %}
+
+        where event_date >= date_sub(date(_dbt_max_partition), interval 2 day)
+
+    {% endif %}
 
 ),
 
@@ -73,12 +78,6 @@ final_events as (
         ]) }} as event_id
 
     from numbered
-
-    {% if is_incremental() %}
-
-        where event_date >= date_sub(current_date(), interval 3 day)
-
-    {% endif %}
 
 )
 

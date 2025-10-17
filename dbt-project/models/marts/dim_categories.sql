@@ -1,7 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = 'raw_category_id',
-    cluster_by = ['category_lvl_1', 'category_lvl_2', 'category_lvl_3', 'category_lvl_4'],
+    cluster_by = ['category_lvl_1', 'category_lvl_2'],
     incremental_strategy = 'merge',
     on_schema_change = 'sync_all_columns'
 ) }}
@@ -11,6 +10,36 @@ with
 source as (
 
     select * from {{ ref('stg_events') }}
+
+),
+
+max_event_date as (
+
+    select
+
+        max(event_date) as max_date
+
+    from source
+),
+
+grouped as (
+
+    select
+
+        category_id,
+        ANY_VALUE(category_code) as category_code
+
+    from source
+
+    where category_id is not null
+
+    {% if is_incremental() %}
+
+        and event_date >= (select date_sub(date(max_date), interval 2 day) from max_event_date)
+
+    {% endif %}
+
+    group by category_id
 
 ),
 
@@ -25,17 +54,7 @@ final as (
         split(category_code, '.')[safe_offset(2)] as category_lvl_3,
         split(category_code, '.')[safe_offset(3)] as category_lvl_4
 
-    from source
-
-    where category_id is not null
-
-    group by
-        category_id,
-        category_code,
-        category_lvl_1,
-        category_lvl_2,
-        category_lvl_3,
-        category_lvl_4
+    from grouped
 
 )
 
