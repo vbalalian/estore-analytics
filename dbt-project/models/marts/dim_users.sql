@@ -1,3 +1,11 @@
+{{ config(
+    materialized = 'incremental',
+    unique_key = 'user_id',
+    cluster_by = ['user_id'],
+    incremental_strategy = 'merge',
+    on_schema_change = 'sync_all_columns'
+) }}
+
 with
 
 source as (

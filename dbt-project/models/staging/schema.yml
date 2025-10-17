@@ -12,10 +12,6 @@ models:
     description: >
       Staging model for raw eCommerce events. Cleans and standardizes event fields
       from estore_raw.events_sampled.
-    # config:
-    #   materialized: incremental
-    #   partition_by: {field: event_date, data_type: date}
-    #   incremental_strategy: insert_overwrite
     columns:
       - name: event_time
         description: "Timestamp of the event"
