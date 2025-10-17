@@ -1,7 +1,8 @@
 {{ config(
     materialized = 'incremental',
+    unique_key = 'session_id',
     partition_by = {"field": "session_date", "data_type": "date"},
-    cluster_by = ['session_id'],
+    cluster_by = ['user_id', 'session_date'],
     incremental_strategy = 'insert_overwrite'
 ) }}
 
@@ -34,7 +35,8 @@ stg_sessions as (
         sum(is_purchase) as purchase_count,
         sum(is_view) as view_count,
         sum(revenue) as total_revenue,
-        max(is_purchase) as converted
+        max(is_purchase) as converted,
+        datetime_diff(max(event_time), min(event_time), second) as session_length
 
     from fct_events
 
@@ -58,7 +60,7 @@ final_sessions as (
         view_count,
         total_revenue,
         converted,
-        datetime_diff(session_end_time, session_start_time, second) as session_length
+        session_length
 
     from stg_sessions
 

@@ -1,5 +1,6 @@
 {{ config(
     materialized="incremental",
+    unique_key="event_id",
     partition_by={"field": "event_date", "data_type": "date"},
     incremental_strategy="insert_overwrite"
 ) }}
