@@ -46,3 +46,9 @@ jobs:
       run: |
         cd dbt-project
         dbt test
+
+    - name: Lint dbt models with SQLFluff
+      run: |
+        pip install sqlfluff sqlfluff-templater-dbt
+        cd dbt-project
+        sqlfluff lint
