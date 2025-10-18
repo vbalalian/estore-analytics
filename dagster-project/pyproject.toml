@@ -3,10 +3,11 @@ name = "dagster_project"
 requires-python = ">=3.9,<3.14"
 version = "0.1.0"
 dependencies = [
-    "dagster==1.11.14",
-    "dagster-dbt==0.27.14",
+    "dagster==1.11.15",
+    "dagster-dbt==0.27.15",
     "dagster-webserver",
-    "dbt-bigquery==1.10.2"
+    "dbt-bigquery==1.10.2",
+    "dagster-gcp==0.27.15"
 ]
 
 [project.optional-dependencies]
