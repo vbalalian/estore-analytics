@@ -1,4 +1,4 @@
-from dagster import AssetSelection, define_asset_job
+from dagster import Definitions, AssetSelection, define_asset_job
 
 dbt_assets = AssetSelection.groups("dbt_models")
 
@@ -8,8 +8,15 @@ dbt_job = define_asset_job(
     description="Run dbt models"
     )
 
-raw_data_load_job = define_asset_job(
-    name="raw_data_load_job",
-    selection="raw_data_load",
+gcs_to_bq_load_job = define_asset_job(
+    name="gcs_to_bq_load_job",
+    selection="gcs_to_bq_load_asset",
     description="Load CSV files from GCS to BigQuery"
     )
+
+defs = Definitions(
+    jobs=[
+        dbt_job, 
+        gcs_to_bq_load_job
+        ]
+)
