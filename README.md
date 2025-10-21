@@ -5,11 +5,11 @@
 
 **Status:** Work in progress
 
+<img width="700" height="352" alt="Dagster dbt Asset Lineage Graph" src="https://github.com/user-attachments/assets/f2064b9e-6b12-4bf5-952e-0dae08c3c2ab" />
+
 ## Overview
 
 Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/). 
-
-<img width="700" height="352" alt="Dagster dbt Asset Lineage Graph" src="https://github.com/user-attachments/assets/f2064b9e-6b12-4bf5-952e-0dae08c3c2ab" />
 
 **Goal:** Produce actionable insights and metrics including customer LTV, churn rate, and purchase behavior.
 
