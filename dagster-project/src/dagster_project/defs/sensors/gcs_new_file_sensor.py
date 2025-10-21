@@ -6,15 +6,13 @@ from dagster import (
     SkipReason
 )
 from dagster_gcp.gcs.sensor import get_gcs_keys
-# from dagster_project.defs.jobs import gcs_to_bq_load_job
+from dagster_project.defs.jobs import gcs_to_bq_load_job
 
-# GCS_BUCKET_NAME = "ecommerce65465"
-GCS_BUCKET_NAME = "telco-data-6516"
-# DESTINATION_TABLE = "mkt-analytics-projects.estore_raw.events"
-DESTINATION_TABLE = "mkt-analytics-projects.estore_raw.events_test"
+GCS_BUCKET_NAME = "ecommerce65465"
+DESTINATION_TABLE = "mkt-analytics-project.estore_raw.events"
 
 @sensor(
-        asset_selection='gcs_to_bq_load_asset',
+        job=gcs_to_bq_load_job,
         minimum_interval_seconds=300,
         default_status=DefaultSensorStatus.RUNNING,
         required_resource_keys={"gcs"}
@@ -39,18 +37,17 @@ def gcs_new_file_sensor(context: SensorEvaluationContext):
     for gcs_key in new_gcs_keys:
         yield RunRequest(run_key=gcs_key, run_config={
             "ops": {
-                "gcs_to_bq_load_asset": {
+                "import_gcs_paths_to_bq": {
+                    "inputs": {
+                        "paths": [f"gs://{GCS_BUCKET_NAME}/{gcs_key}"]
+                    },
                     "config": {
-                        "gcs_key": gcs_key,
-                        "gcs_bucket": GCS_BUCKET_NAME,
-                        "bigquery": {
                             "destination": DESTINATION_TABLE,
                             "load_job_config": {
                                 "source_format": "CSV",
                                 "autodetect": True,
                                 "skip_leading_rows": 1,
                                 "write_disposition": "WRITE_APPEND"
-                            }
                         }
                     }
                 }

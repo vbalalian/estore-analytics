@@ -1,14 +1,10 @@
-from dagster_gcp import BigQueryResource, GCSResource
+from dagster_gcp import GCSResource, bigquery_resource
 from dagster import EnvVar
 
-gcp_creds = EnvVar("GCP_CREDS")
-project_id = EnvVar("GCP_PROJECT_ID")
-
-bq_resource = BigQueryResource(
-    project=project_id,
-    gcp_credentials=gcp_creds
-)
+bq_resource = bigquery_resource.configured({
+    "project":{"env":"GCP_PROJECT_ID"}
+})
 
 gcs_resource = GCSResource(
-    project=project_id
+    project=EnvVar("GCP_PROJECT_ID")
 )
