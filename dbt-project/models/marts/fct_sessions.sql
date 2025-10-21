@@ -1,7 +1,11 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'session_id',
-    partition_by = {"field": "session_start_date", "data_type": "date"},
+    partition_by = {
+    "field": "session_start_date", 
+    "data_type": "date",
+    "granularity": "day"
+    },
     cluster_by = ['user_id', 'session_start_date'],
     incremental_strategy = 'merge'
 ) }}

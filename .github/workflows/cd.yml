@@ -20,18 +20,24 @@ jobs:
           git pull origin main
           
           source .venv/bin/activate
-          
-          cd dagster-project
-          pip install -e .[dev]
-          
-          # Prepare and package dbt project with fresh manifest (Components)
-          cd /home/vbalalian/estore-analytics/dagster-project
-          dagster-dbt project prepare-and-package --components .
-          
-          # Trigger code location reload via GraphQL API
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
-            http://localhost:3000/graphql
-          
-          echo "Deployment complete! Code location reloaded."
+
+          echo "Checking for dependency changes..."
+          if git diff --name-only HEAD@{1} HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
+            echo "Dependencies changed — upgrading environment..."
+            pip install --upgrade pip
+            pip install --upgrade -e .[dev]
+
+            echo "Restarting Dagster services..."
+            sudo systemctl restart dagster-webserver
+            sudo systemctl restart dagster-daemon
+          else
+            echo "No dependency changes detected — reloading code definitions only..."
+            cd /home/vbalalian/estore-analytics/dagster-project
+            dagster-dbt project prepare-and-package --components .
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
+              http://localhost:3000/graphql
+          fi
+
+          echo "Deployment complete!"

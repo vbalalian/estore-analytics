@@ -1,7 +1,11 @@
 {{ config(
     materialized="incremental",
     unique_key="event_id",
-    partition_by={"field": "event_date", "data_type": "date"},
+    partition_by={
+    "field": "event_date", 
+    "data_type": "date",
+    "granularity": "day"
+    },
     incremental_strategy="insert_overwrite"
 ) }}
 
