@@ -11,7 +11,7 @@ models:
   - name: stg_events
     description: >
       Staging model for raw eCommerce events. Cleans and standardizes event fields
-      from estore_raw.events_sampled.
+      from the raw events source.
     columns:
       - name: event_time
         description: "Timestamp of the event"
