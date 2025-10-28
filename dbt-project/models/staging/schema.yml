@@ -5,7 +5,7 @@ sources:
   - name: estore_raw
     schema: estore_raw
     tables:
-      - name: events_sampled
+      - name: events
 
 models:
   - name: stg_events

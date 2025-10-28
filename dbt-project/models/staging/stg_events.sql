@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('estore_raw', 'events_sampled') }}
+    select * from {{ source('estore_raw', 'events') }}
 
 ),
 
