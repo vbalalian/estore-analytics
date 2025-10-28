@@ -20,7 +20,9 @@ jobs:
           git pull origin main
           
           source .venv/bin/activate
-
+          
+          cd /home/vbalalian/estore-analytics/dagster-project
+          
           echo "Checking for dependency changes..."
           if git diff --name-only HEAD@{1} HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
             echo "Dependencies changed — upgrading environment..."
@@ -29,10 +31,9 @@ jobs:
 
             echo "Restarting Dagster services..."
             sudo systemctl restart dagster-webserver
-            sudo systemctl restart dagster-daemon
+            sudo systemctl restart dagster
           else
             echo "No dependency changes detected — reloading code definitions only..."
-            cd /home/vbalalian/estore-analytics/dagster-project
             dagster-dbt project prepare-and-package --components .
             curl -X POST \
               -H "Content-Type: application/json" \
