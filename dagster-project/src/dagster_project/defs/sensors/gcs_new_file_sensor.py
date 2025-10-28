@@ -34,26 +34,33 @@ def gcs_new_file_sensor(context: SensorEvaluationContext):
     if not new_gcs_keys:
         return SkipReason(f"No new files found in GCS bucket: {GCS_BUCKET_NAME}.")
 
+    last_key = new_gcs_keys[-1]
+
     for gcs_key in new_gcs_keys:
-        yield RunRequest(run_key=gcs_key, run_config={
-            "ops": {
-                "import_gcs_paths_to_bq": {
-                    "inputs": {
-                        "paths": [f"gs://{GCS_BUCKET_NAME}/{gcs_key}"]
-                    },
-                    "config": {
-                            "destination": DESTINATION_TABLE,
-                            "load_job_config": {
-                                "source_format": "CSV",
-                                "autodetect": True,
-                                "skip_leading_rows": 1,
-                                "write_disposition": "WRITE_APPEND"
+        yield RunRequest(
+            run_key=gcs_key, 
+            run_config={
+                "ops": {
+                    "import_gcs_paths_to_bq": {
+                        "inputs": {
+                            "paths": [f"gs://{GCS_BUCKET_NAME}/{gcs_key}"]
+                        },
+                        "config": {
+                                "destination": DESTINATION_TABLE,
+                                "load_job_config": {
+                                    "source_format": "CSV",
+                                    "autodetect": True,
+                                    "skip_leading_rows": 1,
+                                    "write_disposition": "WRITE_APPEND"
+                            }
                         }
                     }
-                }
+                },
+        },
+            tags={
+                "gcs_key": gcs_key,
+                "latest_gcs_key": last_key,
+                "file_count": str(len(new_gcs_keys))
             }
-        })
-
-    # Update the cursor to the latest processed key
-    last_key = new_gcs_keys[-1]
+        )
     context.update_cursor(last_key)
