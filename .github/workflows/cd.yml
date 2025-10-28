@@ -16,10 +16,17 @@ jobs:
         username: ${{ secrets.GCP_VM_USERNAME }}
         key: ${{ secrets.GCP_VM_SSH_KEY }}
         script: |
+          set -e
+
           cd /home/vbalalian/estore-analytics
           git pull origin main
           
           source .venv/bin/activate
+
+          cd /home/vbalalian/estore-analytics/dbt-project
+          dbt clean
+          dbt deps
+          dbt parse
           
           cd /home/vbalalian/estore-analytics/dagster-project
           
@@ -30,6 +37,7 @@ jobs:
             pip install --upgrade -e .[dev]
 
             echo "Restarting Dagster services..."
+            dagster-dbt project prepare-and-package --components .
             sudo systemctl restart dagster-webserver
             sudo systemctl restart dagster
           else
@@ -40,5 +48,6 @@ jobs:
               -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
               http://localhost:3000/graphql
           fi
+
 
           echo "Deployment complete!"
