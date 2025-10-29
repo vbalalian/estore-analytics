@@ -19,9 +19,7 @@ stg_events as (
 
         where
             stg_events.event_date
-            >= date_sub(
-                (select max(t.event_date) from {{ this }} as t), interval 2 day
-            )
+            >= (select max(t.event_date) from {{ this }} as t)
 
     {% endif %}
 
