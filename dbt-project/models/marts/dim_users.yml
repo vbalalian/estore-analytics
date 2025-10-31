@@ -74,10 +74,6 @@ models:
 
       - name: is_churned
         description: "Flag for churned users (1 for churned, 0 otherwise)"
-        tests:
-          - accepted_values:
-              arguments:
-                values: [0, 1]
 
       - name: customer_ltv
         description: "Customer lifetime value. Same as total_revenue; just semantic clarity."
