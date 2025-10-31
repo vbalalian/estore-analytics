@@ -53,40 +53,50 @@ transformed as (
         count(*) as event_count,
 
         sum(
-            case when is_purchase = 1 
-            then revenue end
-            ) as total_revenue,
+            case
+                when is_purchase = 1
+                    then revenue
+            end
+        ) as total_revenue,
         count(
-            case when is_purchase = 1 
-            then 1 end
-            ) as purchase_count,
+            case
+                when is_purchase = 1
+                    then 1
+            end
+        ) as purchase_count,
         min(
-            case when is_purchase = 1 
-            then event_date end
-            ) as first_purchase_date,
+            case
+                when is_purchase = 1
+                    then event_date
+            end
+        ) as first_purchase_date,
         max(
-            case when is_purchase = 1 
-            then event_date end
-            ) as last_purchase_date,
+            case
+                when is_purchase = 1
+                    then event_date
+            end
+        ) as last_purchase_date,
         avg(
-            case when is_purchase = 1
-            then revenue end
-            ) as avg_order_value,
+            case
+                when is_purchase = 1
+                    then revenue
+            end
+        ) as avg_order_value,
         date_diff(
             max(case when is_purchase = 1 then event_date end),
             min(case when is_purchase = 1 then event_date end),
             day
-            ) as customer_lifespan_days,
+        ) as customer_lifespan_days,
         date_diff(
             (select max_date.max_date from max_date),
             max(event_date),
             day
-            ) as days_since_last_activity,
+        ) as days_since_last_activity,
         date_diff(
             (select max_date.max_date from max_date),
             max(case when is_purchase = 1 then event_date end),
             day
-            ) as days_since_last_purchase
+        ) as days_since_last_purchase
 
     from source
 
@@ -113,20 +123,26 @@ final as (
         days_since_last_activity,
         days_since_last_purchase,
 
-        case 
-            when purchase_count > 0 and days_since_last_purchase > 120 then 'churned'
-            when purchase_count > 0 and days_since_last_purchase > 90 then 'at_risk'
-            when purchase_count > 0 and days_since_last_purchase > 60 then 'declining'
+        total_revenue as customer_ltv,
+
+        case
+            when
+                purchase_count > 0 and days_since_last_purchase > 120
+                then 'churned'
+            when
+                purchase_count > 0 and days_since_last_purchase > 90
+                then 'at_risk'
+            when
+                purchase_count > 0 and days_since_last_purchase > 60
+                then 'declining'
             when purchase_count > 0 then 'active'
             else 'prospect'
         end as activity_status,
 
         case
-            when purchase_count > 0 and days_since_last_purchase > 120 then 1 
-            else 0 
-        end as is_churned,
-
-        total_revenue as customer_ltv
+            when purchase_count > 0 and days_since_last_purchase > 120 then 1
+            else 0
+        end as is_churned
 
     from transformed
 
