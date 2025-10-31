@@ -24,7 +24,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['view', 'cart', 'purchase', 'remove_from_cart']
+                values: ['view', 'cart', 'purchase']
 
       - name: product_id
         description: "Unique identifier for the product (string-cast from raw integer)"
@@ -33,6 +33,8 @@ models:
 
       - name: category_id
         description: "Unique identifier for the product category (string-cast from raw integer)"
+        tests:
+          - not_null
 
       - name: category_code
         description: "Hierarchical category code (e.g. electronics.smartphone)"
@@ -42,6 +44,8 @@ models:
 
       - name: price
         description: "Price of the product at the time of event"
+        tests:
+          - not_null
 
       - name: user_id
         description: "Unique identifier for the user (string-cast from raw integer)"
@@ -55,3 +59,5 @@ models:
 
       - name: event_date
         description: "Date portion of event_time (for partitioning/aggregations)"
+        tests:
+          - not_null
