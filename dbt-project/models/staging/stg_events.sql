@@ -62,6 +62,7 @@ final as (
             from multi_brand_product_ids
         )
         and product_id is not null
+        and user_session is not null
 
 )
 
