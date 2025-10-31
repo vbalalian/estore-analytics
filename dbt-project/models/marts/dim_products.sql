@@ -25,7 +25,7 @@ events_source as (
         where
             event_date
             >= (
-                select date_sub(date(max_event_date.max_date), interval 2 day)
+                select date(max_event_date.max_date)
                 from max_event_date
             )
 
