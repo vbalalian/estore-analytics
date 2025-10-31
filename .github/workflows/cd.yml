@@ -27,6 +27,7 @@ jobs:
           dbt clean
           dbt deps
           dbt parse
+          dbt compile
           
           cd /home/vbalalian/estore-analytics/dagster-project
           
