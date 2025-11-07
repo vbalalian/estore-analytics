@@ -16,7 +16,7 @@ ranked_users as (
     select
 
         *,
-        dense_rank() over (order by purchase_count) as freq_percentile
+        percent_rank() over (order by purchase_count) as freq_percentile
 
     from source_dim_users
     where purchase_count > 0
