@@ -13,13 +13,13 @@ with
 
         select max(event_date) as max_date
 
-        from {{ ref('stg_events') }}
+        from {{ ref('fct_events') }}
     ),
 {% endif %}
 
 source as (
 
-    select * from {{ ref('stg_events') }}
+    select * from {{ ref('fct_events') }}
     {% if is_incremental() %}
 
         where
