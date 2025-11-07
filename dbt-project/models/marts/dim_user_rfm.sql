@@ -13,7 +13,7 @@ source_dim_users as (
 
 ranked_users as (
 
-    select 
+    select
 
         *,
         dense_rank() over (order by purchase_count) as freq_percentile
