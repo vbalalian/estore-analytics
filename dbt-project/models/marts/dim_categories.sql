@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'raw_category_id',
-    cluster_by = ['category_lvl_1', 'category_lvl_2'],
+    cluster_by = ['category_lvl_1'],
     incremental_strategy = 'merge',
     on_schema_change = 'sync_all_columns'
 ) }}

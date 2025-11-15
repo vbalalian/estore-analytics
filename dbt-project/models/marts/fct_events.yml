@@ -3,127 +3,113 @@ version: 2
 
 models:
 
-  - name: dim_categories
-    description: >
-      Dimension table for product categories. Extracted from staging events data.
-    columns:
-
-      - name: raw_category_id
-        description: "Original unique identifier for the product category"
-        tests:
-          - not_null
-          - unique
-
-      - name: category_code
-        description: "All hierarchical category codes associated with the product category, separated by commas"
-
-      - name: category_lvl_1
-        description: "First level of hierarchical category (e.g. electronics.smartphone returns electronics)"
-
-      - name: category_lvl_2
-        description: "Second level of hierarchical category (e.g. electronics.smartphone returns smartphone)"
-
-      - name: category_lvl_3
-        description: "Third level of hierarchical category (if applicable)"
-
-      - name: category_lvl_4
-        description: "Fourth level of hierarchical category (if applicable)"
-        
-  - name: dim_products
-    description: >
-      Dimension table for products. Extracted from staging events data.
-    columns:
-      - name: product_id
-        description: "Unique identifier for the product"
-        tests:
-          - not_null
-          - unique
-
-      - name: brand
-        description: "Brand of the product"
-
-      - name: category_code
-        description: "Category code associated with the product"
-
-      - name: category_lvl_1
-        description: "First level of hierarchical category associated with the product"
-
-      - name: category_lvl_2
-        description: "Second level of hierarchical category associated with the product" 
-
-      - name: category_lvl_3
-        description: "Third level of hierarchical category associated with the product"
-      
-      - name: category_lvl_4
-        description: "Fourth level of hierarchical category associated with the product"
-
   - name: fct_events
     description: >
       Fact table for user events. Extracted from staging events data.
+
+    config:
+      contract:
+        enforced: false
+
     columns:
       - name: event_id
+        data_type: string
+        constraints:
+          - type: primary_key
+          - type: not_null
         description: "Unique identifier for the event"
         tests:
           - not_null
           - unique
 
       - name: event_time
+        data_type: timestamp
+        constraints:
+          - type: not_null
         description: "Timestamp when the event occurred"
         tests:
           - not_null
 
       - name: event_date
+        data_type: date
+        constraints:
+          - type: not_null
         description: "Date when the event occurred"
         tests:
           - not_null
 
       - name: event_type
+        data_type: string
+        constraints:
+          - type: not_null
         description: "Type of the event (e.g., view, click, purchase)"
         tests:
           - not_null
 
       - name: user_id
+        data_type: string
+        constraints:
+          - type: not_null
         description: "Identifier for the user who generated the event"
         tests:
           - not_null
 
       - name: user_session
+        data_type: string
+        constraints:
+          - type: not_null
         description: "Identifier for the session during which the event occurred"
         tests:
           - not_null
 
       - name: product_id
+        data_type: string
         description: "Identifier for the product associated with the event (if applicable)"
 
       - name: category_code
+        data_type: string
         description: "Category code associated with the product (if applicable)"
 
       - name: category_id
+        data_type: string
         description: "Category id associated with the product (if applicable)"
 
       - name: brand
+        data_type: string
         description: "Brand of the product associated with the event (if applicable)"
 
       - name: price
+        data_type: float
         description: "Price of the product associated with the event (if applicable)"
 
       - name: quantity
+        data_type: integer
         description: "Quantity of the product involved in the event (set to 1 for downstream aggregations)"
 
       - name: is_purchase
+        data_type: integer
+        constraints:
+          - type: not_null
         description: "Indicator if the event is a purchase event (1 for purchase, 0 otherwise)"
         tests:
           - not_null
 
       - name: is_cart_add
+        data_type: integer
+        constraints:
+          - type: not_null
         description: "Indicator if the event is an add-to-cart event (1 for add-to-cart, 0 otherwise)"
         tests:
           - not_null
 
       - name: is_view
+        data_type: integer
+        constraints:
+          - type: not_null
         description: "Indicator if the event is a view event (1 for view, 0 otherwise)"
         tests:
           - not_null
       
       - name: revenue
+        data_type: float
         description: "Revenue generated from the event (price * quantity for purchase events, 0 otherwise)"
