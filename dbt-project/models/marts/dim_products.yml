@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: dim_products
+    description: >
+      Dimension table for products. Extracted from staging events data.
+    
+    config:
+      contract:
+        enforced: false
+    
+    columns:
+      - name: product_id
+        data_type: string
+        constraints:
+          - type: not_null
+          - type: primary_key
+        description: "Unique identifier for the product"
+        tests:
+          - not_null
+          - unique
+
+      - name: brand
+        data_type: string
+        description: "Brand of the product"
+
+      - name: category_code
+        data_type: string
+        description: "Category code associated with the product"
+
+      - name: category_lvl_1
+        data_type: string
+        description: "First level of hierarchical category associated with the product"
+
+      - name: category_lvl_2
+        data_type: string
+        description: "Second level of hierarchical category associated with the product" 
+
+      - name: category_lvl_3
+        data_type: string
+        description: "Third level of hierarchical category associated with the product"
+      
+      - name: category_lvl_4
+        data_type: string
+        description: "Fourth level of hierarchical category associated with the product"

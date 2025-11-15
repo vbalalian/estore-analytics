@@ -3,34 +3,6 @@ version: 2
 
 models:
 
-  - name: dim_products
-    description: >
-      Dimension table for products. Extracted from staging events data.
-    columns:
-      - name: product_id
-        description: "Unique identifier for the product"
-        tests:
-          - not_null
-          - unique
-
-      - name: brand
-        description: "Brand of the product"
-
-      - name: category_code
-        description: "Category code associated with the product"
-
-      - name: category_lvl_1
-        description: "First level of hierarchical category associated with the product"
-
-      - name: category_lvl_2
-        description: "Second level of hierarchical category associated with the product" 
-
-      - name: category_lvl_3
-        description: "Third level of hierarchical category associated with the product"
-      
-      - name: category_lvl_4
-        description: "Fourth level of hierarchical category associated with the product"
-
   - name: fct_events
     description: >
       Fact table for user events. Extracted from staging events data.
