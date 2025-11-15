@@ -1,5 +1,5 @@
 {{ config(
-    materialized='view'
+    materialized='table'
 ) }}
 
 with
@@ -62,7 +62,7 @@ segment_summary as (
     group by rfm_segment
 ),
 
-final_view as (
+final as (
 
     select
         rfm_segment,
@@ -113,4 +113,4 @@ final_view as (
     order by segment_rank
 )
 
-select * from final_view
+select * from final
