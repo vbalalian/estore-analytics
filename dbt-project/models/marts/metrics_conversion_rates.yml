@@ -27,7 +27,7 @@ models:
         data_type: integer
         tests:
           - not_null
-      - name: sesssions_with_cart
+      - name: sessions_with_cart
         description: "The number of sessions that included at least one cart event."
         data_type: integer
         tests:
