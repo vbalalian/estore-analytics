@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: metrics_conversion_rates
+    description: "A table containing daily and overall session conversion rates."
+    config:
+      contract: 
+        enforced: false
+    columns:
+      - name: time_period
+        description: "The time period for the conversion rate (e.g., daily, overall)."
+        data_type: string
+        tests:
+          - unique
+          - not_null
+      - name: metric_level
+        description: "The aggregate level of the metric."
+        data_type: string
+        tests:
+          - not_null
+      - name: total_sessions
+        description: "The total number of sessions recorded."
+        data_type: integer
+        tests:
+          - not_null
+      - name: sessions_with_view
+        description: "The number of sessions that included at least one view event."
+        data_type: integer
+        tests:
+          - not_null
+      - name: sesssions_with_cart
+        description: "The number of sessions that included at least one cart event."
+        data_type: integer
+        tests:
+          - not_null
+      - name: sessions_with_purchase
+        description: "The number of sessions that included at least one purchase event."
+        data_type: integer
+        tests:
+          - not_null
+      - name: view_to_cart_rate
+        description: "The conversion rate from view to cart."
+        data_type: float
+        tests:
+          - not_null
+      - name: cart_to_purchase_rate
+        description: "The conversion rate from cart to purchase."
+        data_type: float
+        tests:
+          - not_null
+      - name: view_to_purchase_rate
+        description: "The conversion rate from view to purchase."
+        data_type: float
+        tests:
+          - not_null
+      - name: total_revenue
+        description: "The total revenue generated from purchase sessions."
+        data_type: float
+        tests:
+          - not_null
+      - name: avg_order_value
+        description: "The average order value for purchase sessions."
+        data_type: float
+        tests:
+          - not_null
+      
