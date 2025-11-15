@@ -3,13 +3,11 @@
 [![CI](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml)
 [![CD](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml)
 
-<img width="700" height="352" alt="Dagster dbt Asset Lineage Graph" src="https://github.com/user-attachments/assets/f2064b9e-6b12-4bf5-952e-0dae08c3c2ab" />
-
 ## Overview
 
 Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/). 
 
-**Goal:** Produce actionable insights and metrics including customer LTV, churn rate, and purchase behavior.
+<img width="1146" height="939" alt="Dagster Asset Lineage Graph" src="https://github.com/user-attachments/assets/9e27e52f-b896-4604-9813-371272553766" />
 
 ## Pipeline Architecture
 
