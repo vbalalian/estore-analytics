@@ -1,4 +1,4 @@
-# E-Store Marketing Analytics 
+# E-commerce Analytics Pipeline 
 
 [![CI](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml)
 [![CD](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml)
@@ -6,6 +6,10 @@
 ## Overview
 
 Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/).
+
+* A production-style data pipeline that processes millions of e-commerce events to generate customer analytics and business insights.
+* Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
+* The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, and churn identification.
 
 <img width="1273" height="80" alt="image" src="https://github.com/user-attachments/assets/8e2f2fce-a79d-4d5e-be2d-b582b5566732" />
 
