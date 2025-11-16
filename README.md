@@ -58,6 +58,10 @@ graph TB
     style I fill:#fce4ec
 ```
 
+## Insights
+
+<img width="1267" height="857" alt="Total Revenue by Segment2" src="https://github.com/user-attachments/assets/27ada3a1-335f-496b-b4c4-8140902a9d5b" />
+
 ## Roadmap
 - [X] Automate GCS → BigQuery loading
 - [X] Complete dbt models for key metrics
