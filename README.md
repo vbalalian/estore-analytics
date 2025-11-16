@@ -60,7 +60,7 @@ graph TB
 
 ## Insights
 
-<img width="1267" height="857" alt="Total Revenue by Segment2" src="https://github.com/user-attachments/assets/27ada3a1-335f-496b-b4c4-8140902a9d5b" />
+![Total Revenue by Segment](/visualizations/Total_Revenue_by_Segment.png)
 
 ## Roadmap
 - [X] Automate GCS → BigQuery loading
