@@ -5,7 +5,9 @@
 
 ## Overview
 
-Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/). 
+Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/).
+
+<img width="1273" height="80" alt="image" src="https://github.com/user-attachments/assets/8e2f2fce-a79d-4d5e-be2d-b582b5566732" />
 
 ## Pipeline Architecture
 
