@@ -20,16 +20,6 @@ with
 source as (
 
     select * from {{ ref('fct_events') }}
-    {% if is_incremental() %}
-
-        where
-            event_date
-            >= (
-                select date(max_event_date.max_date)
-                from max_event_date
-            )
-
-    {% endif %}
 
 ),
 
