@@ -66,6 +66,10 @@ graph TB
 
 ![Total Revenue by Segment](/visualizations/Total_Revenue_by_Segment.png)
 
+
+![Session Conversion Funnel](/visualizations/Conversion_Funnel.png)
+
+
 ## Roadmap
 - [X] Automate GCS → BigQuery loading
 - [X] Complete dbt models for key metrics
