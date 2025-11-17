@@ -8,28 +8,9 @@
 
 with
 
-{% if is_incremental() %}
-    max_event_date as (
-
-        select max(event_date) as max_date
-
-        from {{ ref('fct_events') }}
-    ),
-{% endif %}
-
 source as (
 
     select * from {{ ref('fct_events') }}
-    {% if is_incremental() %}
-
-        where
-            event_date
-            >= (
-                select date(max_event_date.max_date)
-                from max_event_date
-            )
-
-    {% endif %}
 
 ),
 
