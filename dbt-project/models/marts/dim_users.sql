@@ -85,7 +85,7 @@ transformed as (
 
 ),
 
-final as (
+churn_classified as (
 
     select
         user_id,
@@ -126,6 +126,31 @@ final as (
         end as is_churned
 
     from transformed
+
+),
+
+final as (
+
+    select
+
+        user_id,
+        first_event_time,
+        first_event_date,
+        last_event_time,
+        last_event_date,
+        session_count,
+        event_count,
+        total_revenue,
+        purchase_count,
+        first_purchase_date,
+        last_purchase_date,
+        avg_order_value,
+        customer_lifespan_days,
+        days_since_last_activity,
+        days_since_last_purchase,
+        customer_ltv,
+        activity_status,
+        is_churned
 
 )
 
