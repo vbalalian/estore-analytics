@@ -1,4 +1,4 @@
-# E-Store Marketing Analytics 
+# E-commerce Analytics Pipeline 
 
 [![CI](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci.yml)
 [![CD](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml)
@@ -7,7 +7,11 @@
 
 Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) from [REES46 Marketing Platform](https://rees46.com/).
 
-<img width="1273" height="80" alt="image" src="https://github.com/user-attachments/assets/8e2f2fce-a79d-4d5e-be2d-b582b5566732" />
+![Raw Events Snippet](/images/screenshots/estore-raw-events-snippet.png)
+
+* A production-style data pipeline that processes millions of e-commerce events to generate customer analytics and business insights.
+* Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
+* The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, and churn identification.
 
 ## Pipeline Architecture
 
@@ -26,7 +30,7 @@ graph TB
         end
         
         subgraph "Orchestration"
-            E[Dagster<br/>Event-Driven Loading & Transformation]
+            E[Dagster<br/>Loading & Transformation]
         end
         
         F[Compute Engine<br/>Virtual Machine]
@@ -58,9 +62,17 @@ graph TB
     style I fill:#fce4ec
 ```
 
-## Insights
+## Lineage Graph
 
-<img width="1267" height="857" alt="Total Revenue by Segment2" src="https://github.com/user-attachments/assets/27ada3a1-335f-496b-b4c4-8140902a9d5b" />
+![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
+
+## Data Visualizations
+
+![Total Revenue by Segment](/images/data_viz/Total_Revenue_by_Segment.png)
+
+
+![Session Conversion Funnel](/images/data_viz/Conversion_Funnel.png)
+
 
 ## Roadmap
 - [X] Automate GCS → BigQuery loading
