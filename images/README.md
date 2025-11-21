@@ -2,6 +2,8 @@
 
 ## Screenshots
 
+![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
+
 ## Data Visualizations
 
 ![Total Revenue by Segment](/images/data_viz/Total_Revenue_by_Segment.png)
