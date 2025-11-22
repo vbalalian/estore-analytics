@@ -64,3 +64,10 @@ models:
           - type: not_null
         tests:
           - not_null
+      - name: rfm_segment
+        description: "RFM segment classification based on RFM scores"
+        data_type: string
+        constraints:
+          - type: not_null
+        tests:
+          - not_null

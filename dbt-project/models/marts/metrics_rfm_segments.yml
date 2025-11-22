@@ -36,9 +36,16 @@ models:
           - type: not_null
         tests:
           - not_null
-      - name: segment_rank
-        description: "Rank of the RFM Segment based on marketing lifecycle"
+      - name: med_rfm_total
+        description: "Median RFM Total Value for the Segment"
         data_type: integer
+        constraints:
+          - type: not_null
+        tests:
+          - not_null
+      - name: med_revenue
+        description: "Median Revenue for Customers in the Segment"
+        data_type: float
         constraints:
           - type: not_null
         tests:
