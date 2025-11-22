@@ -85,7 +85,7 @@ transformed as (
 
 ),
 
-final as (
+churn_classified as (
 
     select
         user_id,
@@ -108,24 +108,51 @@ final as (
 
         case
             when
-                purchase_count > 0 and days_since_last_purchase > 120
+                purchase_count > 0 and days_since_last_purchase > 60
                 then 'churned'
             when
-                purchase_count > 0 and days_since_last_purchase > 90
+                purchase_count > 0 and days_since_last_purchase > 45
                 then 'at_risk'
             when
-                purchase_count > 0 and days_since_last_purchase > 60
+                purchase_count > 0 and days_since_last_purchase > 30
                 then 'declining'
             when purchase_count > 0 then 'active'
             else 'prospect'
         end as activity_status,
 
         case
-            when purchase_count > 0 and days_since_last_purchase > 120 then 1
+            when purchase_count > 0 and days_since_last_purchase > 60 then 1
             else 0
         end as is_churned
 
     from transformed
+
+),
+
+final as (
+
+    select
+
+        user_id,
+        first_event_time,
+        first_event_date,
+        last_event_time,
+        last_event_date,
+        session_count,
+        event_count,
+        total_revenue,
+        purchase_count,
+        first_purchase_date,
+        last_purchase_date,
+        avg_order_value,
+        customer_lifespan_days,
+        days_since_last_activity,
+        days_since_last_purchase,
+        customer_ltv,
+        activity_status,
+        is_churned
+
+    from churn_classified
 
 )
 
