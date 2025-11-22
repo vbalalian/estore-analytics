@@ -15,7 +15,10 @@ ranked_users as (
 
     select
 
-        *,
+        user_id,
+        days_since_last_purchase,
+        purchase_count,
+        total_revenue,
         percent_rank() over (order by purchase_count) as freq_percentile
 
     from source_dim_users
@@ -46,7 +49,7 @@ rfm_scores as (
     from ranked_users
 ),
 
-final_users_rfm as (
+final_rfm_scores as (
 
     select
 
@@ -61,6 +64,73 @@ final_users_rfm as (
         (recency_score + frequency_score + monetary_score) as rfm_score
 
     from rfm_scores
+
+),
+
+rfm_labeled as (
+
+    select
+
+        user_id,
+        days_since_last_purchase,
+        purchase_count,
+        total_revenue,
+        recency_score,
+        frequency_score,
+        monetary_score,
+        rfm_score,
+
+        case
+            when
+                recency_score >= 4
+                and frequency_score >= 4
+                and monetary_score >= 4
+                then 'Champions'
+            when
+                recency_score <= 2
+                and frequency_score >= 4
+                and monetary_score >= 4
+                then 'At Risk'
+            when
+                recency_score >= 4 and frequency_score >= 3
+                then 'Loyal Customers'
+            when
+                recency_score >= 3 and frequency_score >= 3
+                then 'Potential Loyalists'
+            when
+                recency_score >= 4 and frequency_score < 3
+                then 'Recent Customers'
+            when recency_score = 3 and frequency_score < 3 then 'Promising'
+            when
+                recency_score <= 2 and frequency_score >= 3
+                then 'About To Sleep'
+            when
+                recency_score <= 2
+                and frequency_score <= 2
+                and monetary_score <= 2
+                then 'Lost'
+            else 'Needs Attention'
+        end as rfm_segment
+
+    from final_rfm_scores
+
+),
+
+final_users_rfm as (
+
+    select
+
+        user_id,
+        days_since_last_purchase,
+        purchase_count,
+        total_revenue,
+        recency_score,
+        frequency_score,
+        monetary_score,
+        rfm_score,
+        rfm_segment
+
+    from rfm_labeled
 
 )
 
