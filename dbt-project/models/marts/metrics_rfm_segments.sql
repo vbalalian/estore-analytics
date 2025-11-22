@@ -4,9 +4,38 @@
 
 with
 
-source_dim_user_rfm as (
+users as (
+
+    select * from {{ ref('dim_users') }}
+
+),
+
+rfm as (
 
     select * from {{ ref('dim_user_rfm') }}
+
+),
+
+combined as (
+
+    select
+
+        users.user_id,
+        users.session_count,
+        users.event_count,
+        users.total_revenue,
+        users.purchase_count,
+        users.avg_order_value,
+        users.customer_lifespan_days,
+        users.customer_ltv,
+        users.is_churned,
+        rfm.rfm_score,
+        rfm.rfm_segment
+
+    from users
+
+    inner join rfm
+        on users.user_id = rfm.user_id
 
 ),
 
@@ -16,15 +45,26 @@ segment_summary as (
 
         rfm_segment,
         count(*) as customer_count,
+
+        round(avg(session_count), 2) as avg_session_count,
+        round(avg(event_count), 2) as avg_event_count,
+        round(avg(purchase_count), 2) as avg_purchase_count,
+        round(avg(avg_order_value), 2) as avg_order_value,
+        round(avg(customer_lifespan_days), 2) as avg_lifespan_days,
+        round(avg(customer_ltv), 2) as avg_customer_ltv,
+        sum(is_churned) as total_churned,
+        round(sum(is_churned) / count(*), 2) as churn_rate,
+
         round(avg(rfm_score), 2) as avg_rfm_total,
-        round(avg(total_revenue), 2) as avg_revenue,
         approx_quantiles(rfm_score, 100)[offset(50)] as med_rfm_total,
+
+        round(avg(total_revenue), 2) as avg_revenue,
         approx_quantiles(total_revenue, 100)[offset(50)] as med_revenue,
         round(stddev(total_revenue), 2) as std_dev_revenue,
         approx_quantiles(total_revenue, 100)[offset(25)] as p25_revenue,
         approx_quantiles(total_revenue, 100)[offset(75)] as p75_revenue
 
-    from source_dim_user_rfm
+    from combined
 
     group by rfm_segment
 
@@ -36,9 +76,17 @@ segments_w_context as (
 
         rfm_segment,
         customer_count,
+        avg_session_count,
+        avg_event_count,
+        avg_purchase_count,
+        avg_order_value,
+        avg_lifespan_days,
+        avg_customer_ltv,
+        total_churned,
+        churn_rate,
         avg_rfm_total,
-        avg_revenue,
         med_rfm_total,
+        avg_revenue,
         med_revenue,
         std_dev_revenue,
         p25_revenue,
@@ -84,6 +132,14 @@ final as (
 
         rfm_segment,
         customer_count,
+        avg_session_count,
+        avg_event_count,
+        avg_purchase_count,
+        avg_order_value,
+        avg_lifespan_days,
+        avg_customer_ltv,
+        total_churned,
+        churn_rate,
         avg_rfm_total,
         avg_revenue,
         med_rfm_total,
