@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: metrics_churn
+    description: "A table that captures customer churn metrics over time."
+    config:
+      contract: 
+        enforced: false
+    columns:
+      - name: metric_level
+        description: "The level at which the metric is calculated (e.g., customer, account)."
+        data_type: string
+        tests:
+          - not_null
+      - name: time_period
+        description: "The time period for the churn metric (e.g., monthly, quarterly)."
+        data_type: string
+        tests:
+          - not_null
+      - name: total_customers
+        description: "The total number of customers at the start of the time period."
+        data_type: integer
+        tests:
+          - not_null
+      - name: churned_customers
+        description: "The number of customers who churned during the time period."
+        data_type: integer
+        tests:
+          - not_null
+      - name: churn_rate
+        description: "The percentage of customers who churned during the time period."
+        data_type: float
+        tests:
+          - not_null
+      
