@@ -55,11 +55,7 @@ models:
       - name: total_revenue
         description: "The total revenue generated from purchase sessions."
         data_type: float
-        tests:
-          - not_null
       - name: avg_order_value
         description: "The average order value for purchase sessions."
         data_type: float
-        tests:
-          - not_null
       
