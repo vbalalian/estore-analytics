@@ -16,8 +16,8 @@ segment_summary as (
 
         rfm_segment,
         count(*) as customer_count,
-        round(AVG(rfm_score), 2) as avg_rfm_total,
-        round(AVG(total_revenue), 2) as avg_revenue,
+        round(avg(rfm_score), 2) as avg_rfm_total,
+        round(avg(total_revenue), 2) as avg_revenue,
         approx_quantiles(rfm_score, 100)[offset(50)] as med_rfm_total,
         approx_quantiles(total_revenue, 100)[offset(50)] as med_revenue,
         round(stddev(total_revenue), 2) as std_dev_revenue,
@@ -75,7 +75,7 @@ segments_w_context as (
         end as action_strategy
 
     from segment_summary
-    
+
 ),
 
 final as (
@@ -93,7 +93,7 @@ final as (
         p75_revenue,
         category_type,
         action_strategy
-    
+
     from segments_w_context
 )
 

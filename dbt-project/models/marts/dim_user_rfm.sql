@@ -70,7 +70,7 @@ final_rfm_scores as (
 rfm_labeled as (
 
     select
-    
+
         user_id,
         days_since_last_purchase,
         purchase_count,
@@ -115,7 +115,6 @@ rfm_labeled as (
     from final_rfm_scores
 
 ),
-
 
 final_users_rfm as (
 
