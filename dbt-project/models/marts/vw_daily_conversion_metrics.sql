@@ -1,4 +1,4 @@
-{{ config(materialized='view')}}
+{{ config(materialized='view') }}
 
 with
 
@@ -12,7 +12,6 @@ daily_conversion_metrics as (
 
     select
 
-        date(time_period) as metric_date,
         total_sessions,
         sessions_with_view,
         sessions_with_cart,
@@ -20,12 +19,13 @@ daily_conversion_metrics as (
         view_to_cart_rate,
         cart_to_purchase_rate,
         view_to_purchase_rate,
-        avg_order_value
+        avg_order_value,
+        date(time_period) as metric_date
 
     from conversion_metrics
 
     where metric_level = 'daily'
-    
+
 ),
 
 final as (
