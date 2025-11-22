@@ -13,7 +13,7 @@ models:
         tests:
           - not_null
       - name: time_period
-        description: "The time period for the churn metric (e.g., monthly, quarterly).
+        description: "The time period for the churn metric (e.g., monthly, quarterly)."
         data_type: string
         tests:
           - not_null
