@@ -68,6 +68,8 @@ graph TB
 
 ## Data Visualizations
 
+### Dashboard - Sales & AOV
+![Dashboard - Sales & AOV](/images/data_viz/dashboard_sales_aov.png)
 
 ### Total Revenue by RFM Segment
 ![Total Revenue by Segment](/images/data_viz/Total_Revenue_by_Segment.png)
