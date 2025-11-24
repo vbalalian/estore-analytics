@@ -4,6 +4,9 @@
 
 ![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
 
+![Raw Events Snippet](/images/screenshots/estore-raw-events-snippet.png)
+
+
 ## Data Visualizations
 
 ![Dashboard - Sales & AOV](/images/data_viz/dashboard_sales_aov.png)
