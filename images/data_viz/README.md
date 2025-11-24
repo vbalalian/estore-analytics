@@ -3,7 +3,7 @@
 ### Dashboard - Sales & AOV
 ![Dashboard - Sales & AOV](/images/data_viz/dashboard_sales_aov.png)
 
-### Dashboard - Sales & AOV
+### Dashboard - Churn & LTV
 ![Dashboard - Churn & LTV](/images/data_viz/dashboard_churn_and_ltv.png)
 
 ### Total Revenue by RFM Segment
