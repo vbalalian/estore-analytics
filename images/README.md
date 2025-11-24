@@ -6,6 +6,8 @@
 
 ## Data Visualizations
 
+![Dashboard - Sales & AOV](/images/data_viz/dashboard_sales_aov.png)
+
 ![Total Revenue by Segment](/images/data_viz/Total_Revenue_by_Segment.png)
 
 ![Average Revenue & Population by RFM Segment - 1](/images/data_viz/RFM_Segment_Avg_Revenue_&_Population.png)
