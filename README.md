@@ -11,7 +11,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 * A production-style data pipeline that processes millions of e-commerce events to generate customer analytics and business insights.
 * Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
-* The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, and churn identification.
+* The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
 
 ## Pipeline Architecture
 
@@ -84,9 +84,3 @@ graph TB
 
 ### Session Conversion Funnel
 ![Session Conversion Funnel](/images/data_viz/Conversion_Funnel.png)
-
-
-## Roadmap
-- [X] Automate GCS → BigQuery loading
-- [X] Complete dbt models for key metrics
-- [ ] Build analytics dashboards
