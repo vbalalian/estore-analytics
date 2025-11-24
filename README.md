@@ -9,7 +9,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 ![Raw Events Snippet](/images/screenshots/estore-raw-events-snippet.png)
 
-* A production-style data pipeline that processes hundreds of millions of e-commerce events to generate customer analytics and business insights.
+* A production-style data pipeline that processes 400M+ e-commerce events to generate customer analytics and business insights.
 * Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
 * The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
 
