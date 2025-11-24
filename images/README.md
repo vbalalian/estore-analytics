@@ -4,7 +4,14 @@
 
 ![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
 
+![Raw Events Snippet](/images/screenshots/estore-raw-events-snippet.png)
+
+
 ## Data Visualizations
+
+![Dashboard - Sales & AOV](/images/data_viz/dashboard_sales_aov.png)
+
+![Dashboard - Churn & LTV](/images/data_viz/dashboard_churn_and_ltv.png)
 
 ![Total Revenue by Segment](/images/data_viz/Total_Revenue_by_Segment.png)
 
