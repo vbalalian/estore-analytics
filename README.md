@@ -13,6 +13,18 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 * Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
 * The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
 
+## Key Findings
+
+**Customer Segmentation (RFM Analysis)**
+- Champions segment (12% of customers) generates average revenue of $3,333, over 3x higher than typical customers
+- Identified 135K "At Risk" customers with high historical value ($2,452 avg) who haven't purchased recently
+- Lost customers (15%) represent only $110 average revenue (minimal recovery value)
+
+**Conversion & Churn Analysis**
+-
+
+**Business Impact**: RFM segmentation enables targeted retention campaigns for high-value customers, potentially recovering significant revenue from the "At Risk" segment.
+
 ## Pipeline Architecture
 
 ```mermaid
@@ -81,6 +93,3 @@ graph TB
 ![Average Revenue & Population by RFM Segment - 1](/images/data_viz/RFM_Segment_Avg_Revenue_&_Population.png)
 
 ![Average Revenue & Population by RFM Segment - 2](/images/data_viz/RFM_Segment_Revenue_&_Population_bars.png)
-
-### Session Conversion Funnel
-![Session Conversion Funnel](/images/data_viz/Conversion_Funnel.png)
