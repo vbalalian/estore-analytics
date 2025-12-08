@@ -33,6 +33,14 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - Overall view-to-purchase conversion rate of 6.1%, with only 1 in 16 browsing sessions resulting in a sale
 - **Business Impact**: The primary conversion bottleneck occurs before cart addition. Focus should be on product presentation, pricing transparency, and trust signals to improve view-to-cart conversion. Secondary priority is cart abandonment recovery campaigns.
 
+## Tech Stack
+- **Data Warehouse**: BigQuery
+- **Transformation**: dbt Core
+- **Orchestration**: Dagster
+- **Infrastructure**: Google Cloud Platform (GCS, Compute Engine)
+- **CI/CD**: GitHub Actions
+- **Visualization**: Tableau
+
 ## Pipeline Architecture
 
 ```mermaid
