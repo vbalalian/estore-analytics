@@ -19,11 +19,13 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - Champions segment (12% of customers) generates average revenue of $3,333, over 3x higher than typical customers
 - Identified 135K "At Risk" customers with high historical value ($2,452 avg) who haven't purchased recently
 - Lost customers (15%) represent only $110 average revenue (minimal recovery value)
+- **Business Impact**: RFM segmentation enables targeted retention campaigns for high-value customers, potentially recovering significant revenue from the "At Risk" segment.
 
-**Conversion & Churn Analysis**
--
-
-**Business Impact**: RFM segmentation enables targeted retention campaigns for high-value customers, potentially recovering significant revenue from the "At Risk" segment.
+**Churn Analysis (Cohort-Based)**
+- **88% of early customers did not make a repeat purchase within 90 days** - indicating significant retention challenges
+- October 2019 cohort showed 82% churn rate; November cohort 94%
+- Analysis based on customers with sufficient time in dataset to exhibit repeat purchase behavior
+- **Business Impact**: High one-time buyer rate suggests critical need for post-purchase engagement, loyalty programs, and retention campaigns
 
 ## Pipeline Architecture
 
