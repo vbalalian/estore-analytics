@@ -27,6 +27,12 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - Analysis based on customers with sufficient time in dataset to exhibit repeat purchase behavior
 - **Business Impact**: High one-time buyer rate suggests critical need for post-purchase engagement, loyalty programs, and retention campaigns
 
+**Conversion Funnel Analysis**
+- 88% of sessions with product views do not add items to cart—indicating significant friction at the browsing/consideration stage
+- Cart abandonment rate of 49%—approximately half of users who add items to cart fail to complete purchase
+- Overall view-to-purchase conversion rate of 6.1%, with only 1 in 16 browsing sessions resulting in a sale
+- **Business Impact**: The primary conversion bottleneck occurs before cart addition. Focus should be on product presentation, pricing transparency, and trust signals to improve view-to-cart conversion. Secondary priority is cart abandonment recovery campaigns.
+
 ## Pipeline Architecture
 
 ```mermaid
