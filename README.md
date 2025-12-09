@@ -13,6 +13,34 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 * Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
 * The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
 
+## Key Findings
+
+**Customer Segmentation (RFM Analysis)**
+- Champions segment (12% of customers) generates average revenue of $3,333, over 3x higher than typical customers
+- Identified 135K "At Risk" customers with high historical value ($2,452 avg) who haven't purchased recently
+- Lost customers (15%) represent only $110 average revenue (minimal recovery value)
+- **Business Impact**: RFM segmentation enables targeted retention campaigns for high-value customers, potentially recovering significant revenue from the "At Risk" segment.
+
+**Churn Analysis (Cohort-Based)**
+- **88% of early customers did not make a repeat purchase within 90 days** - indicating significant retention challenges
+- October 2019 cohort showed 82% churn rate; November cohort 94%
+- Analysis based on customers with sufficient time in dataset to exhibit repeat purchase behavior
+- **Business Impact**: High one-time buyer rate suggests critical need for post-purchase engagement, loyalty programs, and retention campaigns
+
+**Conversion Funnel Analysis**
+- 88% of sessions with product views do not add items to cart—indicating significant friction at the browsing/consideration stage
+- Cart abandonment rate of 49%—approximately half of users who add items to cart fail to complete purchase
+- Overall view-to-purchase conversion rate of 6.1%, with only 1 in 16 browsing sessions resulting in a sale
+- **Business Impact**: The primary conversion bottleneck occurs before cart addition. Focus should be on product presentation, pricing transparency, and trust signals to improve view-to-cart conversion. Secondary priority is cart abandonment recovery campaigns.
+
+## Tech Stack
+- **Data Warehouse**: BigQuery
+- **Transformation**: dbt Core
+- **Orchestration**: Dagster
+- **Infrastructure**: Google Cloud Platform (GCS, Compute Engine)
+- **CI/CD**: GitHub Actions
+- **Visualization**: Tableau
+
 ## Pipeline Architecture
 
 ```mermaid
@@ -62,6 +90,26 @@ graph TB
     style I fill:#fce4ec
 ```
 
+## Data Models
+
+**Staging Layer**
+- `stg_events` - Cleaned event data
+
+**Dimension Tables**
+- `dim_users` - User-level metrics (LTV, churn status, purchase history)
+- `dim_products` - Product attributes and category hierarchy
+- `dim_categories` - Category taxonomy
+- `dim_user_rfm` - RFM scores and customer segments
+
+**Fact Tables**
+- `fct_events` - Event-level facts with purchase/cart/view flags
+- `fct_sessions` - Session-level aggregations with conversion funnel
+
+**Metrics**
+- `metrics_conversion_rates` - Daily/overall conversion metrics
+- `metrics_churn` - Churn rates by cohort
+- `metrics_rfm_segments` - Aggregated segment-level metrics
+
 ## Lineage Graph
 
 ![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
@@ -81,6 +129,3 @@ graph TB
 ![Average Revenue & Population by RFM Segment - 1](/images/data_viz/RFM_Segment_Avg_Revenue_&_Population.png)
 
 ![Average Revenue & Population by RFM Segment - 2](/images/data_viz/RFM_Segment_Revenue_&_Population_bars.png)
-
-### Session Conversion Funnel
-![Session Conversion Funnel](/images/data_viz/Conversion_Funnel.png)

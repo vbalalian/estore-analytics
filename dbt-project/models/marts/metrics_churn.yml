@@ -32,4 +32,14 @@ models:
         data_type: float
         tests:
           - not_null
+      - name: cohort_start
+        description: "The start date of the customer cohort."
+        data_type: date
+        tests:
+          - not_null
+      - name: cohort_end
+        description: "The end date of the customer cohort."
+        data_type: date
+        tests:
+          - not_null
       
