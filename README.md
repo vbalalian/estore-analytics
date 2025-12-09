@@ -90,6 +90,26 @@ graph TB
     style I fill:#fce4ec
 ```
 
+## Data Models
+
+**Staging Layer**
+- `stg_events` - Cleaned event data
+
+**Dimension Tables**
+- `dim_users` - User-level metrics (LTV, churn status, purchase history)
+- `dim_products` - Product attributes and category hierarchy
+- `dim_categories` - Category taxonomy
+- `dim_user_rfm` - RFM scores and customer segments
+
+**Fact Tables**
+- `fct_events` - Event-level facts with purchase/cart/view flags
+- `fct_sessions` - Session-level aggregations with conversion funnel
+
+**Metrics**
+- `metrics_conversion_rates` - Daily/overall conversion metrics
+- `metrics_churn` - Churn rates by cohort
+- `metrics_rfm_segments` - Aggregated segment-level metrics
+
 ## Lineage Graph
 
 ![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
