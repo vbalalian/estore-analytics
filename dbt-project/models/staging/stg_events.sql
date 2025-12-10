@@ -1,8 +1,38 @@
 with
 
-source as (
+source_raw as (
 
     select * from {{ source('estore_raw', 'events') }}
+
+),
+
+deduped as (
+
+    select
+
+        event_time,
+        event_type,
+        product_id,
+        category_id,
+        category_code,
+        brand,
+        price,
+        user_id,
+        user_session
+
+    from source_raw
+
+    qualify row_number() over (
+
+        partition by
+            event_time,
+            event_type,
+            product_id,
+            user_id,
+            user_session
+        order by event_time
+
+    ) = 1
 
 ),
 
@@ -20,7 +50,7 @@ transformed as (
         lower(category_code) as category_code,
         lower(brand) as brand
 
-    from source
+    from deduped
 
 ),
 
