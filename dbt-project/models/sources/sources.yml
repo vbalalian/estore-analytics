@@ -20,6 +20,9 @@ sources:
             description: "The type of the event (e.g., view, cart, purchase)"
             tests:
               - not_null
+              - accepted_values:
+                  arguments:
+                    values: ['view', 'cart', 'purchase']
           - name: user_id
             description: "The unique identifier for the user"
             tests:
