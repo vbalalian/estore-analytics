@@ -1,0 +1,47 @@
+
+version: 2
+
+sources:
+
+  - name: estore_raw
+    description: "Raw data loaded as csv files into BigQuery"
+    config:
+      freshness:
+        warn_after: {count: 24, period: hour}
+    tables:
+      - name: events
+        description: "Raw eCommerce events data ingested from source systems"
+        columns:
+          - name: event_time
+            description: "The timestamp of the event"
+            tests:
+              - not_null
+          - name: event_type
+            description: "The type of the event (e.g., view, cart, purchase)"
+            tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ['view', 'cart', 'purchase']
+          - name: user_id
+            description: "The unique identifier for the user"
+            tests:
+              - not_null
+          - name: user_session
+            description: "The session identifier for the user's visit"
+          - name: product_id
+            description: "The unique identifier for the product"
+            tests:
+              - not_null
+          - name: price
+            description: "The price of the product at the time of the event"
+            tests:
+              - not_null
+          - name: category_id
+            description: "The category identifier for the product"
+            tests:
+              - not_null
+          - name: category_code
+            description: "The category code representing the product hierarchy"
+          - name: brand
+            description: "The brand of the product"
