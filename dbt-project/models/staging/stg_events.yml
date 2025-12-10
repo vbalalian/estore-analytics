@@ -1,12 +1,6 @@
 
 version: 2
 
-sources:
-  - name: estore_raw
-    schema: estore_raw
-    tables:
-      - name: events
-
 models:
   - name: stg_events
     description: >
