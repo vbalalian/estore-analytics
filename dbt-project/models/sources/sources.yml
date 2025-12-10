@@ -4,6 +4,9 @@ version: 2
 sources:
   - name: estore_raw
     schema: estore_raw
+    config:
+      freshness:
+        warn_after: {count: 24, period: hour}
     tables:
       - name: events
         description: "Raw eCommerce events data ingested from source systems"
