@@ -6,6 +6,9 @@ on:
   push:
     branches: [ dev ]
 
+env:
+  CI_SCHEMA_PREFIX: ci_pr_${{ github.event.number || github.run_id }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,7 +33,19 @@ jobs:
     - name: Set up dbt profile
       run: |
         mkdir -p ~/.dbt
-        echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+        cat > ~/.dbt/profiles.yml << EOF
+        estore:
+          target: ci
+          outputs:
+            ci:
+              type: bigquery
+              method: service-account
+              project: ${{ secrets.GCP_PROJECT_ID }}
+              dataset: "${{ env.CI_SCHEMA_PREFIX }}"
+              keyfile: /tmp/keyfile.json
+              threads: 4
+              timeout_seconds: 300
+        EOF
 
     - name: dbt deps
       run: |
@@ -42,14 +57,20 @@ jobs:
         cd dbt-project
         dbt compile --target ci
 
-    # Uncomment the following to run data tests as part of CI, requires test data to be present in the target dataset
-    # - name: dbt test (data tests)
-    #   run: |
-    #     cd dbt-project
-    #     dbt test
-
     - name: Lint dbt models with SQLFluff
       run: |
         pip install sqlfluff sqlfluff-templater-dbt
         cd dbt-project
         sqlfluff lint
+
+    - name: Cleanup CI schema
+      if: always()
+      run: |
+        echo "Cleaning up schema: ${{ env.CI_SCHEMA_PREFIX }}"
+        cat > /tmp/cleanup.sql << EOF
+        DROP SCHEMA IF EXISTS \`${{ secrets.GCP_PROJECT_ID }}.${{ env.CI_SCHEMA_PREFIX }}\` CASCADE;
+        EOF
+        # Install BigQuery CLI
+        pip install google-cloud-bigquery
+        # Execute cleanup
+        bq query --use_legacy_sql=false < /tmp/cleanup.sql || echo "Schema did not exist or already cleaned up"
