@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -30,6 +32,11 @@ jobs:
       run: |
         echo "${{ secrets.GCP_KEYFILE_BASE64 }}" | base64 -d > /tmp/keyfile.json
     
+    - name: Authenticate with GCP
+      run: |
+        gcloud auth activate-service-account --key-file=/tmp/keyfile.json
+        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+      
     - name: Set up dbt profile
       run: |
         mkdir -p ~/.dbt
@@ -52,7 +59,50 @@ jobs:
         cd dbt-project
         dbt deps
     
-    - name: dbt build
+    - name: Download production manifest
+      id: download-manifest
+      continue-on-error: true
+      run: |
+        mkdir -p dbt-project/target-prod
+        gcloud storage cp gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json \
+          dbt-project/target-prod/manifest.json || echo "No production manifest found."
+
+    - name: Check manifest status
+      id: check-manifest
+      run: |
+        if [ -f "dbt-project/target-prod/manifest.json" ]; then
+          echo "has_manifest=true" >> $GITHUB_OUTPUT
+          echo "Production manifest found - using slim CI"
+        else
+          echo "has_manifest=false" >> $GITHUB_OUTPUT
+          echo "No production manifest found - falling back to full build"
+        fi
+    
+    - name: dbt clone (production incrementals)
+      if: steps.check-manifest.outputs.has_manifest == 'true'
+      run: |
+        cd dbt-project
+        echo "Cloning incremental models from production manifest"
+        dbt clone \
+          --select state:modified+,config.materialized:incremental,state:old \
+          --state target-prod \
+          --target ci \
+          || echo "No incremental models to clone"
+
+    - name: dbt build (slim)
+      if: steps.check-manifest.outputs.has_manifest == 'true'
+      run: |
+        cd dbt-project
+        echo "Building modified models + downstream based on production manifest"
+        dbt build \
+          --select state:modified+ \
+          --defer \
+          --state target-prod \
+          --target ci \
+          --fail-fast
+
+    - name: dbt build (full)
+      if: steps.check-manifest.outputs.has_manifest == 'false'
       run: |
         cd dbt-project
         dbt build --target ci --fail-fast
@@ -67,9 +117,6 @@ jobs:
       if: always()
       run: |
         echo "Cleaning up schema: ${{ env.CI_SCHEMA_PREFIX }}"
-        
-        gcloud auth activate-service-account --key-file=/tmp/keyfile.json
-        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
         
         for dataset in $(bq ls --format=sparse | grep "${{ env.CI_SCHEMA_PREFIX }}"); do
           echo "Dropping dataset: $dataset"
