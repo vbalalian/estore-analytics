@@ -32,6 +32,11 @@ jobs:
       run: |
         echo "${{ secrets.GCP_KEYFILE_BASE64 }}" | base64 -d > /tmp/keyfile.json
     
+    - name: Authenticate with GCP
+      run: |
+        gcloud auth activate-service-account --key-file=/tmp/keyfile.json
+        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+      
     - name: Set up dbt profile
       run: |
         mkdir -p ~/.dbt
@@ -69,9 +74,6 @@ jobs:
       if: always()
       run: |
         echo "Cleaning up schema: ${{ env.CI_SCHEMA_PREFIX }}"
-        
-        gcloud auth activate-service-account --key-file=/tmp/keyfile.json
-        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
         
         for dataset in $(bq ls --format=sparse | grep "${{ env.CI_SCHEMA_PREFIX }}"); do
           echo "Dropping dataset: $dataset"
