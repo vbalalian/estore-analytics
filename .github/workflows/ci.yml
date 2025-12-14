@@ -67,10 +67,10 @@ jobs:
       if: always()
       run: |
         echo "Cleaning up schema: ${{ env.CI_SCHEMA_PREFIX }}"
-        cat > /tmp/cleanup.sql << EOF
-        DROP SCHEMA IF EXISTS \`${{ secrets.GCP_PROJECT_ID }}.${{ env.CI_SCHEMA_PREFIX }}\` CASCADE;
-        EOF
-        # Install BigQuery CLI
-        pip install google-cloud-bigquery
-        # Execute cleanup
-        bq query --use_legacy_sql=false < /tmp/cleanup.sql || echo "Schema did not exist or already cleaned up"
+        
+        # Authenticate gcloud/bq with service account
+        gcloud auth activate-service-account --key-file=/tmp/keyfile.json
+        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+        # Drop the CI dataset (-r = recursive, -f = force/no prompt)
+        bq rm -r -f ${{ secrets.GCP_PROJECT_ID }}:${{ env.CI_SCHEMA_PREFIX }} || echo "Schema did not exist or already cleaned up"
