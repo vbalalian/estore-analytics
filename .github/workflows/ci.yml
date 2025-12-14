@@ -67,6 +67,17 @@ jobs:
         gcloud storage cp gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json \
           dbt-project/target-prod/manifest.json || echo "No production manifest found."
 
+    - name: Check manifest status
+      id: check-manifest
+      run: |
+        if [ -f "dbt-project/target-prod/manifest.json" ]; then
+          echo "has_manifest=true" >> $GITHUB_OUTPUT
+          echo "Production manifest found - using slim CI"]
+        else
+          echo "has_manifest=false" >> $GITHUB_OUTPUT
+          echo "No production manifest found - falling back to full build"
+        fi
+
     - name: dbt build
       run: |
         cd dbt-project
