@@ -6,6 +6,9 @@ on:
   push:
     branches: [ dev ]
 
+env:
+  CI_SCHEMA_PREFIX: ci_pr_${{ github.event.number || github.run_id }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
