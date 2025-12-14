@@ -52,10 +52,10 @@ jobs:
         cd dbt-project
         dbt deps
     
-    - name: dbt compile
+    - name: dbt build
       run: |
         cd dbt-project
-        dbt compile --target ci
+        dbt build --target ci --fail-fast
 
     - name: Lint dbt models with SQLFluff
       run: |
