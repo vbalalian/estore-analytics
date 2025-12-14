@@ -71,6 +71,11 @@ jobs:
         # Authenticate gcloud/bq with service account
         gcloud auth activate-service-account --key-file=/tmp/keyfile.json
         gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-        # Drop the CI dataset (-r = recursive, -f = force/no prompt)
-        bq rm -r -f ${{ secrets.GCP_PROJECT_ID }}:${{ env.CI_SCHEMA_PREFIX }} || echo "Schema did not exist or already cleaned up"
+        
+        # Drop all datasets matching the CI prefix
+        for dataset in $(bq ls --format=sparse | grep "${{ env.CI_SCHEMA_PREFIX }}"); do
+          echo "Dropping dataset: $dataset"
+          bq rm -r -f "${{ secrets.GCP_PROJECT_ID }}:$dataset"
+        done
+        
+        echo "Cleanup complete"
