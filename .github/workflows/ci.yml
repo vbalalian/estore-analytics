@@ -59,6 +59,14 @@ jobs:
         cd dbt-project
         dbt deps
     
+    - name: Download production manifest
+      id: download-manifest
+      continue-on-error: true
+      run: |
+        mkdir -p dbt-project/target-prod
+        gcloud storage cp gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json \
+          dbt-project/target-prod/manifest.json || echo "No production manifest found."
+
     - name: dbt build
       run: |
         cd dbt-project
