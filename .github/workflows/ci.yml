@@ -68,3 +68,15 @@ jobs:
         pip install sqlfluff sqlfluff-templater-dbt
         cd dbt-project
         sqlfluff lint
+
+    - name: Cleanup CI schema
+      if: always()
+      run: |
+        echo "Cleaning up schema: ${{ env.CI_SCHEMA_PREFIX }}"
+        cat > /tmp/cleanup.sql << EOF
+        DROP SCHEMA IF EXISTS \`${{ secrets.GCP_PROJECT_ID }}.${{ env.CI_SCHEMA_PREFIX }}\` CASCADE;
+        EOF
+        # Install BigQuery CLI
+        pip install google-cloud-bigquery
+        # Execute cleanup
+        bq query --use_legacy_sql=false < /tmp/cleanup.sql || echo "Schema did not exist or already cleaned up"
