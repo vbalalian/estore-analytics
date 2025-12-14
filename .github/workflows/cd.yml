@@ -51,6 +51,7 @@ jobs:
           fi
 
           echo "Uploading manifest to GCS for slim CI..."
+          gcloud auth activate-service-account --key-file=${{ vars.DEPLOY_PATH }}/.gcp/keyfile.json
           gcloud storage cp ${{ vars.DEPLOY_PATH }}/dbt-project/target/manifest.json \
             gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
 
