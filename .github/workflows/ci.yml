@@ -77,8 +77,32 @@ jobs:
           echo "has_manifest=false" >> $GITHUB_OUTPUT
           echo "No production manifest found - falling back to full build"
         fi
+    
+    - name: dbt clone (production incrementals)
+      if: steps.check-manifest.outputs.has_manifest == 'true'
+      run: |
+        cd dbt-project
+        echo "Cloning incremental models from production manifest"
+        dbt clone \
+          -- select state:modified+,config.materialized:incremental,state:old \
+          -- state target-prod \
+          -- target ci \
+          || echo "No incremental models to clone"
 
-    - name: dbt build
+    - name: dbt build (slim)
+      if: steps.check-manifest.outputs.has_manifest == 'true'
+      run: |
+        cd dbt-project
+        echo "Building modified models + downstream based on production manifest"
+        dbt build \
+          --select state:modified+ \
+          -- defer \
+          -- state target-prod \
+          -- target ci \
+          --fail-fast
+
+    - name: dbt build (full)
+      if: steps.check-manifest.outputs.has_manifest == 'false'
       run: |
         cd dbt-project
         dbt build --target ci --fail-fast
