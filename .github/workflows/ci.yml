@@ -72,7 +72,7 @@ jobs:
       run: |
         if [ -f "dbt-project/target-prod/manifest.json" ]; then
           echo "has_manifest=true" >> $GITHUB_OUTPUT
-          echo "Production manifest found - using slim CI"]
+          echo "Production manifest found - using slim CI"
         else
           echo "has_manifest=false" >> $GITHUB_OUTPUT
           echo "No production manifest found - falling back to full build"
@@ -84,9 +84,9 @@ jobs:
         cd dbt-project
         echo "Cloning incremental models from production manifest"
         dbt clone \
-          -- select state:modified+,config.materialized:incremental,state:old \
-          -- state target-prod \
-          -- target ci \
+          --select state:modified+,config.materialized:incremental,state:old \
+          --state target-prod \
+          --target ci \
           || echo "No incremental models to clone"
 
     - name: dbt build (slim)
@@ -96,9 +96,9 @@ jobs:
         echo "Building modified models + downstream based on production manifest"
         dbt build \
           --select state:modified+ \
-          -- defer \
-          -- state target-prod \
-          -- target ci \
+          --defer \
+          --state target-prod \
+          --target ci \
           --fail-fast
 
     - name: dbt build (full)
