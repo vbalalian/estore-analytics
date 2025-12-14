@@ -18,18 +18,18 @@ jobs:
         script: |
           set -e
 
-          cd /home/vbalalian/estore-analytics
+          cd ${{ vars.DEPLOY_PATH }}
           git pull origin main
           
           source .venv/bin/activate
 
-          cd /home/vbalalian/estore-analytics/dbt-project
+          cd ${{ vars.DEPLOY_PATH }}/dbt-project
           dbt clean
           dbt deps
           dbt parse
           dbt compile
           
-          cd /home/vbalalian/estore-analytics/dagster-project
+          cd ${{ vars.DEPLOY_PATH }}/dagster-project
           
           echo "Checking for dependency changes..."
           if git diff --name-only HEAD@{1} HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
@@ -50,5 +50,8 @@ jobs:
               http://localhost:3000/graphql
           fi
 
+          echo "Uploading manifest to GCS for slim CI..."
+          gcloud storage cp ${{ vars.DEPLOY_PATH }}/dbt-project/target/manifest.json \
+            gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
 
           echo "Deployment complete!"
