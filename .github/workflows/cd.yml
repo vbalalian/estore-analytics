@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    - name: Store previous commit for rollback
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          cd ${{ vars.DEPLOY_PATH }}
+          git rev-parse HEAD > /tmp/previous_commit
+          echo "Stored current commit for potential rollback: $(cat /tmp/previous_commit)"
+
     - name: Deploy to GCP VM
       uses: appleboy/ssh-action@v1.0.0
       with:
