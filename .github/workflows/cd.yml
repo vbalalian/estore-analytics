@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    - name: Store previous commit for rollback
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          cd ${{ vars.DEPLOY_PATH }}
+          git rev-parse HEAD > /tmp/previous_commit
+          echo "Stored current commit for potential rollback: $(cat /tmp/previous_commit)"
+
     - name: Deploy to GCP VM
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -107,3 +119,78 @@ jobs:
             exit 1
           fi
           echo "Dagster daemon is running."
+
+    - name: Cleanup on success
+      if: success()
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          rm -f /tmp/previous_commit
+
+  rollback:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: failure()
+
+    steps:
+    - name: Rollback to previous commit
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          set -e
+
+          cd ${{ vars.DEPLOY_PATH }}
+          
+          if [ ! -f /tmp/previous_commit ]; then
+            echo "No previous commit found for rollback!"
+            exit 1
+          fi
+
+          PREVIOUS_COMMIT=$(cat /tmp/previous_commit)
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+
+          echo "Rolling back..."
+          echo "From: $CURRENT_COMMIT" 
+          echo "To:   $PREVIOUS_COMMIT"
+
+          git reset --hard $PREVIOUS_COMMIT
+
+          source .venv/bin/activate
+
+          cd ${{ vars.DEPLOY_PATH }}/dbt-project
+          dbt clean
+          dbt deps
+          dbt parse
+          dbt compile
+
+          cd ${{ vars.DEPLOY_PATH }}/dagster-project
+          pip install --upgrade -e .[dev]
+
+          dagster-dbt project prepare-and-package --components .
+          sudo systemctl restart dagster-webserver
+          sudo systemctl restart dagster
+
+          sleep 5
+
+          if systemctl is-active --quiet dagster-webserver && systemctl is-active --quiet dagster; then
+            echo "Rollback successful, services are running."
+          else
+            echo "Rollback completed, but services may not be running correctly."
+            exit 1
+          fi
+
+    - name: Cleanup rollback file
+      if: always()
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          rm -f /tmp/previous_commit
