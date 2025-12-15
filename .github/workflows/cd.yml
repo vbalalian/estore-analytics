@@ -85,7 +85,6 @@ jobs:
             fi
               echo "Attempt $i/$MAX_RETRIES - waiting ${RETRY_DELAY}s..."
               sleep $RETRY_DELAY
-            fi
           done
 
           echo "Dagster webserver HTTP endpoint is not responding!"
