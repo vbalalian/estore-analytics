@@ -2,9 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main, dev ]
-  push:
-    branches: [ dev ]
+    branches: [ main ]
 
 env:
   CI_SCHEMA_PREFIX: ci_pr_${{ github.event.number || github.run_id }}
