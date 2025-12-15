@@ -174,3 +174,13 @@ jobs:
             echo "Rollback completed, but services may not be running correctly."
             exit 1
           fi
+
+    - name: Cleanup rollback file
+      if: always()
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          rm -f /tmp/previous_commit
