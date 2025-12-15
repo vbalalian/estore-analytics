@@ -56,3 +56,55 @@ jobs:
             gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
 
           echo "Deployment complete!"
+
+    - name: Health check - Dagster webserver
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          set -e
+
+          echo "Checking Dagster webserver..."
+
+          if ! systemctl is-active --quiet dagster-webserver; then
+            echo "Dagster webserver is not running!"
+            sudo systemctl status dagster-webserver --no-pager
+            exit 1
+          fi
+          echo "Dagster webserver is running."
+
+          MAX_RETRIES=5
+          RETRY_DELAY=3
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            if curl -sf http://localhost:3000/server_info > /dev/null 2>&1; then
+              echo "Dagster webserver HTTP endpoint is healthy."
+              exit 0
+            fi
+              echo "Attempt $i/$MAX_RETRIES - waiting ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          echo "Dagster webserver HTTP endpoint is not responding!"
+          exit 1
+
+    - name: Health check - Dagster daemon
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          set -e
+
+          echo "Checking Dagster daemon..."
+
+          if ! systemctl is-active --quiet dagster; then
+            echo "Dagster daemon is not running!"
+            sudo systemctl status dagster --no-pager
+            exit 1
+          fi
+          echo "Dagster daemon is running."
