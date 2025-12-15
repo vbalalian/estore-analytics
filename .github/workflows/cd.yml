@@ -120,6 +120,16 @@ jobs:
           fi
           echo "Dagster daemon is running."
 
+    - name: Cleanup on success
+      if: success()
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          rm -f /tmp/previous_commit
+
   rollback:
     needs: deploy
     runs-on: ubuntu-latest
