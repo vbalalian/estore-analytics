@@ -1,0 +1,6 @@
+project         = "<your-gcp-project-id>"
+gcs_bucket_name = "<globally-unique-bucket-name>"
+
+# Optional - defaults shown
+# region = "us-west1"
+# zone   = "us-west1-b"
