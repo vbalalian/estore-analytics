@@ -1,9 +1,10 @@
 from dagster import (
-    run_status_sensor, 
-    RunRequest, 
-    DagsterRunStatus, 
+    run_status_sensor,
+    RunRequest,
+    DagsterRunStatus,
     DefaultSensorStatus,
-    RunStatusSensorContext
+    RunStatusSensorContext,
+    SkipReason
 )
 from dagster_project.defs.jobs import dbt_job, gcs_to_bq_load_job
 from datetime import datetime
@@ -16,11 +17,17 @@ from datetime import datetime
     minimum_interval_seconds=300
 )
 def dbt_run_on_load_sensor(context: RunStatusSensorContext):
-
-    # Set run_key to current minute to avoid multiple runs in the same interval
-    time_window = datetime.now().strftime('%Y%m%d_%H') + str(datetime.now().minute // 15)
-
-    return RunRequest(
-        run_key=f"dbt_{time_window}",
-        tags={"triggered_by": context.dagster_run.tags.get("gcs_key")}
+    try:
+        # Set run_key to current minute to avoid multiple runs in the same interval
+        time_window = (
+            datetime.now().strftime('%Y%m%d_%H')
+            + str(datetime.now().minute // 15)
         )
+
+        return RunRequest(
+            run_key=f"dbt_{time_window}",
+            tags={"triggered_by": context.dagster_run.tags.get("gcs_key")}
+        )
+    except Exception as e:
+        context.log.error(f"Sensor execution failed: {str(e)}")
+        return SkipReason(f"Sensor error: {str(e)}")
