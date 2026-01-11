@@ -23,8 +23,34 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install SQLFluff
+    - name: Install dependencies
       run: pip install sqlfluff sqlfluff-templater-dbt dbt-bigquery
+
+    - name: Create keyfile
+      run: |
+        echo "${{ secrets.GCP_KEYFILE_BASE64 }}" | base64 -d > /tmp/keyfile.json
+
+    - name: Set up dbt profile
+      run: |
+        mkdir -p ~/.dbt
+        cat > ~/.dbt/profiles.yml << EOF
+        estore:
+          target: ci
+          outputs:
+            ci:
+              type: bigquery
+              method: service-account
+              project: ${{ secrets.GCP_PROJECT_ID }}
+              dataset: "${{ env.CI_SCHEMA_PREFIX }}"
+              keyfile: /tmp/keyfile.json
+              threads: 4
+              timeout_seconds: 300
+        EOF
+
+    - name: dbt deps
+      run: |
+        cd dbt-project
+        dbt deps
 
     - name: Lint dbt models with SQLFluff
       run: |
