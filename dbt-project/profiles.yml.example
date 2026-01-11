@@ -1,0 +1,14 @@
+estore:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      project: <your-gcp-project-id>
+      dataset: estore
+      location: US
+      method: service-account
+      keyfile: <path/to/service-account-key.json>
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      priority: interactive
+      threads: 2
