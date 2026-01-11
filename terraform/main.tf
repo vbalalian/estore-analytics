@@ -52,3 +52,9 @@ resource "google_storage_bucket" "raw_data" {
   uniform_bucket_level_access = true
   force_destroy               = true
 }
+
+resource "google_bigquery_dataset" "raw" {
+  dataset_id                 = "estore_raw"
+  location                   = "US"
+  delete_contents_on_destroy = true
+}
