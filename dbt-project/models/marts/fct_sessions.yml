@@ -50,6 +50,8 @@ models:
 
       - name: total_revenue
         description: "Total revenue generated from purchase events during the session"
+        tests:
+          - assert_non_negative
 
       - name: reached_view
         description: "Indicator if the session included at least one view event"
