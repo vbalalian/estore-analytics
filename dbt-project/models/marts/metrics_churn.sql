@@ -84,7 +84,7 @@ cohort_eligible_customers as (
     where
         date_diff(
             dataset_range.dataset_end, customers.first_purchase_date, day
-        ) >= 90
+        ) >= {{ var('cohort_observation_window_days') }}
 
 ),
 
@@ -116,7 +116,8 @@ churn_flags as (
         case
             when purchase_count = 1 then 1
             when
-                date_diff(last_purchase_date, first_purchase_date, day) > 90
+                date_diff(last_purchase_date, first_purchase_date, day)
+                > {{ var('cohort_observation_window_days') }}
                 then 0
             else 1
         end as is_churned_cohort
