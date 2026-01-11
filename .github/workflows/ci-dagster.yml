@@ -45,14 +45,34 @@ jobs:
         cd dagster-project
         pip install -e .
 
-    - name: Install dbt dependencies
+    - name: Create keyfile
+      run: |
+        echo "${{ secrets.GCP_KEYFILE_BASE64 }}" | base64 -d > /tmp/keyfile.json
+
+    - name: Set up dbt profile
+      run: |
+        mkdir -p ~/.dbt
+        cat > ~/.dbt/profiles.yml << EOF
+        estore:
+          target: ci
+          outputs:
+            ci:
+              type: bigquery
+              method: service-account
+              project: ${{ secrets.GCP_PROJECT_ID }}
+              dataset: ci_dagster_validate
+              keyfile: /tmp/keyfile.json
+              threads: 4
+              timeout_seconds: 300
+        EOF
+
+    - name: Compile dbt project
       run: |
         cd dbt-project
         dbt deps
+        dbt compile
 
     - name: Validate Dagster definitions
-      env:
-        DAGSTER_DBT_PARSE_PROJECT_ON_LOAD: "false"
       run: |
         cd dagster-project
         dagster definitions validate
