@@ -26,7 +26,7 @@ def run_failure_sensor(context: RunFailureSensorContext, slack: SlackResource):
 
     try:
         slack.get_client().chat_postMessage(
-            channel="#estore-dagster-reports",
+            channel="#estore-alerts",
             text=slack_message
         )
     except Exception as e:
