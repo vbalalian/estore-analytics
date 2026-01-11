@@ -116,20 +116,30 @@ churn_classified as (
 
         case
             when
-                purchase_count > 0 and days_since_last_purchase > 60
+                purchase_count > 0
+                and days_since_last_purchase
+                > {{ var('churn_threshold_days') }}
                 then 'churned'
             when
-                purchase_count > 0 and days_since_last_purchase > 45
+                purchase_count > 0
+                and days_since_last_purchase
+                > {{ var('at_risk_threshold_days') }}
                 then 'at_risk'
             when
-                purchase_count > 0 and days_since_last_purchase > 30
+                purchase_count > 0
+                and days_since_last_purchase
+                > {{ var('declining_threshold_days') }}
                 then 'declining'
             when purchase_count > 0 then 'active'
             else 'prospect'
         end as activity_status,
 
         case
-            when purchase_count > 0 and days_since_last_purchase > 60 then 1
+            when
+                purchase_count > 0
+                and days_since_last_purchase
+                > {{ var('churn_threshold_days') }}
+                then 1
             else 0
         end as is_churned
 

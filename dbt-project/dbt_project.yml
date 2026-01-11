@@ -23,5 +23,13 @@ models:
       +schema: marts
       +materialized: table
 
+vars:
+  # Churn classification thresholds (days since last purchase)
+  churn_threshold_days: 60
+  at_risk_threshold_days: 45
+  declining_threshold_days: 30
+  # Cohort analysis observation window
+  cohort_observation_window_days: 90
+
 flags:
   send_anonymous_usage_stats: False
