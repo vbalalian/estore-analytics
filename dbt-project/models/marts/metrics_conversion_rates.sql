@@ -16,20 +16,12 @@ overall_metrics as (
         sum(reached_cart) as sessions_with_cart,
         sum(reached_purchase) as sessions_with_purchase,
 
-        round(safe_divide(
-            sum(reached_cart),
-            sum(reached_view)
-        ), 5) as view_to_cart_rate,
-
-        round(safe_divide(
-            sum(reached_purchase),
-            sum(reached_cart)
-        ), 5) as cart_to_purchase_rate,
-
-        round(safe_divide(
-            sum(reached_purchase),
-            sum(reached_view)
-        ), 5) as view_to_purchase_rate,
+        {{ rate_metric('sum(reached_cart)', 'sum(reached_view)') }}
+            as view_to_cart_rate,
+        {{ rate_metric('sum(reached_purchase)', 'sum(reached_cart)') }}
+            as cart_to_purchase_rate,
+        {{ rate_metric('sum(reached_purchase)', 'sum(reached_view)') }}
+            as view_to_purchase_rate,
 
         round(sum(total_revenue), 2) as total_revenue,
         round(avg(case when reached_purchase = 1 then total_revenue end), 2)
@@ -48,20 +40,12 @@ daily_metrics as (
         sum(reached_cart) as sessions_with_cart,
         sum(reached_purchase) as sessions_with_purchase,
 
-        round(safe_divide(
-            sum(reached_cart),
-            sum(reached_view)
-        ), 5) as view_to_cart_rate,
-
-        round(safe_divide(
-            sum(reached_purchase),
-            sum(reached_cart)
-        ), 5) as cart_to_purchase_rate,
-
-        round(safe_divide(
-            sum(reached_purchase),
-            sum(reached_view)
-        ), 5) as view_to_purchase_rate,
+        {{ rate_metric('sum(reached_cart)', 'sum(reached_view)') }}
+            as view_to_cart_rate,
+        {{ rate_metric('sum(reached_purchase)', 'sum(reached_cart)') }}
+            as cart_to_purchase_rate,
+        {{ rate_metric('sum(reached_purchase)', 'sum(reached_view)') }}
+            as view_to_purchase_rate,
 
         round(sum(total_revenue), 2) as total_revenue,
         round(avg(case when reached_purchase = 1 then total_revenue end), 2)
