@@ -16,6 +16,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 ## Contents
 - [Key Findings](#key-findings)
 - [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
 - [Pipeline Architecture](#pipeline-architecture)
 - [Data Models](#data-models)
 - [Data Visualizations](#data-visualizations)
@@ -45,8 +46,41 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - **Transformation**: dbt Core
 - **Orchestration**: Dagster
 - **Infrastructure**: Google Cloud Platform (GCS, Compute Engine)
+- **Infrastructure as Code**: Terraform
 - **CI/CD**: GitHub Actions
 - **Visualization**: Tableau
+
+## Getting Started
+
+### Infrastructure Setup
+
+Provision the required GCP resources using Terraform:
+
+```bash
+cd terraform
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your GCP project ID and bucket name
+terraform init
+terraform apply
+```
+
+See [terraform/README.md](terraform/README.md) for detailed setup instructions.
+
+### dbt Configuration
+
+Configure dbt to connect to your BigQuery instance:
+
+```bash
+cd dbt-project
+cp profiles.yml.example profiles.yml
+# Edit profiles.yml with your GCP project ID and service account key path
+```
+
+### Running the Pipeline
+
+1. Upload raw data CSV files to the GCS bucket
+2. Dagster sensors automatically detect new files and trigger data loads
+3. Transformations run automatically after successful loads
 
 ## Pipeline Architecture
 
