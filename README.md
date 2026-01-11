@@ -44,15 +44,23 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - **Business Impact**: The primary conversion bottleneck occurs before cart addition. Focus should be on product presentation, pricing transparency, and trust signals to improve view-to-cart conversion. Secondary priority is cart abandonment recovery campaigns.
 
 ## Tech Stack
-- **Data Warehouse**: BigQuery
-- **Transformation**: dbt Core
-- **Orchestration**: Dagster
-- **Infrastructure**: Google Cloud Platform (GCS, Compute Engine)
-- **Infrastructure as Code**: Terraform
-- **CI/CD**: GitHub Actions
-- **Visualization**: Tableau
+- **Data Warehouse**: BigQuery — serverless, scales to petabytes, native partitioning/clustering
+- **Transformation**: dbt Core — version-controlled SQL, built-in testing, lineage tracking
+- **Orchestration**: Dagster — asset-based paradigm, first-class dbt integration, superior observability
+- **Infrastructure**: Google Cloud Platform — seamless BigQuery integration, cost-effective compute
+- **Infrastructure as Code**: Terraform — declarative, reproducible infrastructure with state management
+- **CI/CD**: GitHub Actions — native repo integration, matrix builds for parallel testing
+- **Visualization**: Tableau — handles large datasets, flexible for both operational and strategic dashboards
 
 ## Getting Started
+
+### Prerequisites
+
+- **Python** 3.9 - 3.13
+- **Terraform** >= 1.0
+- **gcloud CLI** authenticated with your GCP project
+- **GCP Project** with BigQuery and Cloud Storage APIs enabled
+- **Service Account** with roles: BigQuery Admin, Storage Admin
 
 ### Infrastructure Setup
 
@@ -153,6 +161,13 @@ graph TB
 - `metrics_churn` - Churn rates by cohort
 - `metrics_rfm_segments` - Aggregated segment-level metrics
 
+## Technical Highlights
+
+- **Incremental Processing**: Fact tables use dbt's `insert_overwrite` strategy with daily date partitioning, processing only new/changed partitions rather than full table scans
+- **Event-Driven Orchestration**: GCS sensor polls for new files every 5 minutes with cursor-based tracking to prevent duplicate processing; successful loads automatically trigger dbt runs via a chained `run_status_sensor`
+- **RFM Segmentation**: Percentile-based scoring using BigQuery's `NTILE()` window functions, with configurable thresholds for 9 actionable customer segments
+- **Data Quality**: dbt tests validate referential integrity, accepted values, and null constraints; CI pipeline runs tests against isolated BigQuery datasets per PR
+
 ## Lineage Graph
 
 ![Dagster Asset Lineage Graph](/images/screenshots/Global_Asset_Lineage.svg)
@@ -173,7 +188,7 @@ The conversion funnel tells a clear story: 88.5M browsing sessions drop to 10.6M
 
 **Key Insights:** The LTV distribution shows classic e-commerce behavior: heavily right-skewed with 725K+ customers concentrated in the $0-$100 range, but combined revenue (blue bars) reveals that mid-tier customers ($200-$600) drive significant total value despite smaller populations.
 
-The weekly churn cohort analysis is particularly actionable. Early cohorts (Oct-Nov 2019) maintain 82-84% retention, but more recent cohorts (Apr 2020) show declining retention to 69-75%. This degradation pattern could indicate onboarding issues, product-market fit changes, or simply that newer cohorts haven't had time to mature.
+The weekly churn cohort analysis is particularly actionable. Early cohorts (Oct-Nov 2019) show 82-84% churn rates, meaning only 16-18% of first-time buyers made a repeat purchase. More recent cohorts (Apr 2020) show lower churn rates of 69-75%, though this likely reflects insufficient observation time rather than improved retention.
 
 The Top 15 by LTV table ($386K-$790K) identifies high-value accounts worth dedicated attention - these customers represent outsized revenue concentration.
 
