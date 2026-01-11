@@ -1,0 +1,58 @@
+name: CI - Dagster
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'dagster-project/**'
+      - '.github/workflows/ci-dagster.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install ruff
+      run: pip install ruff
+
+    - name: Lint with ruff
+      run: |
+        cd dagster-project
+        ruff check .
+
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd dagster-project
+        pip install -e .
+
+    - name: Install dbt dependencies
+      run: |
+        cd dbt-project
+        dbt deps
+
+    - name: Validate Dagster definitions
+      env:
+        DAGSTER_DBT_PARSE_PROJECT_ON_LOAD: "false"
+      run: |
+        cd dagster-project
+        dagster definitions validate
