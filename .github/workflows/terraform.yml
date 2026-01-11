@@ -1,0 +1,29 @@
+name: Terraform
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.9.0
+
+    - name: Terraform Format Check
+      run: terraform -chdir=terraform fmt -check -diff
+
+    - name: Terraform Init
+      run: terraform -chdir=terraform init -backend=false
+
+    - name: Terraform Validate
+      run: terraform -chdir=terraform validate
