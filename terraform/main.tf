@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.0"
+
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -82,7 +84,7 @@ resource "google_storage_bucket" "raw_data" {
 
 resource "google_bigquery_dataset" "raw" {
   dataset_id                 = "estore_raw"
-  location                   = "US"
+  location                   = var.region
   delete_contents_on_destroy = true
 }
 

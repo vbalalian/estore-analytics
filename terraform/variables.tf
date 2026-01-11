@@ -6,13 +6,13 @@ variable "project" {
 variable "region" {
   type        = string
   description = "The Google Cloud region to deploy resources into."
-  default     = "us-west1"
+  default     = "us-central1"
 }
 
 variable "zone" {
   type        = string
-  description = "The Google Cloud zone to deploy resources into. If not set, will be derived from the region."
-  default     = "us-west1-b"
+  description = "The Google Cloud zone to deploy resources into."
+  default     = "us-central1-a"
 }
 
 variable "gcs_bucket_name" {
