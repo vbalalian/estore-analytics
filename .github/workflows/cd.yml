@@ -134,6 +134,29 @@ jobs:
         script: |
           rm -f /tmp/previous_commit
 
+    - name: Notify Slack - Deploy Success
+      if: success()
+      continue-on-error: true
+      uses: slackapi/slack-github-action@v2.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ secrets.SLACK_BOT_TOKEN }}
+        payload: |
+          channel: "#estore-alerts"
+          text: "Deployment successful"
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: ":white_check_mark: *Deployment Successful*\n\n*Repo:* ${{ github.repository }}\n*Commit:* `${{ github.sha }}`\n*By:* ${{ github.actor }}"
+            - type: actions
+              elements:
+                - type: button
+                  text:
+                    type: plain_text
+                    text: View Run
+                  url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
   rollback:
     needs: deploy
     runs-on: ubuntu-latest
@@ -198,3 +221,26 @@ jobs:
         key: ${{ secrets.GCP_VM_SSH_KEY }}
         script: |
           rm -f /tmp/previous_commit
+
+    - name: Notify Slack - Rollback
+      if: always()
+      continue-on-error: true
+      uses: slackapi/slack-github-action@v2.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ secrets.SLACK_BOT_TOKEN }}
+        payload: |
+          channel: "#estore-alerts"
+          text: "Deployment failed - rollback attempted"
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: ":rotating_light: *Deployment Failed - Rollback ${{ job.status }}*\n\n*Repo:* ${{ github.repository }}\n*Commit:* `${{ github.sha }}`\n*By:* ${{ github.actor }}"
+            - type: actions
+              elements:
+                - type: button
+                  text:
+                    type: plain_text
+                    text: View Run
+                  url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
