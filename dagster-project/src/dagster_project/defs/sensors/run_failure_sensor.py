@@ -24,7 +24,13 @@ def run_failure_sensor(context: RunFailureSensorContext, slack: SlackResource):
 *Run ID:* `{run_id}`
 """.strip()
 
-    slack.get_client().chat_postMessage(
-        channel="#estore-dagster-reports",
-        text=slack_message
-    )
+    try:
+        slack.get_client().chat_postMessage(
+            channel="#estore-dagster-reports",
+            text=slack_message
+        )
+    except Exception as e:
+        context.log.error(
+            f"Failed to send Slack notification: {str(e)}. "
+            f"Original failure: Job '{job_name}' Run ID '{run_id}'"
+        )
