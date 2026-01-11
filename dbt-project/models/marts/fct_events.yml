@@ -113,3 +113,5 @@ models:
       - name: revenue
         data_type: float
         description: "Revenue generated from the event (price * quantity for purchase events, 0 otherwise)"
+        tests:
+          - assert_non_negative
