@@ -58,3 +58,21 @@ resource "google_bigquery_dataset" "raw" {
   location                   = "US"
   delete_contents_on_destroy = true
 }
+
+resource "google_project_iam_member" "sa_storage_viewer" {
+  project = var.project
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.tf-sa.email}"
+}
+
+resource "google_project_iam_member" "sa_bigquery_data_editor" {
+  project = var.project
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:${google_service_account.tf-sa.email}"
+}
+
+resource "google_project_iam_member" "sa_bigquery_job_user" {
+  project = var.project
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${google_service_account.tf-sa.email}"
+}
