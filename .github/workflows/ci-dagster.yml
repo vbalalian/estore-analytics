@@ -1,0 +1,78 @@
+name: CI - Dagster
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'dagster-project/**'
+      - '.github/workflows/ci-dagster.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install ruff
+      run: pip install ruff
+
+    - name: Lint with ruff
+      run: |
+        cd dagster-project
+        ruff check .
+
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd dagster-project
+        pip install -e .
+
+    - name: Create keyfile
+      run: |
+        echo "${{ secrets.GCP_KEYFILE_BASE64 }}" | base64 -d > /tmp/keyfile.json
+
+    - name: Set up dbt profile
+      run: |
+        mkdir -p ~/.dbt
+        cat > ~/.dbt/profiles.yml << EOF
+        estore:
+          target: ci
+          outputs:
+            ci:
+              type: bigquery
+              method: service-account
+              project: ${{ secrets.GCP_PROJECT_ID }}
+              dataset: ci_dagster_validate
+              keyfile: /tmp/keyfile.json
+              threads: 4
+              timeout_seconds: 300
+        EOF
+
+    - name: Compile dbt project
+      run: |
+        cd dbt-project
+        dbt deps
+        dbt compile
+
+    - name: Validate Dagster definitions
+      run: |
+        cd dagster-project
+        dagster definitions validate
