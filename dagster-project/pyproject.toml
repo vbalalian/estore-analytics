@@ -14,7 +14,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "dagster-dg-cli"
+    "dagster-dg-cli",
+    "pytest>=7.0.0"
 ]
 
 [build-system]
