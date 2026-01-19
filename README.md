@@ -161,6 +161,10 @@ graph TB
 - `metrics_churn` - Churn rates by cohort
 - `metrics_rfm_segments` - Aggregated segment-level metrics
 
+**Snapshots (SCD Type 2)**
+- `snap_user_rfm` - Tracks changes to RFM segments over time
+- `snap_user_status` - Tracks changes to user activity/churn status
+
 ## Technical Highlights
 
 - **Incremental Processing**: Fact tables use dbt's `insert_overwrite` strategy with daily date partitioning, processing only new/changed partitions rather than full table scans
