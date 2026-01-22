@@ -114,3 +114,4 @@ cp profiles.yml.example profiles.yml
 
 - [Analysis & Visualizations](analysis/README.md) - Dashboard screenshots and detailed insights
 - [Orchestration](docs/orchestration.md) - Dagster sensors, jobs, and scheduling patterns
+- **dbt Docs** - Run `cd dbt-project && dbt docs generate && dbt docs serve` to view model documentation and lineage locally
