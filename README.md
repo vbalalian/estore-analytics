@@ -87,9 +87,16 @@ Provision the required GCP resources using Terraform:
 ```bash
 cd terraform
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your GCP project ID and bucket name
+# Edit terraform.tfvars with your GCP project ID, bucket name, and Slack token
 terraform init
 terraform apply
+```
+
+This provisions a GCP VM with Dagster running as systemd services. Access the Dagster UI via SSH tunnel:
+
+```bash
+gcloud compute ssh terraform-instance --zone=us-central1-a -- -L 3000:localhost:3000
+# Then open http://localhost:3000 in your browser
 ```
 
 See [terraform/README.md](terraform/README.md) for detailed setup instructions.

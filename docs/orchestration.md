@@ -179,6 +179,56 @@ This ensures sensor crashes don't go unnoticed and the sensor retries on the nex
 - No alerting if a sensor stops ticking entirely
 - See [Future Improvements](#future-improvements) for production-grade monitoring options
 
+## Production Deployment
+
+Dagster runs on a GCP Compute Engine VM as two systemd services:
+
+| Service | Description | Port |
+|---------|-------------|------|
+| `dagster` | Daemon process for sensors and schedules | - |
+| `dagster-webserver` | Web UI (binds to localhost) | 3000 |
+
+### Accessing the UI
+
+The webserver binds to `127.0.0.1` for security. Access via SSH tunnel:
+
+```bash
+gcloud compute ssh INSTANCE_NAME --zone=ZONE -- -L 3000:localhost:3000
+# Open http://localhost:3000 in your browser
+```
+
+### Service Management
+
+```bash
+# Check service status
+sudo systemctl status dagster dagster-webserver
+
+# View logs
+journalctl -u dagster -f
+journalctl -u dagster-webserver -f
+
+# Restart services
+sudo systemctl restart dagster dagster-webserver
+```
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `/etc/systemd/system/dagster.service` | Daemon service definition |
+| `/etc/systemd/system/dagster-webserver.service` | Webserver service definition |
+| `/etc/systemd/system/dagster.service.d/override.conf` | Secrets (Slack token) |
+| `~/estore-analytics/dagster-project/dagster.yaml` | Dagster instance config |
+| `~/estore-analytics/dagster-project/.env` | Environment variables |
+
+### Infrastructure as Code
+
+The VM and services are provisioned via Terraform. See `terraform/startup.sh` for the full provisioning script that:
+- Creates the deploy user
+- Installs dependencies and clones the repo
+- Sets up the Python virtualenv
+- Installs and enables systemd services
+
 ## Future Improvements
 
 The following issues document potential enhancements that would be appropriate at production scale:
