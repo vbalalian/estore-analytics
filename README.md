@@ -44,13 +44,13 @@ graph LR
 - **Conversion Funnel**: 6.1% view-to-purchase rate; 88% drop-off before cart, 49% cart abandonment
 
 ## Tech Stack
-- **Data Warehouse**: BigQuery:serverless, scales to petabytes, native partitioning/clustering
-- **Transformation**: dbt Core:version-controlled SQL, built-in testing, lineage tracking
-- **Orchestration**: Dagster:asset-based paradigm, first-class dbt integration, superior observability
-- **Infrastructure**: Google Cloud Platform:seamless BigQuery integration, cost-effective compute
-- **Infrastructure as Code**: Terraform:declarative, reproducible infrastructure with state management
-- **CI/CD**: GitHub Actions:native repo integration, matrix builds for parallel testing
-- **Visualization**: Tableau:handles large datasets, flexible for both operational and strategic dashboards
+- **Data Warehouse**: BigQuery - serverless, scales to petabytes, native partitioning/clustering
+- **Transformation**: dbt Core - version-controlled SQL, built-in testing, lineage tracking
+- **Orchestration**: Dagster - asset-based paradigm, first-class dbt integration, superior observability
+- **Infrastructure**: Google Cloud Platform - seamless BigQuery integration, cost-effective compute
+- **Infrastructure as Code**: Terraform - declarative, reproducible infrastructure with state management
+- **CI/CD**: GitHub Actions - native repo integration, matrix builds for parallel testing
+- **Visualization**: Tableau - handles large datasets, flexible for both operational and strategic dashboards
 
 ## Getting Started
 
