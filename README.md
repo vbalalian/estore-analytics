@@ -25,7 +25,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 ## Pipeline Architecture
 
-<img src="/docs/diagrams/pipeline.svg" alt="Pipeline Architecture" width="500">
+![Pipeline Architecture](/docs/diagrams/pipeline.svg)
 
 ## Key Findings
 
