@@ -1,6 +1,14 @@
-project         = "<your-gcp-project-id>"
-gcs_bucket_name = "<globally-unique-bucket-name>"
+# Terraform Variables for estore-analytics
+# Copy this file to terraform.tfvars and fill in your values.
+# DO NOT commit terraform.tfvars to version control.
 
-# Optional - defaults shown
-# region = "us-central1"
-# zone   = "us-central1-a"
+# Required
+project         = "your-gcp-project-id"
+gcs_bucket_name = "your-unique-bucket-name"
+slack_bot_token = "xoxb-your-slack-bot-token"
+
+# Optional (have defaults)
+# deploy_user = "dagster"
+# repo_url    = "https://github.com/vbalalian/estore-analytics"
+# region      = "us-central1"
+# zone        = "us-central1-a"
