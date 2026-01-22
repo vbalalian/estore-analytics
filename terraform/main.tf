@@ -72,6 +72,13 @@ resource "google_compute_instance" "vm_instance" {
     email  = google_service_account.tf-sa.email
     scopes = ["cloud-platform"]
   }
+
+  metadata_startup_script = templatefile("${path.module}/startup.sh", {
+    deploy_user     = var.deploy_user
+    gcp_project_id  = var.project
+    slack_bot_token = var.slack_bot_token
+    repo_url        = var.repo_url
+  })
 }
 
 resource "google_storage_bucket" "raw_data" {
