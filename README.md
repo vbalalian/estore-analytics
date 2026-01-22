@@ -22,6 +22,7 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - [Pipeline Architecture](#pipeline-architecture)
 - [Data Models](#data-models)
 - [Data Visualizations](#data-visualizations)
+- [Documentation](#documentation)
 
 ## Key Findings
 
@@ -219,3 +220,7 @@ Recent Customers (342K, largest population) sitting at low average revenue isn't
 **Key Insights:** This paired bar chart tells the same story as the bubble chart but makes the magnitude differences more precise. The Champions segment's $3,333 average dwarfs Recent Customers' $254 - a 13x difference that underscores why segment-specific strategies matter.
 
 The juxtaposition of "Lost" (307K customers, $110 avg) against "Champions" (249K customers, $3,333 avg) quantifies the cost of churn: losing a Champion requires winning ~30 new customers to replace the revenue.
+
+## Documentation
+
+- [Orchestration](docs/orchestration.md) - Dagster sensors, jobs, and scheduling patterns
