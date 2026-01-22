@@ -1,4 +1,4 @@
-# E-commerce Analytics Pipeline 
+# E-commerce Analytics Pipeline
 
 [![Terraform](https://github.com/vbalalian/estore-analytics/actions/workflows/terraform.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/terraform.yml)
 [![CI - dbt](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dbt.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dbt.yml)
@@ -15,27 +15,17 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 * Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
 * The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
 
-```mermaid
-graph LR
-    A[GCS] -->|sensor| B[BigQuery Raw]
-    B -->|dbt| C[Staging]
-    C -->|dbt| D[Marts]
-    D --> E[Dashboards]
-
-    style A fill:#fff4e6
-    style B fill:#fff4e6
-    style C fill:#e8f5e9
-    style D fill:#e8f5e9
-    style E fill:#fce4ec
-```
-
 ## Contents
+- [Pipeline Architecture](#pipeline-architecture)
 - [Key Findings](#key-findings)
 - [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Pipeline Architecture](#pipeline-architecture)
 - [Data Models](#data-models)
+- [Getting Started](#getting-started)
 - [Documentation](#documentation)
+
+## Pipeline Architecture
+
+<img src="/docs/diagrams/pipeline.svg" alt="Pipeline Architecture" width="500">
 
 ## Key Findings
 
@@ -51,6 +41,34 @@ graph LR
 - **Infrastructure as Code**: Terraform - declarative, reproducible infrastructure with state management
 - **CI/CD**: GitHub Actions - native repo integration, matrix builds for parallel testing
 - **Visualization**: Tableau - handles large datasets, flexible for both operational and strategic dashboards
+
+## Data Models
+
+**Staging Layer**
+- `stg_events` - Cleaned event data
+
+**Dimension Tables**
+- `dim_users` - User-level metrics (LTV, churn status, purchase history)
+- `dim_products` - Product attributes and category hierarchy
+- `dim_categories` - Category taxonomy
+- `dim_user_rfm` - RFM scores and customer segments
+
+**Fact Tables**
+- `fct_events` - Event-level facts with purchase/cart/view flags
+- `fct_sessions` - Session-level aggregations with conversion funnel
+
+**Metrics**
+- `metrics_conversion_rates` - Daily/overall conversion metrics
+- `metrics_churn` - Churn rates by cohort
+- `metrics_rfm_segments` - Aggregated segment-level metrics
+
+**Snapshots (SCD Type 2)**
+- `snap_user_rfm` - Tracks changes to RFM segments over time
+- `snap_user_status` - Tracks changes to user activity/churn status
+
+## Lineage Graph
+
+![Dagster Asset Lineage Graph](/docs/diagrams/lineage.svg)
 
 ## Getting Started
 
@@ -91,71 +109,6 @@ cp profiles.yml.example profiles.yml
 1. Upload raw data CSV files to the GCS bucket
 2. Dagster sensors automatically detect new files and trigger data loads
 3. Transformations run automatically after successful loads
-
-## Pipeline Architecture
-
-```mermaid
-flowchart LR
-    subgraph Source
-        A[CSV Files]
-    end
-
-    subgraph GCP
-        B[Cloud Storage]
-        C[BigQuery Raw]
-        D[dbt Models]
-    end
-
-    subgraph Output
-        E[Dashboards]
-    end
-
-    A --> B
-    B -->|sensor + load job| C
-    C -->|sensor + dbt| D
-    D --> E
-
-    style A fill:#e1f5ff
-    style B fill:#fff4e6
-    style C fill:#fff4e6
-    style D fill:#e8f5e9
-    style E fill:#fce4ec
-```
-
-## Data Models
-
-**Staging Layer**
-- `stg_events` - Cleaned event data
-
-**Dimension Tables**
-- `dim_users` - User-level metrics (LTV, churn status, purchase history)
-- `dim_products` - Product attributes and category hierarchy
-- `dim_categories` - Category taxonomy
-- `dim_user_rfm` - RFM scores and customer segments
-
-**Fact Tables**
-- `fct_events` - Event-level facts with purchase/cart/view flags
-- `fct_sessions` - Session-level aggregations with conversion funnel
-
-**Metrics**
-- `metrics_conversion_rates` - Daily/overall conversion metrics
-- `metrics_churn` - Churn rates by cohort
-- `metrics_rfm_segments` - Aggregated segment-level metrics
-
-**Snapshots (SCD Type 2)**
-- `snap_user_rfm` - Tracks changes to RFM segments over time
-- `snap_user_status` - Tracks changes to user activity/churn status
-
-## Technical Highlights
-
-- **Incremental Processing**: Fact tables use dbt's `insert_overwrite` strategy with daily date partitioning, processing only new/changed partitions rather than full table scans
-- **Event-Driven Orchestration**: GCS sensor polls for new files every 5 minutes with cursor-based tracking to prevent duplicate processing; successful loads automatically trigger dbt runs via a chained `run_status_sensor`
-- **RFM Segmentation**: Percentile-based scoring using BigQuery's `NTILE()` window functions, with configurable thresholds for 9 actionable customer segments
-- **Data Quality**: dbt tests validate referential integrity, accepted values, and null constraints; CI pipeline runs tests against isolated BigQuery datasets per PR
-
-## Lineage Graph
-
-![Dagster Asset Lineage Graph](/analysis/images/screenshots/Global_Asset_Lineage.svg)
 
 ## Documentation
 
