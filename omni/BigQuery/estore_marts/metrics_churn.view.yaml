@@ -1,0 +1,15 @@
+# Reference this view as metrics_churn
+schema: estore_marts
+
+dimensions:
+  metric_level: {}
+  time_period: {}
+  total_customers: {}
+  churned_customers: {}
+  churn_rate: {}
+  cohort_start: {}
+  cohort_end: {}
+
+measures:
+  count:
+    aggregate_type: count

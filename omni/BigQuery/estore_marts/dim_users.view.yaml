@@ -1,0 +1,28 @@
+# Reference this view as dim_users
+schema: estore_marts
+
+dimensions:
+  first_event_time: {}
+  first_event_date: {}
+  last_event_time: {}
+  last_event_date: {}
+  session_count: {}
+  event_count: {}
+  total_revenue: {}
+  purchase_count: {}
+  first_purchase_date: {}
+  last_purchase_date: {}
+  avg_order_value: {}
+  customer_lifespan_days: {}
+  days_since_last_activity: {}
+  days_since_last_purchase: {}
+  customer_ltv: {}
+  activity_status: {}
+  is_churned: {}
+
+  user_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

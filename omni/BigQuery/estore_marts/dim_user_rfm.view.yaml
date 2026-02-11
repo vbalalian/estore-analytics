@@ -1,0 +1,19 @@
+# Reference this view as dim_user_rfm
+schema: estore_marts
+
+dimensions:
+  days_since_last_purchase: {}
+  purchase_count: {}
+  total_revenue: {}
+  recency_score: {}
+  frequency_score: {}
+  monetary_score: {}
+  rfm_score: {}
+  rfm_segment: {}
+
+  user_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

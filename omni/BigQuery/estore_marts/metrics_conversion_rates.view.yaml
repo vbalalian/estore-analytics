@@ -1,0 +1,19 @@
+# Reference this view as metrics_conversion_rates
+schema: estore_marts
+
+dimensions:
+  metric_level: {}
+  time_period: {}
+  total_sessions: {}
+  sessions_with_view: {}
+  sessions_with_cart: {}
+  sessions_with_purchase: {}
+  view_to_cart_rate: {}
+  cart_to_purchase_rate: {}
+  view_to_purchase_rate: {}
+  total_revenue: {}
+  avg_order_value: {}
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,16 @@
+# Reference this view as dim_categories
+schema: estore_marts
+
+dimensions:
+  category_code: {}
+  category_lvl_1: {}
+  category_lvl_2: {}
+  category_lvl_3: {}
+  category_lvl_4: {}
+
+  raw_category_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

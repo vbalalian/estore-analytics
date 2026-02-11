@@ -1,0 +1,27 @@
+# Reference this view as metrics_rfm_segments
+schema: estore_marts
+
+dimensions:
+  rfm_segment: {}
+  customer_count: {}
+  avg_session_count: {}
+  avg_event_count: {}
+  avg_purchase_count: {}
+  avg_order_value: {}
+  avg_lifespan_days: {}
+  avg_customer_ltv: {}
+  total_churned: {}
+  churn_rate: {}
+  avg_rfm_total: {}
+  avg_revenue: {}
+  med_rfm_total: {}
+  med_revenue: {}
+  std_dev_revenue: {}
+  p25_revenue: {}
+  p75_revenue: {}
+  category_type: {}
+  action_strategy: {}
+
+measures:
+  count:
+    aggregate_type: count

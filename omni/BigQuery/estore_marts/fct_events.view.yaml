@@ -1,0 +1,32 @@
+# Reference this view as fct_events
+schema: estore_marts
+
+dimensions:
+  event_time: {}
+  event_date: {}
+  event_type: {}
+  user_session: {}
+  brand: {}
+  category_code: {}
+  price: {}
+  quantity: {}
+  is_purchase: {}
+  is_cart_add: {}
+  is_view: {}
+  revenue: {}
+
+  user_id:
+    format: ID
+
+  product_id:
+    format: ID
+
+  category_id:
+    format: ID
+
+  event_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
