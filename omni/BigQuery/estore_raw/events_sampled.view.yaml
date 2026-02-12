@@ -1,0 +1,24 @@
+# Reference this view as estore_raw__events_sampled
+schema: estore_raw
+table_name: events_sampled
+
+dimensions:
+  event_time: {}
+  event_type: {}
+  category_code: {}
+  brand: {}
+  price: {}
+  user_session: {}
+
+  product_id:
+    format: ID
+
+  category_id:
+    format: ID
+
+  user_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
