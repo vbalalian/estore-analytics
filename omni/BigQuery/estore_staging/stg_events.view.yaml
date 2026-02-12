@@ -1,0 +1,25 @@
+# Reference this view as estore_staging__stg_events
+schema: estore_staging
+table_name: stg_events
+
+dimensions:
+  event_time: {}
+  event_type: {}
+  category_code: {}
+  brand: {}
+  price: {}
+  user_session: {}
+  event_date: {}
+
+  product_id:
+    format: ID
+
+  category_id:
+    format: ID
+
+  user_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
