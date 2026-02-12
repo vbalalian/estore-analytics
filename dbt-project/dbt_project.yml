@@ -30,6 +30,8 @@ vars:
   declining_threshold_days: 30
   # Cohort analysis observation window
   cohort_observation_window_days: 90
+  # Session timeout threshold (seconds of inactivity before splitting a session)
+  session_timeout_seconds: 3600
 
 flags:
   send_anonymous_usage_stats: False
