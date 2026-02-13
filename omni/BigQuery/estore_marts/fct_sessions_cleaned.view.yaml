@@ -1,0 +1,28 @@
+# Reference this view as fct_sessions_cleaned
+schema: estore_marts
+
+dimensions:
+  session_start_time: {}
+  session_start_date: {}
+  session_end_time: {}
+  event_count: {}
+  unique_product_count: {}
+  cart_additions: {}
+  purchase_count: {}
+  view_count: {}
+  total_revenue: {}
+  session_length: {}
+  reached_view: {}
+  reached_cart: {}
+  reached_purchase: {}
+  funnel_stage: {}
+
+  session_id:
+    format: ID
+
+  user_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
