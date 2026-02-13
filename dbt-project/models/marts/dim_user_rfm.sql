@@ -54,9 +54,6 @@ final_rfm_scores as (
     select
 
         user_id,
-        days_since_last_purchase,
-        purchase_count,
-        total_revenue,
         recency_score,
         frequency_score,
         monetary_score,
@@ -72,9 +69,6 @@ rfm_labeled as (
     select
 
         user_id,
-        days_since_last_purchase,
-        purchase_count,
-        total_revenue,
         recency_score,
         frequency_score,
         monetary_score,
@@ -121,9 +115,6 @@ final_users_rfm as (
     select
 
         user_id,
-        days_since_last_purchase,
-        purchase_count,
-        total_revenue,
         recency_score,
         frequency_score,
         monetary_score,
