@@ -1,1 +1,12 @@
-[]
+- join_from_view: dim_users
+  join_to_view: dim_user_rfm
+  join_type: always_left
+  on_sql: ${dim_users.user_id} = ${dim_user_rfm.user_id}
+  relationship_type: one_to_one
+
+- join_from_view: fct_sessions_cleaned
+  join_to_view: dim_users
+  join_type: always_left
+  on_sql: ${fct_sessions_cleaned.user_id} = ${dim_users.user_id}
+  relationship_type: many_to_one
+  reversible: false
