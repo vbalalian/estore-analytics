@@ -32,7 +32,7 @@ models:
           - not_null
 
       - name: session_count
-        description: "Total number of sessions initiated by the user"
+        description: "Total number of cleaned sessions for the user, sourced from fct_sessions_cleaned (sessions split at 1-hour inactivity gaps). 0 if no sessions exist."
         tests:
           - not_null
       
@@ -61,23 +61,23 @@ models:
           - assert_non_negative
       
       - name: customer_lifespan_days
-        description: "Number of days between the user's first and last event"
+        description: "Number of days between the user's first and last purchase. Minimum 1 for any user with at least one purchase. NULL for non-purchasers."
       
       - name: days_since_last_activity
-        description: "Number of days since the user's last event"
-      
+        description: "Number of days between the most recent event_date in the dataset (reference date) and this user's last event. Reference date is max(event_date) from fct_events."
+
       - name: days_since_last_purchase
-        description: "Number of days since the user's last purchase event"
+        description: "Number of days between the most recent event_date in the dataset (reference date) and this user's last purchase. NULL for non-purchasers. Reference date is max(event_date) from fct_events."
       
       - name: activity_status
-        description: "User activity status based on recent engagement"
+        description: "User activity status based on purchase recency and browsing activity. Churned requires both purchase and activity to have lapsed beyond churn_threshold_days."
         tests:
           - accepted_values:
               arguments:
                 values: ['active', 'declining', 'at_risk', 'churned', 'prospect']
 
       - name: is_churned
-        description: "Flag for churned users (1 for churned, 0 otherwise)"
+        description: "Flag for churned users (1 for churned, 0 otherwise). Requires both days_since_last_purchase and days_since_last_activity to exceed churn_threshold_days."
 
       - name: customer_ltv
         description: "Customer lifetime value. Same as total_revenue; just semantic clarity."
