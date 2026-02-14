@@ -32,6 +32,7 @@ vars:
   cohort_observation_window_days: 90
   # Session timeout threshold (seconds of inactivity before splitting a session)
   session_timeout_seconds: 3600
+  session_outlier_ratio: 200
 
 flags:
   send_anonymous_usage_stats: False
