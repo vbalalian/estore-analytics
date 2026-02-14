@@ -161,7 +161,21 @@ churn_classified as (
                 > {{ var('churn_threshold_days') }}
                 then 1
             else 0
-        end as is_churned
+        end as is_churned,
+
+        transformed.purchase_count > 0 as has_purchase_history,
+
+        case
+            when coalesce(cleaned_sessions.session_count, 0) = 0
+                then 'missing_sessions'
+            when
+                cleaned_sessions.session_count > 0
+                and safe_divide(
+                    transformed.event_count,
+                    cleaned_sessions.session_count
+                ) > {{ var('session_outlier_ratio') }}
+                then 'anomalous_session_ratio'
+        end as data_quality_flag
 
     from transformed
 
@@ -191,7 +205,9 @@ final as (
         days_since_last_purchase,
         customer_ltv,
         activity_status,
-        is_churned
+        is_churned,
+        has_purchase_history,
+        data_quality_flag
 
     from churn_classified
 

@@ -84,3 +84,16 @@ models:
         tests:
           - assert_non_negative
 
+      - name: has_purchase_history
+        description: "Boolean flag indicating whether the user has made at least one purchase."
+        tests:
+          - not_null
+
+      - name: data_quality_flag
+        description: "Data quality indicator. NULL when no issues detected. 'missing_sessions' if session_count is 0. 'anomalous_session_ratio' if events-per-session exceeds session_outlier_ratio var."
+        tests:
+          - accepted_values:
+              values: ['missing_sessions', 'anomalous_session_ratio']
+              config:
+                where: "data_quality_flag is not null"
+
