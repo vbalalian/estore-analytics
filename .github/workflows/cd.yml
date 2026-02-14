@@ -14,6 +14,11 @@ jobs:
     
     steps:
 
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
     - name: Store previous commit for rollback
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -72,6 +77,21 @@ jobs:
             gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
 
           echo "Deployment complete!"
+
+    - name: Refresh Omni schema
+      if: success()
+      continue-on-error: true
+      run: |
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- dbt-project/models/ | grep -q .; then
+          echo "dbt model changes detected — refreshing Omni schema..."
+          RESPONSE=$(curl -sf -X POST \
+            "${{ secrets.OMNI_BASE_URL }}/api/v1/models/${{ secrets.OMNI_MODEL_ID }}/refresh" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
+          echo "Omni refresh triggered: $RESPONSE"
+        else
+          echo "No dbt model changes — skipping Omni schema refresh."
+        fi
 
     - name: Health check - Dagster webserver
       uses: appleboy/ssh-action@v1.0.0
