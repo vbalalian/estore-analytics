@@ -69,11 +69,18 @@ transformed as (
             end
         ), 2) as avg_order_value,
 
-        date_diff(
-            max(case when is_purchase = 1 then event_date end),
-            min(case when is_purchase = 1 then event_date end),
-            day
-        ) as customer_lifespan_days,
+        case
+            when
+                count(case when is_purchase = 1 then 1 end) > 0
+                then greatest(
+                    date_diff(
+                        max(case when is_purchase = 1 then event_date end),
+                        min(case when is_purchase = 1 then event_date end),
+                        day
+                    ),
+                    1
+                )
+        end as customer_lifespan_days,
 
         date_diff(
             (select max_date.max_date from max_date),
