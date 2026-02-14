@@ -126,6 +126,8 @@ churn_classified as (
                 purchase_count > 0
                 and days_since_last_purchase
                 > {{ var('churn_threshold_days') }}
+                and days_since_last_activity
+                > {{ var('churn_threshold_days') }}
                 then 'churned'
             when
                 purchase_count > 0
@@ -145,6 +147,8 @@ churn_classified as (
             when
                 purchase_count > 0
                 and days_since_last_purchase
+                > {{ var('churn_threshold_days') }}
+                and days_since_last_activity
                 > {{ var('churn_threshold_days') }}
                 then 1
             else 0
