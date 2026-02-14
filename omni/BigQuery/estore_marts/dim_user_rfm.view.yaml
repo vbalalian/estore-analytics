@@ -2,9 +2,6 @@
 schema: estore_marts
 
 dimensions:
-  days_since_last_purchase: {}
-  purchase_count: {}
-  total_revenue: {}
   recency_score: {}
   frequency_score: {}
   monetary_score: {}
