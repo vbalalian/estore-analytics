@@ -1,0 +1,6 @@
+base_view: fct_sessions
+label: Sessions
+
+joins:
+  dim_users:
+    dim_user_rfm: {}
