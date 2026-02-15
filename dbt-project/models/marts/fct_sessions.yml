@@ -1,36 +1,47 @@
 version: 2
 
-models: 
+models:
   - name: fct_sessions
     description: >
-      Fact table for user sessions. Extracted from staging events data.
-    config:
-      contract:
-        enforced: false
+      Session fact table that applies a 1-hour inactivity timeout to split
+      sessions spanning unreasonably long periods. 2.16% of sessions in the raw data
+      span up to 6 months due to session IDs being reused without an inactivity timeout.
+      This model detects gaps >3600 seconds between consecutive events within a session
+      and assigns new session IDs at each timeout boundary.
     columns:
       - name: session_id
-        description: "Unique identifier for the user session"
+        description: >
+          Cleaned session identifier. Original session ID if no timeout occurred,
+          or original_id + '_timeout_' + occurrence_number for split sessions.
         tests:
           - not_null
           - unique
+
+      - name: session_start_time
+        description: "Timestamp of the first event in the session"
+        tests:
+          - not_null
+
+      - name: session_start_date
+        description: "Date of the first event in the session, used for partitioning"
 
       - name: user_id
         description: "Identifier for the user who initiated the session"
         tests:
           - not_null
-
-      - name: session_start_time
-        description: "Timestamp when the session started"
-        tests:
-          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
 
       - name: session_end_time
-        description: "Timestamp when the session ended"
+        description: "Timestamp of the last event in the session"
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= session_start_time"
 
       - name: event_count
-        description: "Total number of events that occurred during the session"
+        description: "Total number of events in the session"
         tests:
           - not_null
 
@@ -44,7 +55,7 @@ models:
 
       - name: purchase_count
         description: "Total number of purchase events during the session"
-      
+
       - name: view_count
         description: "Total number of view events during the session"
 
@@ -53,14 +64,22 @@ models:
         tests:
           - assert_non_negative
 
+      - name: session_length
+        description: "Duration of the session in seconds (end - start)"
+        tests:
+          - assert_non_negative
+
       - name: reached_view
-        description: "Indicator if the session included at least one view event"
-      
+        description: "Indicator (1/0) if the session included at least one view event"
+
       - name: reached_cart
-        description: "Indicator if the session included at least one add-to-cart event"
-      
+        description: "Indicator (1/0) if the session included at least one add-to-cart event"
+
       - name: reached_purchase
-        description: "Indicator if the session included at least one purchase event"
+        description: "Indicator (1/0) if the session included at least one purchase event"
 
       - name: funnel_stage
         description: "Furthest stage reached in the purchase funnel during the session"
+        tests:
+          - accepted_values:
+              values: ['purchase', 'cart', 'view', 'no_activity']

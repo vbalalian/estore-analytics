@@ -26,7 +26,7 @@ cleaned_sessions as (
     select
         user_id,
         count(*) as session_count
-    from {{ ref('fct_sessions_cleaned') }}
+    from {{ ref('fct_sessions') }}
     group by user_id
 
 ),
