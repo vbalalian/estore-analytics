@@ -19,6 +19,8 @@ dimensions:
   customer_ltv: {}
   activity_status: {}
   is_churned: {}
+  has_purchase_history: {}
+  data_quality_flag: {}
 
   user_id:
     format: ID
