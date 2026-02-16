@@ -93,7 +93,8 @@ models:
         description: "Data quality indicator. NULL when no issues detected. 'missing_sessions' if session_count is 0. 'anomalous_session_ratio' if events-per-session exceeds session_outlier_ratio var."
         tests:
           - accepted_values:
-              values: ['missing_sessions', 'anomalous_session_ratio']
+              arguments:
+                values: ['missing_sessions', 'anomalous_session_ratio']
               config:
                 where: "data_quality_flag is not null"
 

@@ -82,4 +82,5 @@ models:
         description: "Furthest stage reached in the purchase funnel during the session"
         tests:
           - accepted_values:
-              values: ['purchase', 'cart', 'view', 'no_activity']
+              arguments:
+                values: ['purchase', 'cart', 'view', 'no_activity']
