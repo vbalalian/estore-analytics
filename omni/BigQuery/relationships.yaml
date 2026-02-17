@@ -1,11 +1,3 @@
-- join_from_view: omni_dbt_marts__fct_sessions
-  join_to_view: omni_dbt_marts__dim_users
-  join_type: always_left
-  on_sql: ${omni_dbt_marts__fct_sessions.user_id} =
-    ${omni_dbt_marts__dim_users.user_id}
-  relationship_type: many_to_one
-  reversible: false
-
 - join_from_view: omni_dbt_marts__dim_users
   join_to_view: omni_dbt_marts__dim_user_rfm
   join_type: always_left
@@ -13,15 +5,10 @@
     ${omni_dbt_marts__dim_user_rfm.user_id}
   relationship_type: one_to_one
 
-- join_from_view: dim_users
-  join_to_view: dim_user_rfm
+- join_from_view: omni_dbt_marts__fct_sessions
+  join_to_view: omni_dbt_marts__dim_users
   join_type: always_left
-  on_sql: ${dim_users.user_id} = ${dim_user_rfm.user_id}
-  relationship_type: one_to_one
-
-- join_from_view: fct_sessions
-  join_to_view: dim_users
-  join_type: always_left
-  on_sql: ${fct_sessions.user_id} = ${dim_users.user_id}
+  on_sql: ${omni_dbt_marts__fct_sessions.user_id} =
+    ${omni_dbt_marts__dim_users.user_id}
   relationship_type: many_to_one
-  reversible: false
+  reversible: true
