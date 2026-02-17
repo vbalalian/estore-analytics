@@ -8,12 +8,6 @@ schema: omni_dbt_marts
 table_name: dim_products
 
 dimensions:
-  product_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Unique identifier for the product
-    primary_key: true
-
   brand:
     #This description was pulled from dbt.
     description: Brand of the product
@@ -37,6 +31,12 @@ dimensions:
   category_lvl_4:
     #This description was pulled from dbt.
     description: Fourth level of hierarchical category associated with the product
+
+  product_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Unique identifier for the product
+    primary_key: true
 
 measures:
   count:

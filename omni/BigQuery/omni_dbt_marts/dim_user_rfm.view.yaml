@@ -8,11 +8,6 @@ schema: omni_dbt_marts
 table_name: dim_user_rfm
 
 dimensions:
-  user_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Foreign key to dim_users
-
   recency_score:
     #This description was pulled from dbt.
     description: Recency score of the user
@@ -33,6 +28,11 @@ dimensions:
   rfm_segment:
     #This description was pulled from dbt.
     description: RFM segment classification based on RFM scores
+
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Foreign key to dim_users
 
 measures:
   count:

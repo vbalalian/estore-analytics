@@ -8,12 +8,6 @@ schema: omni_dbt_marts
 table_name: fct_sessions
 
 dimensions:
-  session_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: |
-      Cleaned session identifier. Original session ID if no timeout occurred, or original_id + '_timeout_' + occurrence_number for split sessions.
-
   session_start_time:
     #This description was pulled from dbt.
     description: Timestamp of the first event in the session
@@ -22,18 +16,9 @@ dimensions:
     #This description was pulled from dbt.
     description: Date of the first event in the session, used for partitioning
 
-  user_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Identifier for the user who initiated the session
-
   session_end_time:
     #This description was pulled from dbt.
     description: Timestamp of the last event in the session
-
-  event_count:
-    #This description was pulled from dbt.
-    description: Total number of events in the session
 
   unique_product_count:
     #This description was pulled from dbt.
@@ -51,14 +36,6 @@ dimensions:
     #This description was pulled from dbt.
     description: Total number of view events during the session
 
-  total_revenue:
-    #This description was pulled from dbt.
-    description: Total revenue generated from purchase events during the session
-
-  session_length:
-    #This description was pulled from dbt.
-    description: Duration of the session in seconds (end - start)
-
   reached_view:
     #This description was pulled from dbt.
     description: Indicator (1/0) if the session included at least one view event
@@ -71,14 +48,99 @@ dimensions:
     #This description was pulled from dbt.
     description: Indicator (1/0) if the session included at least one purchase event
 
+  event_count:
+    description: Total number of events (page views, cart additions, purchases) that
+      occurred during the session
+
+  total_revenue:
+    description: Revenue generated in the session. NULL for non-purchasing sessions
+      (expected behavior). For purchasing sessions, represents the transaction
+      value
+
+  session_length:
+    description: Duration of the session in seconds
+
   funnel_stage:
-    #This description was pulled from dbt.
-    description: Furthest stage reached in the purchase funnel during the session
+    description: "Indicates the furthest stage reached in the conversion funnel
+      during the session. Values: 'view' (product viewed), 'cart' (item added to
+      cart), 'purchase' (transaction completed), or NULL for sessions that
+      didn't reach any stage"
     all_values: [ purchase, cart, view, no_activity ]
+
+  session_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: |
+      Cleaned session identifier. Original session ID if no timeout occurred, or original_id + '_timeout_' + occurrence_number for split sessions.
+
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Identifier for the user who initiated the session
+
+  is_converting_session:
+    sql: CASE WHEN purchase_count > 0 THEN 1 ELSE 0 END
+    description: "Binary indicator: 1 if the session resulted in at least one
+      purchase, 0 otherwise"
+
+  session_quality_tier:
+    sql: CASE WHEN session_length < 150 OR event_count < 3 THEN 'Low' WHEN
+      session_length <= 600 AND event_count <= 10 THEN 'Medium' ELSE 'High' END
+    description: "Categorizes sessions into quality tiers based on engagement
+      (session length + event count). Low: <150 sec or <3 events; Medium:
+      150-600 sec and 3-10 events; High: >600 sec or >10 events"
+
+  user_purchase_history_group:
+    sql: CASE WHEN ${omni_dbt_marts__dim_users.purchase_count} = 0 THEN
+      'Non-Customer' WHEN ${omni_dbt_marts__dim_users.purchase_count} BETWEEN
+      ASYMMETRIC 1 AND 5 THEN 'Repeat Customer' ELSE 'Loyal Customer' END
+    description: "Groups users by their historical purchase count at the time of the
+      session. Non-customers: 0 purchases; Repeat: 1-5 purchases; Loyal: 6+
+      purchases"
+
+  session_length_bucket:
+    sql: CASE WHEN session_length <= 60 THEN 'Very Short (0-60s)' WHEN
+      session_length <= 300 THEN 'Short (61-300s)' WHEN session_length <= 600
+      THEN 'Medium (301-600s)' ELSE 'Long (600+s)' END
+    description: "Categorizes sessions by duration into buckets: Very Short (0-60s),
+      Short (61-300s), Medium (301-600s), Long (600+s)"
 
 measures:
   count:
     aggregate_type: count
+
+  conversion_rate:
+    sql: SUM(CASE WHEN purchase_count > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)
+    label: Conversion Rate (%)
+    description: Percentage of sessions that resulted in at least one purchase.
+      Calculated as (sessions with purchases / total sessions) * 100
+
+  revenue_per_session:
+    sql: SUM(total_revenue) / COUNT(*)
+    description: Average revenue generated per session, including non-purchasing
+      sessions. Calculated as total revenue / session count
+
+  view_to_cart_rate:
+    sql: SUM(CASE WHEN reached_cart > 0 THEN 1 ELSE 0 END) * 100.0 / NULLIF(SUM(CASE
+      WHEN reached_view > 0 THEN 1 ELSE 0 END), 0)
+    label: View to Cart Rate (%)
+    description: Percentage of sessions that reached the view stage and proceeded to
+      add items to cart. Calculated as (sessions reached cart / sessions reached
+      view) * 100
+
+  cart_to_purchase_rate:
+    sql: SUM(CASE WHEN reached_purchase > 0 THEN 1 ELSE 0 END) * 100.0 /
+      NULLIF(SUM(CASE WHEN reached_cart > 0 THEN 1 ELSE 0 END), 0)
+    label: Cart to Purchase Rate (%)
+    description: Percentage of sessions that reached the cart stage and completed a
+      purchase. Calculated as (sessions reached purchase / sessions reached
+      cart) * 100
+
+  avg_revenue_per_purchasing_session:
+    sql: SUM(CASE WHEN purchase_count > 0 THEN total_revenue ELSE 0 END) /
+      NULLIF(SUM(CASE WHEN purchase_count > 0 THEN 1 ELSE 0 END), 0)
+    description: Average revenue for sessions that resulted in at least one
+      purchase. Excludes non-purchasing sessions from the average
 
 #The info below was pulled from your dbt repository and is read-only.
 dbt:

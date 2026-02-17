@@ -8,12 +8,6 @@ schema: omni_dbt_marts
 table_name: dim_categories
 
 dimensions:
-  raw_category_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Original unique identifier for the product category
-    primary_key: true
-
   category_code:
     #This description was pulled from dbt.
     description: All hierarchical category codes associated with the product
@@ -36,6 +30,12 @@ dimensions:
   category_lvl_4:
     #This description was pulled from dbt.
     description: Fourth level of hierarchical category (if applicable)
+
+  raw_category_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Original unique identifier for the product category
+    primary_key: true
 
 measures:
   count:
