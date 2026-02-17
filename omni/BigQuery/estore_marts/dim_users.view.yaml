@@ -39,6 +39,7 @@ dimensions:
 
   avg_order_value:
     format: currency
+    #This description was pulled from dbt.
     description: Average order value for the user
 
   customer_lifespan_days:
