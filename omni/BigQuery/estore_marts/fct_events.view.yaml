@@ -82,6 +82,14 @@ measures:
   count:
     aggregate_type: count
 
+  sum_revenue:
+    sql: ${fct_events.revenue}
+    label: Total Revenue
+    format: BIGUSDCURRENCY_2
+    description: Sum of revenue
+    aggregate_type: sum
+    synonyms: [ sales ]
+
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
   name: fct_events

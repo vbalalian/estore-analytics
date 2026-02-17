@@ -1,0 +1,5 @@
+base_view: omni_dbt_marts__dim_users
+label: Users
+
+joins:
+  omni_dbt_marts__dim_user_rfm: {}

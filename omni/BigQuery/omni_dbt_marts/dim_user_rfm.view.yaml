@@ -26,8 +26,9 @@ dimensions:
       monetary scores
 
   rfm_segment:
-    #This description was pulled from dbt.
-    description: RFM segment classification based on RFM scores
+    sql: rfm_segment
+    label: RFM Segment
+    description: Segmentation based on Recency, Frequency, and Monetary scores
 
   user_id:
     format: ID
@@ -36,6 +37,8 @@ dimensions:
 
 measures:
   count:
+    label: Dim User RFM Count
+    format: BIGNUMBER_0
     aggregate_type: count
 
 #The info below was pulled from your dbt repository and is read-only.

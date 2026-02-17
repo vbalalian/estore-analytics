@@ -89,9 +89,8 @@ dimensions:
       150-600 sec and 3-10 events; High: >600 sec or >10 events"
 
   user_purchase_history_group:
-    sql: CASE WHEN ${dim_users.purchase_count} = 0 THEN 'Non-Customer' WHEN
-      ${dim_users.purchase_count} BETWEEN 1 AND 5 THEN 'Repeat Customer' ELSE
-      'Loyal Customer' END
+    sql: CASE WHEN purchase_count = 0 THEN 'Non-Customer' WHEN purchase_count
+      BETWEEN 1 AND 5 THEN 'Repeat Customer' ELSE 'Loyal Customer' END
     description: "Groups users by their historical purchase count at the time of the
       session. Non-customers: 0 purchases; Repeat: 1-5 purchases; Loyal: 6+
       purchases"
