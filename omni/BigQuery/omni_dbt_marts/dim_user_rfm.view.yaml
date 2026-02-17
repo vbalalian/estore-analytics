@@ -1,11 +1,18 @@
-# Reference this view as dim_user_rfm
+# Reference this view as omni_dbt_marts__dim_user_rfm
+schema_label: ""
 #This description was pulled from dbt.
 description: |
   RFM segmentation dimension. Contains only RFM-specific scores and segments. Join to dim_users on user_id for lifecycle metrics (revenue, purchase history, etc.).
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: dim_user_rfm
 
 dimensions:
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Foreign key to dim_users
+
   recency_score:
     #This description was pulled from dbt.
     description: Recency score of the user
@@ -26,11 +33,6 @@ dimensions:
   rfm_segment:
     #This description was pulled from dbt.
     description: RFM segment classification based on RFM scores
-
-  user_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Foreign key to dim_users
 
 measures:
   count:

@@ -1,8 +1,10 @@
-# Reference this view as metrics_rfm_segments
+# Reference this view as omni_dbt_marts__metrics_rfm_segments
+schema_label: ""
 #This description was pulled from dbt.
 description: RFM Segments for Customer Segmentation
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: metrics_rfm_segments
 
 dimensions:
   avg_session_count: {}

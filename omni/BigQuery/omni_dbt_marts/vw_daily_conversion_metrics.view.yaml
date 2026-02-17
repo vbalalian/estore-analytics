@@ -1,9 +1,11 @@
-# Reference this view as vw_daily_conversion_metrics
+# Reference this view as omni_dbt_marts__vw_daily_conversion_metrics
+schema_label: ""
 #This description was pulled from dbt.
 description: Daily conversion funnel metrics filtered from
   metrics_conversion_rates. Provides a simplified view for Tableau dashboards.
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: vw_daily_conversion_metrics
 
 dimensions:
   metric_date:

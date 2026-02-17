@@ -1,0 +1,168 @@
+# Reference this view as omni_dbt_staging__stg_events
+schema_label: ""
+#This description was pulled from dbt.
+description: |
+  Staging model for raw eCommerce events. Cleans and standardizes event fields from the raw events source.
+
+schema: omni_dbt_staging
+table_name: stg_events
+
+dimensions:
+  event_time:
+    #This description was pulled from dbt.
+    description: Timestamp of the event
+
+  event_type:
+    #This description was pulled from dbt.
+    description: Type of event (view, cart, purchase, etc.)
+    all_values: [ view, cart, purchase ]
+
+  product_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Unique identifier for the product (string-cast from raw integer)
+
+  category_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Unique identifier for the product category (string-cast from raw integer)
+
+  category_code:
+    #This description was pulled from dbt.
+    description: Hierarchical category code (e.g. electronics.smartphone)
+
+  brand:
+    #This description was pulled from dbt.
+    description: Brand of the product
+
+  price:
+    #This description was pulled from dbt.
+    description: Price of the product at the time of event
+
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Unique identifier for the user (string-cast from raw integer)
+
+  user_session:
+    #This description was pulled from dbt.
+    description: Session identifier for grouping related events
+
+  event_date:
+    #This description was pulled from dbt.
+    description: Date portion of event_time (for partitioning/aggregations)
+
+measures:
+  count:
+    aggregate_type: count
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: stg_events
+  target_schema: estore
+  description: |
+    Staging model for raw eCommerce events. Cleans and standardizes event fields from the raw events source.
+  config:
+    schema: staging
+    materialized: view
+  code: |-
+    with
+
+    source_raw as (
+
+        select * from {{ source('estore_raw', 'events') }}
+
+    ),
+
+    deduped as (
+
+        select
+
+            event_time,
+            event_type,
+            product_id,
+            category_id,
+            category_code,
+            brand,
+            price,
+            user_id,
+            user_session
+
+        from source_raw
+
+        qualify row_number() over (
+
+            partition by
+                event_time,
+                event_type,
+                product_id,
+                user_id,
+                user_session
+            order by event_time
+
+        ) = 1
+
+    ),
+
+    transformed as (
+
+        select
+
+            event_time,
+            event_type,
+            cast(product_id as string) as product_id,
+            cast(category_id as string) as category_id,
+            price,
+            cast(user_id as string) as user_id,
+            user_session,
+            lower(category_code) as category_code,
+            lower(brand) as brand
+
+        from deduped
+
+    ),
+
+    -- filter out products associated with multiple brands as likely data errors 
+
+    multi_brand_product_ids as (
+
+        select product_id
+
+        from transformed
+
+        where brand is not null
+
+        group by product_id
+        having count(distinct brand) > 1
+
+    ),
+
+    final as (
+
+        select
+
+            event_time,
+            event_type,
+            product_id,
+            category_id,
+            category_code,
+            brand,
+            price,
+            user_id,
+            user_session,
+            cast(event_time as date) as event_date
+
+        from transformed
+
+        where
+            product_id not in (
+                select multi_brand_product_ids.product_id
+                from multi_brand_product_ids
+            )
+            and product_id is not null
+            and user_session is not null
+
+    )
+
+    select * from final
+  referenced_by: [ fct_events ]

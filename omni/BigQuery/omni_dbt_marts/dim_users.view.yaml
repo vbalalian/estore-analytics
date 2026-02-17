@@ -1,11 +1,18 @@
-# Reference this view as dim_users
+# Reference this view as omni_dbt_marts__dim_users
+schema_label: ""
 #This description was pulled from dbt.
 description: |
   Dimension table for users. Extracted from staging events data.
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: dim_users
 
 dimensions:
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Unique identifier for the user
+
   first_event_time:
     #This description was pulled from dbt.
     description: Timestamp of the user's first interaction with the platform
@@ -95,11 +102,6 @@ dimensions:
       'missing_sessions' if session_count is 0. 'anomalous_session_ratio' if
       events-per-session exceeds session_outlier_ratio var.
     sample_values: [ missing_sessions, anomalous_session_ratio ]
-
-  user_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Unique identifier for the user
 
 measures:
   count:

@@ -1,8 +1,10 @@
-# Reference this view as metrics_conversion_rates
+# Reference this view as omni_dbt_marts__metrics_conversion_rates
+schema_label: ""
 #This description was pulled from dbt.
 description: A table containing daily and overall session conversion rates.
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: metrics_conversion_rates
 
 dimensions:
   metric_level:

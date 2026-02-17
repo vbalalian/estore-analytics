@@ -1,9 +1,11 @@
-# Reference this view as fct_events
+# Reference this view as omni_dbt_marts__fct_events
+schema_label: ""
 #This description was pulled from dbt.
 description: |
   Fact table for user events. Extracted from staging events data.
 
-schema: estore_marts
+schema: omni_dbt_marts
+table_name: fct_events
 
 dimensions:
   event_time:
@@ -18,9 +20,19 @@ dimensions:
     #This description was pulled from dbt.
     description: Type of the event (e.g., view, click, purchase)
 
+  user_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Identifier for the user who generated the event
+
   user_session:
     #This description was pulled from dbt.
     description: Identifier for the session during which the event occurred
+
+  product_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Identifier for the product associated with the event (if applicable)
 
   brand:
     #This description was pulled from dbt.
@@ -29,6 +41,11 @@ dimensions:
   category_code:
     #This description was pulled from dbt.
     description: Category code associated with the product (if applicable)
+
+  category_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Category id associated with the product (if applicable)
 
   price:
     #This description was pulled from dbt.
@@ -56,21 +73,6 @@ dimensions:
     #This description was pulled from dbt.
     description: Revenue generated from the event (price * quantity for purchase
       events, 0 otherwise)
-
-  user_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Identifier for the user who generated the event
-
-  product_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Identifier for the product associated with the event (if applicable)
-
-  category_id:
-    format: ID
-    #This description was pulled from dbt.
-    description: Category id associated with the product (if applicable)
 
   event_id:
     format: ID
