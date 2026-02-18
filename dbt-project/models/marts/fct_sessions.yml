@@ -41,7 +41,8 @@ models:
               expression: ">= session_start_time"
 
       - name: event_count
-        description: "Total number of events in the session"
+        description: Total number of events (page views, cart additions, purchases) that occurred during
+          the session
         tests:
           - not_null
 
@@ -60,12 +61,13 @@ models:
         description: "Total number of view events during the session"
 
       - name: total_revenue
-        description: "Total revenue generated from purchase events during the session"
+        description: Revenue generated in the session. NULL for non-purchasing sessions (expected behavior).
+          For purchasing sessions, represents the transaction value
         tests:
           - assert_non_negative
 
       - name: session_length
-        description: "Duration of the session in seconds (end - start)"
+        description: Duration of the session in seconds
         tests:
           - assert_non_negative
 
@@ -79,8 +81,24 @@ models:
         description: "Indicator (1/0) if the session included at least one purchase event"
 
       - name: funnel_stage
-        description: "Furthest stage reached in the purchase funnel during the session"
+        description: 'Indicates the furthest stage reached in the conversion funnel during the session.
+          Values: ''view'' (product viewed), ''cart'' (item added to cart), ''purchase'' (transaction
+          completed), or NULL for sessions that didn''t reach any stage'
         tests:
           - accepted_values:
               arguments:
                 values: ['purchase', 'cart', 'view', 'no_activity']
+
+      - name: is_converting_session
+        description: 'Binary indicator: 1 if the session resulted in at least one purchase,
+          0 otherwise'
+      - name: session_length_bucket
+        description: 'Categorizes sessions by duration into buckets: Very Short (0-60s),
+          Short (61-300s), Medium (301-600s), Long (600+s)'
+      - name: session_quality_tier
+        description: 'Categorizes sessions into quality tiers based on engagement (session
+          length + event count). Low: <150 sec or <3 events; Medium: 150-600 sec and 3-10
+          events; High: >600 sec or >10 events'
+      - name: user_purchase_history_group
+        description: 'Groups users by their historical purchase count at the time of the
+          session. Non-customers: 0 purchases; Repeat: 1-5 purchases; Loyal: 6+ purchases'

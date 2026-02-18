@@ -42,7 +42,7 @@ models:
         data_type: string
         constraints:
           - type: not_null
-        description: "Type of the event (e.g., view, click, purchase)"
+        description: Type of the event (e.g., view, cart, purchase)
         tests:
           - not_null
 
@@ -58,7 +58,7 @@ models:
         data_type: string
         constraints:
           - type: not_null
-        description: "Identifier for the session during which the event occurred"
+        description: Original identifier for the session during which the event occurred
         tests:
           - not_null
 

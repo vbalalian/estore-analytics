@@ -46,7 +46,7 @@ models:
         tests:
           - not_null
       - name: rfm_segment
-        description: "RFM segment classification based on RFM scores"
+        description: Segmentation based on Recency, Frequency, and Monetary scores
         data_type: string
         constraints:
           - type: not_null
