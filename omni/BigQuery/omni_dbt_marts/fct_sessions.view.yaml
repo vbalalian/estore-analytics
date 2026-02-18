@@ -63,8 +63,8 @@ dimensions:
   funnel_stage:
     description: "Indicates the furthest stage reached in the conversion funnel
       during the session. Values: 'view' (product viewed), 'cart' (item added to
-      cart), 'purchase' (transaction completed), or NULL for sessions that
-      didn't reach any stage"
+      cart), 'purchase' (transaction completed), or 'no_activity' for sessions
+      that didn't reach any stage"
     all_values: [ purchase, cart, view, no_activity ]
 
   session_id:
