@@ -40,7 +40,6 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 - **Infrastructure**: Google Cloud Platform - seamless BigQuery integration, cost-effective compute
 - **Infrastructure as Code**: Terraform - declarative, reproducible infrastructure with state management
 - **CI/CD**: GitHub Actions - native repo integration, matrix builds for parallel testing
-- **Visualization**: Tableau - handles large datasets, flexible for both operational and strategic dashboards
 
 ## Data Models
 
