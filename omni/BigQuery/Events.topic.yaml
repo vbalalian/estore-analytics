@@ -2,5 +2,6 @@ base_view: omni_dbt_marts__fct_events
 label: Events
 
 joins:
-  omni_dbt_marts__dim_users: {}
+  omni_dbt_marts__dim_users:
+    omni_dbt_marts__dim_user_rfm: {}
   omni_dbt_marts__dim_products: {}

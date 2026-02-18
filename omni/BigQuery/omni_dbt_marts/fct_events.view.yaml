@@ -121,12 +121,18 @@ measures:
     format: BIGNUMBER_0
     description: Total add-to-cart events
     aggregate_type: count
+    filters:
+      is_cart_add:
+        is: 1
 
   view_count:
     label: View Count
     format: BIGNUMBER_0
     description: Total view events
     aggregate_type: count
+    filters:
+      is_view:
+        is: 1
 
   unique_users:
     sql: ${omni_dbt_marts__fct_events.user_id}
