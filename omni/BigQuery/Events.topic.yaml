@@ -1,0 +1,3 @@
+base_view: omni_dbt_marts__fct_events
+
+joins: {}
