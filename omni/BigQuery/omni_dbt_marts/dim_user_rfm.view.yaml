@@ -28,6 +28,7 @@ dimensions:
   rfm_segment:
     sql: rfm_segment
     label: RFM Segment
+    #This description was pulled from dbt.
     description: Segmentation based on Recency, Frequency, and Monetary scores
 
   user_id:

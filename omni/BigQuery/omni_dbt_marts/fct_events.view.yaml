@@ -17,10 +17,12 @@ dimensions:
     description: Date when the event occurred
 
   event_type:
+    #This description was pulled from dbt.
     description: Type of the event (e.g., view, cart, purchase)
     all_values: [ view, cart, purchase ]
 
   user_session:
+    #This description was pulled from dbt.
     description: Original identifier for the session during which the event occurred
 
   brand:

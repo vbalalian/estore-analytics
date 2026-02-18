@@ -49,15 +49,18 @@ dimensions:
     description: Indicator (1/0) if the session included at least one purchase event
 
   event_count:
+    #This description was pulled from dbt.
     description: Total number of events (page views, cart additions, purchases) that
       occurred during the session
 
   total_revenue:
+    #This description was pulled from dbt.
     description: Revenue generated in the session. NULL for non-purchasing sessions
       (expected behavior). For purchasing sessions, represents the transaction
       value
 
   session_length:
+    #This description was pulled from dbt.
     description: Duration of the session in seconds
 
   funnel_stage:
