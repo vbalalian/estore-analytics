@@ -96,6 +96,7 @@ dimensions:
       2 AND 5 THEN 'Repeat Customer' ELSE 'Loyal Customer' END
     label: Customer Lifecycle Stage
     description: Lifecycle stage based on purchase count
+    all_values: [ Prospect, First-Time Buyer, Repeat Customer, Loyal Customer ]
 
 measures:
   count:
@@ -147,7 +148,6 @@ measures:
     aggregate_type: average
 
   churned_user_count:
-    sql: ${omni_dbt_marts__dim_users.is_churned}
     label: Churned Users
     format: BIGNUMBER_0
     description: Count of churned users
