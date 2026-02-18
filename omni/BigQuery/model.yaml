@@ -1,1 +1,1 @@
-{}
+included_schemas: [ omni_dbt_marts, omni_dbt_snapshots ]
