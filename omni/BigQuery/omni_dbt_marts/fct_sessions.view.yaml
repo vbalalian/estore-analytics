@@ -117,6 +117,29 @@ measures:
   count:
     aggregate_type: count
 
+  total_events:
+    sql: ${omni_dbt_marts__fct_sessions.event_count}
+    label: Total Events
+    aggregate_type: sum
+
+  sessions_reached_view:
+    sql: ${omni_dbt_marts__fct_sessions.reached_view}
+    label: Sessions Reached View
+    description: Count of sessions that included at least one product view
+    aggregate_type: sum
+
+  sessions_reached_cart:
+    sql: ${omni_dbt_marts__fct_sessions.reached_cart}
+    label: Sessions Reached Cart
+    description: Count of sessions that included at least one add-to-cart event
+    aggregate_type: sum
+
+  sessions_reached_purchase:
+    sql: ${omni_dbt_marts__fct_sessions.reached_purchase}
+    label: Sessions Reached Purchase
+    description: Count of sessions that included at least one purchase
+    aggregate_type: sum
+
   conversion_rate:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.purchase_count} > 0 THEN 1
       ELSE 0 END) * 100.0 / COUNT(*)
