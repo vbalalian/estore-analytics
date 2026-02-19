@@ -170,6 +170,11 @@ measures:
     format: BIG
     aggregate_type: sum
 
+  avg_purchase_count:
+    sql: ${omni_dbt_marts__dim_users.purchase_count}
+    label: Avg Purchase Count
+    aggregate_type: average
+
   avg_ltv:
     sql: ${omni_dbt_marts__dim_users.customer_ltv}
     label: Avg LTV
