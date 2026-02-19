@@ -97,14 +97,6 @@ dimensions:
       (session length + event count). Low: <150 sec or <3 events; Medium:
       150-600 sec and 3-10 events; High: >600 sec or >10 events"
 
-  user_purchase_history_group:
-    sql: CASE WHEN ${omni_dbt_marts__dim_users.purchase_count} = 0 THEN
-      'Non-Customer' WHEN ${omni_dbt_marts__dim_users.purchase_count} BETWEEN
-      ASYMMETRIC 1 AND 5 THEN 'Repeat Customer' ELSE 'Loyal Customer' END
-    description: "Groups users by their historical purchase count at the time of the
-      session. Non-customers: 0 purchases; Repeat: 1-5 purchases; Loyal: 6+
-      purchases"
-
   session_length_bucket:
     sql: CASE WHEN ${omni_dbt_marts__fct_sessions.session_length} <= 60 THEN 'Very
       Short (0-60s)' WHEN ${omni_dbt_marts__fct_sessions.session_length} <= 300
@@ -142,8 +134,9 @@ measures:
 
   conversion_rate:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.purchase_count} > 0 THEN 1
-      ELSE 0 END) * 100.0 / COUNT(*)
-    label: Conversion Rate (%)
+      ELSE 0 END) / COUNT(*)
+    label: Conversion Rate
+    format: PERCENT
     description: Percentage of sessions that resulted in at least one purchase.
       Calculated as (sessions with purchases / total sessions) * 100
 
@@ -154,18 +147,20 @@ measures:
 
   view_to_cart_rate:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.reached_cart} > 0 THEN 1 ELSE
-      0 END) * 100.0 / NULLIF(SUM(CASE WHEN
-      ${omni_dbt_marts__fct_sessions.reached_view} > 0 THEN 1 ELSE 0 END), 0)
-    label: View to Cart Rate (%)
+      0 END) / NULLIF(SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.reached_view}
+      > 0 THEN 1 ELSE 0 END), 0)
+    label: View to Cart Rate
+    format: PERCENT
     description: Percentage of sessions that reached the view stage and proceeded to
       add items to cart. Calculated as (sessions reached cart / sessions reached
       view) * 100
 
   cart_to_purchase_rate:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.reached_purchase} > 0 THEN 1
-      ELSE 0 END) * 100.0 / NULLIF(SUM(CASE WHEN
+      ELSE 0 END) / NULLIF(SUM(CASE WHEN
       ${omni_dbt_marts__fct_sessions.reached_cart} > 0 THEN 1 ELSE 0 END), 0)
-    label: Cart to Purchase Rate (%)
+    label: Cart to Purchase Rate
+    format: PERCENT
     description: Percentage of sessions that reached the cart stage and completed a
       purchase. Calculated as (sessions reached purchase / sessions reached
       cart) * 100

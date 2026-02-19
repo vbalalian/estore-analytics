@@ -116,6 +116,25 @@ dimensions:
     description: Lifecycle stage based on purchase count
     all_values: [ Prospect, First-Time Buyer, Repeat Customer, Loyal Customer ]
 
+  rfm_segment_inclusive:
+    sql: COALESCE(${omni_dbt_marts__dim_user_rfm.rfm_segment}, 'No RFM Score')
+    label: RFM Segment (Inclusive)
+    description: |
+      RFM segment for purchasers, 'No RFM Score' for users with no purchase history. Uses COALESCE on the dim_user_rfm join (which filters to purchase_count > 0).
+    all_values:
+      [
+        Champions,
+        Loyal Customers,
+        Potential Loyalists,
+        Recent Customers,
+        Promising,
+        Needs Attention,
+        About To Sleep,
+        At Risk,
+        Lost,
+        No RFM Score
+      ]
+
 measures:
   count:
     aggregate_type: count
