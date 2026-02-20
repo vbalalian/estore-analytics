@@ -175,6 +175,11 @@ measures:
     label: Avg Purchase Count
     aggregate_type: average
 
+  avg_session_count:
+    sql: ${omni_dbt_marts__dim_users.session_count}
+    label: Avg Session Count
+    aggregate_type: average
+
   avg_ltv:
     sql: ${omni_dbt_marts__dim_users.customer_ltv}
     label: Avg LTV
