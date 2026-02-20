@@ -111,7 +111,7 @@ measures:
 
   purchase_count:
     label: Purchase Count
-    format: BIGNUMBER_0
+    format: BIG
     description: Total purchase events
     aggregate_type: count
     filters:
@@ -165,6 +165,12 @@ measures:
     label: Cart Add Rate (%)
     format: PERCENT
     description: Percentage of events that are cart additions
+
+  avg_events_per_session:
+    sql: CASE WHEN ${omni_dbt_marts__fct_events.unique_sessions} = 0 THEN NULL ELSE
+      COALESCE(${omni_dbt_marts__fct_events.view_count}, 0) /
+      ${omni_dbt_marts__fct_events.unique_sessions} END
+    label: Avg Views per Session
 
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
