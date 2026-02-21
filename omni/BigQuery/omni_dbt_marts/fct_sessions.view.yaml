@@ -319,4 +319,4 @@ dbt:
     )
 
     select * from cleaned_sessions
-  referenced_by: [ dim_users, metrics_conversion_rates ]
+  referenced_by: [ dim_users ]

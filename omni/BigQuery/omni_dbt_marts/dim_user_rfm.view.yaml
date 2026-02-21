@@ -180,4 +180,4 @@ dbt:
     )
 
     select * from final_users_rfm
-  referenced_by: [ snap_user_rfm, metrics_rfm_segments ]
+  referenced_by: [ snap_user_rfm ]
