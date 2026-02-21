@@ -1,0 +1,48 @@
+version: 2
+
+exposures:
+
+  - name: conversion_funnel_workbook
+    label: "Conversion Funnel by Customer Segment"
+    type: analysis
+    maturity: medium
+    description: >
+      Omni workbook analyzing session-level conversion rates across customer segments,
+      RFM groups, and session quality tiers. Built on the Sessions topic.
+    depends_on:
+      - ref('fct_sessions')
+      - ref('dim_users')
+      - ref('dim_user_rfm')
+    owner:
+      name: Vincent Balalian
+      email: vbalalian@gmail.com
+
+  - name: customer_segmentation_workbook
+    label: "Customer Segmentation Deep Dive"
+    type: analysis
+    maturity: medium
+    description: >
+      Omni workbook exploring RFM segments, lifecycle stages, churn indicators,
+      and LTV distributions. Built on the Customers topic.
+    depends_on:
+      - ref('dim_users')
+      - ref('dim_user_rfm')
+    owner:
+      name: Vincent Balalian
+      email: vbalalian@gmail.com
+
+  - name: product_category_performance_workbook
+    label: "Product Category Performance"
+    type: analysis
+    maturity: medium
+    description: >
+      Omni workbook analyzing revenue, purchase volume, and engagement
+      by product category and brand. Built on the Events topic.
+    depends_on:
+      - ref('fct_events')
+      - ref('dim_products')
+      - ref('dim_users')
+      - ref('dim_user_rfm')
+    owner:
+      name: Vincent Balalian
+      email: vbalalian@gmail.com
