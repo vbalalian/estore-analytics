@@ -11,15 +11,14 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 ![Raw Events Snippet](/analysis/images/screenshots/estore-raw-events-snippet.png)
 
-* A production-style data pipeline that processes 400M+ e-commerce events to generate customer analytics and business insights.
-* Built using modern data engineering tools (dbt, Dagster, BigQuery) to demonstrate scalable analytics infrastructure and best practices.
-* The pipeline automates data ingestion, transformation, and metric calculation for customer segmentation (RFM analysis), conversion funnel tracking, churn identification, and other KPIs.
+A production-style data pipeline that processes 400M+ e-commerce events to generate customer analytics and business insights. Built using modern data engineering tools (dbt, Dagster, BigQuery) with an Omni Analytics semantic layer for interactive analysis.
 
 ## Contents
 - [Pipeline Architecture](#pipeline-architecture)
 - [Key Findings](#key-findings)
 - [Tech Stack](#tech-stack)
 - [Data Models](#data-models)
+- [Semantic Layer](#semantic-layer)
 - [Getting Started](#getting-started)
 - [Documentation](#documentation)
 
@@ -29,41 +28,47 @@ Marketing analytics for a large [eCommerce events dataset](https://www.kaggle.co
 
 ## Key Findings
 
-- **RFM Segmentation**: Champions (12% of customers) generate 3x higher revenue ($3,333 avg); 135K high-value "At Risk" customers identified for retention campaigns
-- **Churn**: 88% of early customers did not make a repeat purchase within 90 days
-- **Conversion Funnel**: 6.1% view-to-purchase rate; 88% drop-off before cart, 49% cart abandonment
+- **RFM Segmentation**: Champions (12% of customers) generate ~40% of revenue ($830M). 135K high-value "At Risk" customers identified for retention, with $330M in revenue at stake.
+- **Conversion Funnel**: 5.92% overall conversion rate. 88% drop-off before cart, ~50% cart abandonment. Returning customers convert at 4x the rate of first-time buyers.
+- **Churn**: At Risk segment shows 78% churn rate despite averaging 21.7 sessions per customer, indicating high prior engagement. Needs Attention customers have the highest AOV ($564.71), making them the most cost-effective retention target.
+- **Category Performance**: Construction dominates revenue ($1.33B) and conversion (2.78%), but has the largest cart abandonment gap (7.05% add rate vs 2.78% purchase rate), representing significant recoverable revenue.
 
 ## Tech Stack
-- **Data Warehouse**: BigQuery - serverless, scales to petabytes, native partitioning/clustering
-- **Transformation**: dbt Core - version-controlled SQL, built-in testing, lineage tracking
-- **Orchestration**: Dagster - asset-based paradigm, first-class dbt integration, superior observability
-- **Infrastructure**: Google Cloud Platform - seamless BigQuery integration, cost-effective compute
-- **Infrastructure as Code**: Terraform - declarative, reproducible infrastructure with state management
-- **CI/CD**: GitHub Actions - native repo integration, matrix builds for parallel testing
+- **Data Warehouse**: BigQuery, serverless, native partitioning/clustering
+- **Transformation**: dbt Core, version-controlled SQL, built-in testing, lineage tracking
+- **Orchestration**: Dagster, asset-based paradigm, first-class dbt integration
+- **BI Layer**: Omni Analytics, semantic modeling with bi-directional dbt integration, custom measures/dimensions in YAML
+- **Infrastructure**: Google Cloud Platform, Terraform for IaC
+- **CI/CD**: GitHub Actions with slim CI (state-based dbt builds), automated rollback, Omni schema refresh on deploy
 
 ## Data Models
 
 **Staging Layer**
-- `stg_events` - Cleaned event data
+- `stg_events` - Deduplicated, cleaned event data with multi-brand product filtering
 
 **Dimension Tables**
-- `dim_users` - User-level metrics (LTV, churn status, purchase history)
+- `dim_users` - User-level metrics (LTV, churn status, activity classification, purchase history)
 - `dim_products` - Product attributes and category hierarchy
-- `dim_categories` - Category taxonomy
-- `dim_user_rfm` - RFM scores and customer segments
+- `dim_user_rfm` - RFM scores and customer segments (9 segments)
 
 **Fact Tables**
-- `fct_events` - Event-level facts with purchase/cart/view flags
-- `fct_sessions` - Session-level aggregations with conversion funnel
-
-**Metrics**
-- `metrics_conversion_rates` - Daily/overall conversion metrics
-- `metrics_churn` - Churn rates by cohort
-- `metrics_rfm_segments` - Aggregated segment-level metrics
+- `fct_events` - Event-level facts with purchase/cart/view flags (incremental, partitioned by day)
+- `fct_sessions` - Session-level aggregations with 1-hour timeout splitting and conversion funnel stage
 
 **Snapshots (SCD Type 2)**
 - `snap_user_rfm` - Tracks changes to RFM segments over time
 - `snap_user_status` - Tracks changes to user activity/churn status
+
+## Semantic Layer
+
+The Omni Analytics semantic layer ([`omni/`](/omni/BigQuery/)) extends the dbt models with:
+
+- **3 topics**: Sessions, Customers, Events, each with pre-configured join paths
+- **Custom dimensions**: `rfm_segment_inclusive` (COALESCE to include non-purchasers), `session_quality_tier`, `customer_lifecycle_stage`, `session_length_bucket`
+- **Custom measures**: Conversion rates (view-to-cart, cart-to-purchase), churn rate, purchaser rate, revenue per session, avg LTV
+- **Bi-directional dbt sync**: Descriptions and metadata flow between dbt YAML and Omni on schema refresh (triggered automatically in CD pipeline)
+
+See [Analysis & Visualizations](analysis/README.md) for workbook screenshots and detailed findings.
 
 ## Lineage Graph
 
@@ -118,6 +123,6 @@ cp profiles.yml.example profiles.yml
 
 ## Documentation
 
-- [Analysis & Visualizations](analysis/README.md) - Dashboard screenshots and detailed insights
+- [Analysis & Visualizations](analysis/README.md) - Omni workbook screenshots and detailed insights
 - [Orchestration](docs/orchestration.md) - Dagster sensors, jobs, and scheduling patterns
 - **dbt Docs** - Run `cd dbt-project && dbt docs generate && dbt docs serve` to view model documentation and lineage locally
