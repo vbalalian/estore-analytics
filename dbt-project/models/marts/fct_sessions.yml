@@ -89,16 +89,23 @@ models:
               arguments:
                 values: ['purchase', 'cart', 'view', 'no_activity']
 
+      # Omni semantic layer dimensions (computed at query time, not physical columns)
+      # Pushed from Omni via bi-directional dbt integration
+
       - name: is_converting_session
-        description: 'Binary indicator: 1 if the session resulted in at least one purchase,
-          0 otherwise'
+        description: 'Binary indicator: 1 if the session resulted in at least one purchase, 0 otherwise'
+
       - name: session_length_bucket
-        description: 'Categorizes sessions by duration into buckets: Very Short (0-60s),
-          Short (61-300s), Medium (301-600s), Long (600+s)'
+        description: >
+          Categorizes sessions by duration.
+          Very Short (0-60s), Short (61-300s), Medium (301-600s), Long (600+s)
+
       - name: session_quality_tier
-        description: 'Categorizes sessions into quality tiers based on engagement (session
-          length + event count). Low: <150 sec or <3 events; Medium: 150-600 sec and 3-10
-          events; High: >600 sec or >10 events'
+        description: >
+          Engagement-based quality tier.
+          Low: <150 sec or <3 events. Medium: 150-600 sec and 3-10 events. High: >600 sec or >10 events
+
       - name: user_purchase_history_group
-        description: 'Groups users by their historical purchase count at the time of the
-          session. Non-customers: 0 purchases; Repeat: 1-5 purchases; Loyal: 6+ purchases'
+        description: >
+          Groups users by historical purchase count.
+          Non-customers (0), Repeat (1-5), Loyal (6+)
