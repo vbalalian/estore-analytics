@@ -19,6 +19,7 @@ dimensions:
   session_end_time:
     #This description was pulled from dbt.
     description: Timestamp of the last event in the session
+    hidden: true
 
   unique_product_count:
     #This description was pulled from dbt.
@@ -27,37 +28,45 @@ dimensions:
   cart_additions:
     #This description was pulled from dbt.
     description: Total number of add-to-cart events during the session
+    hidden: true
 
   purchase_count:
     #This description was pulled from dbt.
     description: Total number of purchase events during the session
+    hidden: true
 
   view_count:
     #This description was pulled from dbt.
     description: Total number of view events during the session
+    hidden: true
 
   reached_view:
     #This description was pulled from dbt.
     description: Indicator (1/0) if the session included at least one view event
+    hidden: true
 
   reached_cart:
     #This description was pulled from dbt.
     description: Indicator (1/0) if the session included at least one add-to-cart event
+    hidden: true
 
   reached_purchase:
     #This description was pulled from dbt.
     description: Indicator (1/0) if the session included at least one purchase event
+    hidden: true
 
   event_count:
     #This description was pulled from dbt.
     description: Total number of events (page views, cart additions, purchases) that
       occurred during the session
+    hidden: true
 
   total_revenue:
     #This description was pulled from dbt.
     description: Revenue generated in the session. NULL for non-purchasing sessions
       (expected behavior). For purchasing sessions, represents the transaction
       value
+    hidden: true
 
   session_length:
     #This description was pulled from dbt.
@@ -75,11 +84,13 @@ dimensions:
     #This description was pulled from dbt.
     description: |
       Cleaned session identifier. Original session ID if no timeout occurred, or original_id + '_timeout_' + occurrence_number for split sessions.
+    hidden: true
 
   user_id:
     format: ID
     #This description was pulled from dbt.
     description: Identifier for the user who initiated the session
+    hidden: true
 
   is_converting_session:
     sql: CASE WHEN ${omni_dbt_marts__fct_sessions.purchase_count} > 0 THEN 1 ELSE 0
@@ -107,6 +118,7 @@ dimensions:
 
 measures:
   count:
+    label: Session Count
     aggregate_type: count
 
   total_events:
@@ -138,7 +150,7 @@ measures:
     label: Conversion Rate
     format: PERCENT
     description: Percentage of sessions that resulted in at least one purchase.
-      Calculated as (sessions with purchases / total sessions) * 100
+      Calculated as (sessions with purchases / total sessions)
 
   revenue_per_session:
     sql: SUM(${omni_dbt_marts__fct_sessions.total_revenue}) / COUNT(*)
@@ -153,7 +165,7 @@ measures:
     format: PERCENT
     description: Percentage of sessions that reached the view stage and proceeded to
       add items to cart. Calculated as (sessions reached cart / sessions reached
-      view) * 100
+      view)
 
   cart_to_purchase_rate:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.reached_purchase} > 0 THEN 1
@@ -163,7 +175,7 @@ measures:
     format: PERCENT
     description: Percentage of sessions that reached the cart stage and completed a
       purchase. Calculated as (sessions reached purchase / sessions reached
-      cart) * 100
+      cart)
 
   avg_revenue_per_purchasing_session:
     sql: SUM(CASE WHEN ${omni_dbt_marts__fct_sessions.purchase_count} > 0 THEN

@@ -21,6 +21,7 @@ dimensions:
     description: Monetary score of the user
 
   rfm_score:
+    label: RFM Score
     #This description was pulled from dbt.
     description: Total RFM score calculated as the sum of recency, frequency, and
       monetary scores
