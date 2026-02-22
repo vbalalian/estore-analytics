@@ -74,6 +74,10 @@ See [Analysis & Visualizations](analysis/README.md) for workbook screenshots and
 
 ![Dagster Asset Lineage Graph](/docs/diagrams/lineage.svg)
 
+## dbt Lineage (with BI layer exposures)
+
+![dbt Dag](/docs/diagrams/dbt-dag.png)
+
 ## Getting Started
 
 ### Prerequisites
