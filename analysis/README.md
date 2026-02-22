@@ -1,6 +1,6 @@
 # Analysis & Visualizations
 
-All visualizations built on [Omni Analytics](https://omni.co/), connected to the dbt semantic layer via bi-directional integration. Custom measures, dimensions, and RFM segmentation logic are defined in the Omni model YAML (see [`omni/`](/omni/BigQuery/)) and sync with dbt metadata on schema refresh.
+All visualizations built on [Omni Analytics](https://omni.co/) semantic layer with bi-directional dbt integration. Custom measures, dimensions, and RFM segmentation logic are defined in the Omni model YAML (see [`omni/`](/omni/BigQuery/)) and sync with dbt metadata on schema refresh.
 
 ## Conversion Funnel by Customer Segment
 
