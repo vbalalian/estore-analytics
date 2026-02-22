@@ -1,6 +1,65 @@
 base_view: omni_dbt_marts__fct_sessions
 label: Sessions
+description: Analyze user sessions with 1-hour inactivity timeout for a
+  multi-category online retailer. Includes session metrics and RFM customer
+  segmentation.
+
+fields:
+  [
+    all_views.*,
+    -omni_dbt_marts__fct_sessions.session_id,
+    -omni_dbt_marts__fct_sessions.user_id,
+    -omni_dbt_marts__dim_users.total_revenue,
+    -omni_dbt_marts__dim_users.sum_revenue,
+    -omni_dbt_marts__dim_users.total_sessions,
+    -omni_dbt_marts__dim_users.avg_order_value,
+    -omni_dbt_marts__dim_users.purchase_count,
+    -omni_dbt_marts__dim_users.last_event_date,
+    -omni_dbt_marts__dim_users.last_event_time,
+    -omni_dbt_marts__dim_users.last_purchase_date,
+    -omni_dbt_marts__dim_users.first_event_date,
+    -omni_dbt_marts__dim_users.first_event_time,
+    -omni_dbt_marts__dim_users.first_purchase_date,
+    -omni_dbt_marts__dim_users.days_since_last_purchase,
+    -omni_dbt_marts__dim_users.days_since_last_activity,
+    -omni_dbt_marts__dim_users.customer_lifespan_days,
+    -omni_dbt_marts__dim_user_rfm.frequency_score,
+    -omni_dbt_marts__dim_user_rfm.monetary_score,
+    -omni_dbt_marts__dim_user_rfm.recency_score,
+    -omni_dbt_marts__dim_user_rfm.rfm_score,
+    -omni_dbt_marts__dim_users.avg_ltv,
+    -omni_dbt_marts__dim_users.avg_aov,
+    -omni_dbt_marts__dim_users.churned_user_count,
+    -omni_dbt_marts__dim_users.churn_rate,
+    -omni_dbt_marts__dim_users.purchaser_count,
+    -omni_dbt_marts__dim_users.purchaser_rate,
+    -omni_dbt_marts__dim_users.total_events,
+    -omni_dbt_marts__dim_user_rfm.user_id,
+    -omni_dbt_marts__dim_users.total_purchases,
+    -omni_dbt_marts__dim_users.user_id,
+    -omni_dbt_marts__dim_users.is_churned,
+    -omni_dbt_marts__dim_users.avg_days_since_last_purchase,
+    -omni_dbt_marts__dim_users.avg_revenue_per_user,
+    -omni_dbt_marts__dim_users.avg_customer_lifespan,
+    -omni_dbt_marts__dim_users.customer_ltv,
+    -omni_dbt_marts__dim_users.event_count,
+    -omni_dbt_marts__dim_users.session_count,
+    -omni_dbt_marts__dim_users.avg_purchase_count,
+    -omni_dbt_marts__dim_users.avg_session_count,
+    -omni_dbt_marts__dim_user_rfm.count
+  ]
 
 joins:
   omni_dbt_marts__dim_users:
     omni_dbt_marts__dim_user_rfm: {}
+
+ai_context: Use this topic to analyze user behavior and engagement patterns
+  across sessions. Analyze session metrics like duration, event counts,
+  conversion rates, and user activity patterns. Join to dim_users to understand
+  user demographics and behavior, or to dim_user_rfm to segment sessions by
+  customer value (recency, frequency, monetary scores). Filter by session
+  attributes to identify high-value sessions, analyze drop-off points, or track
+  user journeys. Use time-based filters on session start/end times to identify
+  trends and patterns. When analyzing customer segments, join to dim_user_rfm
+  for RFM segments, then to dim_users for additional user attributes like
+  lifetime value.
