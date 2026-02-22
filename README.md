@@ -32,6 +32,9 @@ A production-style data pipeline that processes 400M+ e-commerce events to gener
 - **Conversion Funnel**: 5.92% overall conversion rate. 88% drop-off before cart, ~50% cart abandonment. Returning customers convert at 4x the rate of first-time buyers.
 - **Churn**: At Risk segment shows 78% churn rate despite averaging 21.7 sessions per customer, indicating high prior engagement. Needs Attention customers have the highest AOV ($564.71), making them the most cost-effective retention target.
 - **Category Performance**: Construction dominates revenue ($1.33B) and conversion (2.78%), but has the largest cart abandonment gap (7.05% add rate vs 2.78% purchase rate), representing significant recoverable revenue.
+---
+![Customer Segmentation Deep Dive](/analysis/images/omni/Customer_Segmentation_Deep_Dive.png)
+*Customer Segmentation workbook in Omni Analytics. See [full analysis](analysis/README.md) for all three workbooks.*
 
 ## Tech Stack
 - **Data Warehouse**: BigQuery, serverless, native partitioning/clustering
