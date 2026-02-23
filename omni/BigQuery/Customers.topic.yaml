@@ -11,8 +11,6 @@ fields:
     -omni_dbt_marts__dim_users.first_event_time,
     -omni_dbt_marts__dim_users.last_event_time,
     -omni_dbt_marts__dim_users.is_churned,
-    omni_dbt_marts__dim_users.customer_ltv,
-    omni_dbt_marts__dim_users.user_id,
     -omni_dbt_marts__dim_user_rfm.user_id,
     -omni_dbt_marts__dim_user_rfm.count
   ]
