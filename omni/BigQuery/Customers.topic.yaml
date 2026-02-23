@@ -1,5 +1,33 @@
 base_view: omni_dbt_marts__dim_users
 label: Customers
+description: Analyze customer lifecycle, purchasing behavior, and value
+  segmentation for a multi-category online retailer. Includes RFM scoring, churn
+  classification, and lifetime value metrics.
+
+fields:
+  [
+    all_views.*,
+    -omni_dbt_marts__dim_users.data_quality_flag,
+    -omni_dbt_marts__dim_users.first_event_time,
+    -omni_dbt_marts__dim_users.last_event_time,
+    -omni_dbt_marts__dim_users.is_churned,
+    omni_dbt_marts__dim_users.customer_ltv,
+    omni_dbt_marts__dim_users.user_id,
+    -omni_dbt_marts__dim_user_rfm.user_id,
+    -omni_dbt_marts__dim_user_rfm.count
+  ]
 
 joins:
   omni_dbt_marts__dim_user_rfm: {}
+
+ai_context: Use this topic to analyze individual customers and customer
+  segments. Includes lifecycle metrics (first/last activity, purchase history,
+  lifespan), value metrics (revenue, LTV, average order value), and behavioral
+  classification (activity status, churn, lifecycle stage). Join to dim_user_rfm
+  for RFM segmentation scores and segments. Use activity_status to filter by
+  churn state (active, declining, at_risk, churned, prospect). Use
+  customer_lifecycle_stage for purchase-count-based segmentation (Prospect,
+  First-Time Buyer, Repeat Customer, Loyal Customer). Use rfm_segment_inclusive
+  when you need RFM segments that include non-purchasers. For session-level or
+  event-level analysis, use the Sessions or Events topics instead. This topic is
+  user-grain, one row per customer.

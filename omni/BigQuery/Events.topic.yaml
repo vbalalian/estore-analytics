@@ -1,7 +1,66 @@
 base_view: omni_dbt_marts__fct_events
 label: Events
+description: Analyze individual e-commerce events (views, cart adds, purchases)
+  by product, category, brand, and customer segment for a multi-category online
+  retailer.
+
+fields:
+  [
+    all_views.*,
+    -omni_dbt_marts__dim_products.product_id,
+    -omni_dbt_marts__dim_products.count,
+    -omni_dbt_marts__dim_user_rfm.user_id,
+    -omni_dbt_marts__dim_user_rfm.count,
+    -omni_dbt_marts__dim_users.avg_order_value,
+    -omni_dbt_marts__dim_users.customer_lifespan_days,
+    -omni_dbt_marts__dim_users.data_quality_flag,
+    -omni_dbt_marts__dim_users.days_since_last_activity,
+    -omni_dbt_marts__dim_users.days_since_last_purchase,
+    -omni_dbt_marts__dim_users.event_count,
+    -omni_dbt_marts__dim_users.is_churned,
+    -omni_dbt_marts__dim_users.first_purchase_date,
+    -omni_dbt_marts__dim_users.first_event_time,
+    -omni_dbt_marts__dim_users.first_event_date,
+    -omni_dbt_marts__dim_users.last_event_date,
+    -omni_dbt_marts__dim_users.last_event_time,
+    -omni_dbt_marts__dim_users.last_purchase_date,
+    -omni_dbt_marts__dim_users.purchase_count,
+    -omni_dbt_marts__dim_users.session_count,
+    -omni_dbt_marts__dim_users.total_revenue,
+    omni_dbt_marts__dim_users.has_purchase_history,
+    -omni_dbt_marts__dim_users.avg_aov,
+    -omni_dbt_marts__dim_users.avg_customer_lifespan,
+    -omni_dbt_marts__dim_users.avg_days_since_last_purchase,
+    -omni_dbt_marts__dim_users.avg_ltv,
+    -omni_dbt_marts__dim_users.avg_purchase_count,
+    -omni_dbt_marts__dim_users.avg_revenue_per_user,
+    -omni_dbt_marts__dim_users.avg_session_count,
+    -omni_dbt_marts__dim_users.churn_rate,
+    -omni_dbt_marts__dim_users.churned_user_count,
+    -omni_dbt_marts__dim_users.count,
+    -omni_dbt_marts__dim_users.purchaser_rate,
+    -omni_dbt_marts__dim_users.purchaser_count,
+    -omni_dbt_marts__dim_users.total_events,
+    -omni_dbt_marts__dim_users.total_sessions,
+    -omni_dbt_marts__dim_users.sum_revenue,
+    -omni_dbt_marts__dim_users.total_purchases,
+    omni_dbt_marts__dim_users.user_id,
+    omni_dbt_marts__dim_users.customer_ltv
+  ]
 
 joins:
   omni_dbt_marts__dim_users:
     omni_dbt_marts__dim_user_rfm: {}
   omni_dbt_marts__dim_products: {}
+
+ai_context: Use this topic to analyze individual events at the most granular
+  level. Each row is one event (view, cart add, or purchase). Filter by
+  event_type or use the binary flags (is_view, is_cart_add, is_purchase) to
+  isolate event types. Includes revenue, price, and product attributes via
+  dim_products (brand, category hierarchy). Join to dim_users for customer
+  segmentation (activity_status, lifecycle_stage, rfm_segment_inclusive) to
+  analyze event patterns by customer type. Use purchase_rate and cart_add_rate
+  for event-level conversion metrics. For session-level analysis (funnel stages,
+  session quality, conversion rates), use the Sessions topic instead. For
+  user-level analysis (LTV, churn, purchase history), use the Customers topic
+  instead. This topic is event-grain, one row per event.
