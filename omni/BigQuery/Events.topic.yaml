@@ -27,7 +27,6 @@ fields:
     -omni_dbt_marts__dim_users.purchase_count,
     -omni_dbt_marts__dim_users.session_count,
     -omni_dbt_marts__dim_users.total_revenue,
-    omni_dbt_marts__dim_users.has_purchase_history,
     -omni_dbt_marts__dim_users.avg_aov,
     -omni_dbt_marts__dim_users.avg_customer_lifespan,
     -omni_dbt_marts__dim_users.avg_days_since_last_purchase,
@@ -43,9 +42,7 @@ fields:
     -omni_dbt_marts__dim_users.total_events,
     -omni_dbt_marts__dim_users.total_sessions,
     -omni_dbt_marts__dim_users.sum_revenue,
-    -omni_dbt_marts__dim_users.total_purchases,
-    omni_dbt_marts__dim_users.user_id,
-    omni_dbt_marts__dim_users.customer_ltv
+    -omni_dbt_marts__dim_users.total_purchases
   ]
 
 joins:
