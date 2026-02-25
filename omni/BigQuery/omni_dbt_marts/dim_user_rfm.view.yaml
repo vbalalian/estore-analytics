@@ -31,17 +31,59 @@ dimensions:
     label: RFM Segment
     #This description was pulled from dbt.
     description: Segmentation based on Recency, Frequency, and Monetary scores
+    all_values:
+      [
+        Champions,
+        Loyal Customers,
+        Potential Loyalists,
+        Recent Customers,
+        Promising,
+        Needs Attention,
+        About To Sleep,
+        At Risk,
+        Lost
+      ]
 
   user_id:
     format: ID
     #This description was pulled from dbt.
     description: Foreign key to dim_users
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     label: Dim User RFM Count
-    format: BIGNUMBER_0
+    hidden: true
     aggregate_type: count
+
+  avg_recency_score:
+    sql: ${omni_dbt_marts__dim_user_rfm.recency_score}
+    label: Avg Recency Score
+    format: NUMBER_2
+    description: Average recency score (1-5) across users in the current grouping
+    aggregate_type: average
+
+  avg_frequency_score:
+    sql: ${omni_dbt_marts__dim_user_rfm.frequency_score}
+    label: Avg Frequency Score
+    format: NUMBER_2
+    description: Average frequency score (1-5) across users in the current grouping
+    aggregate_type: average
+
+  avg_monetary_score:
+    sql: ${omni_dbt_marts__dim_user_rfm.monetary_score}
+    label: Avg Monetary Score
+    format: NUMBER_2
+    description: Average monetary score (1-5) across users in the current grouping
+    aggregate_type: average
+
+  avg_rfm_score:
+    sql: ${omni_dbt_marts__dim_user_rfm.rfm_score}
+    label: Avg RFM Score
+    format: NUMBER_2
+    description: Average composite RFM score (3-15) across users in the current grouping
+    aggregate_type: average
 
 #The info below was pulled from your dbt repository and is read-only.
 dbt:

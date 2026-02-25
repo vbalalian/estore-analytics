@@ -97,6 +97,7 @@ dimensions:
     #This description was pulled from dbt.
     description: Unique identifier for the user
     hidden: true
+    primary_key: true
 
   avg_order_value_bin:
     sql: ${omni_dbt_marts__dim_users.avg_order_value}

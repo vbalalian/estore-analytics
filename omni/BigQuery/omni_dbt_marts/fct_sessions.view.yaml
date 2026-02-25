@@ -85,6 +85,7 @@ dimensions:
     description: |
       Cleaned session identifier. Original session ID if no timeout occurred, or original_id + '_timeout_' + occurrence_number for split sessions.
     hidden: true
+    primary_key: true
 
   user_id:
     format: ID
