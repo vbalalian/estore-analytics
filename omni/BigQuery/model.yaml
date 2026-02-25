@@ -1,1 +1,14 @@
+ai_context: |
+  This model covers e-commerce analytics for a multi-category online retailer,
+  built on 400M+ user events (views, cart adds, purchases) ranging from Oct 1 
+  2019 to Apr 30 2020. Three topics are available: Sessions (conversion funnel 
+  analysis, session quality, engagement patterns), Customers (lifecycle 
+  segmentation, RFM scoring, churn, LTV), and Events (granular event-level 
+  analysis by product, category, brand, and customer segment). Use Sessions 
+  for funnel and conversion questions, Customers for user-level segmentation 
+  and retention questions, and Events for product performance and event-level 
+  breakdowns.
+
 included_schemas: [ omni_dbt_marts, omni_dbt_snapshots ]
+
+ignored_views: [ omni_dbt_marts__dim_categories ]

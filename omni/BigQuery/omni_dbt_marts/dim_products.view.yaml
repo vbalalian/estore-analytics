@@ -15,6 +15,7 @@ dimensions:
   category_code:
     #This description was pulled from dbt.
     description: Category code associated with the product
+    hidden: true
 
   category_lvl_1:
     #This description was pulled from dbt.
@@ -36,11 +37,26 @@ dimensions:
     format: ID
     #This description was pulled from dbt.
     description: Unique identifier for the product
+    hidden: true
     primary_key: true
 
 measures:
   count:
     aggregate_type: count
+
+  unique_brands:
+    sql: ${omni_dbt_marts__dim_products.brand}
+    label: Unique Brands
+    format: BIGNUMBER_0
+    description: Count of distinct brands in the current grouping
+    aggregate_type: count_distinct
+
+  unique_categories:
+    sql: ${omni_dbt_marts__dim_products.category_lvl_1}
+    label: Unique Categories
+    format: BIGNUMBER_0
+    description: Count of distinct top-level product categories in the current grouping
+    aggregate_type: count_distinct
 
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
