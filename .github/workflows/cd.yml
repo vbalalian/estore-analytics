@@ -79,19 +79,55 @@ jobs:
           echo "Deployment complete!"
 
     - name: Refresh Omni schema
+      id: omni_refresh
       if: success()
       continue-on-error: true
       run: |
-        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- dbt-project/models/ | grep -q .; then
-          echo "dbt model changes detected — refreshing Omni schema..."
-          RESPONSE=$(curl -sf -X POST \
-            "${{ secrets.OMNI_BASE_URL }}/api/v1/models/${{ secrets.OMNI_MODEL_ID }}/refresh" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
-          echo "Omni refresh triggered: $RESPONSE"
-        else
+        if ! git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- dbt-project/models/ | grep -q .; then
           echo "No dbt model changes — skipping Omni schema refresh."
+          echo "omni_refresh_result=skipped" >> "$GITHUB_OUTPUT"
+          exit 0
         fi
+
+        echo "dbt model changes detected — refreshing Omni schema..."
+        RESPONSE=$(curl -sf -X POST \
+          "${{ secrets.OMNI_BASE_URL }}/api/v1/models/${{ secrets.OMNI_MODEL_ID }}/refresh" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
+
+        JOB_ID=$(echo "$RESPONSE" | jq -r '.jobId')
+        if [ -z "$JOB_ID" ] || [ "$JOB_ID" = "null" ]; then
+          echo "Failed to extract jobId from response: $RESPONSE"
+          echo "omni_refresh_result=failed" >> "$GITHUB_OUTPUT"
+          exit 1
+        fi
+        echo "Omni refresh triggered (jobId: $JOB_ID). Polling for completion..."
+
+        MAX_ATTEMPTS=30
+        POLL_INTERVAL=10
+        for i in $(seq 1 $MAX_ATTEMPTS); do
+          STATUS_RESPONSE=$(curl -sf \
+            "${{ secrets.OMNI_BASE_URL }}/api/v1/jobs/${JOB_ID}/status" \
+            -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
+          STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.status')
+
+          if [ "$STATUS" = "COMPLETED" ]; then
+            echo "Omni schema refresh completed successfully."
+            echo "omni_refresh_result=completed" >> "$GITHUB_OUTPUT"
+            exit 0
+          elif [ "$STATUS" = "FAILED" ]; then
+            echo "Omni schema refresh failed: $STATUS_RESPONSE"
+            echo "omni_refresh_result=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "Attempt $i/$MAX_ATTEMPTS — status: $STATUS. Waiting ${POLL_INTERVAL}s..."
+          sleep $POLL_INTERVAL
+        done
+
+        echo "Omni schema refresh timed out after $((MAX_ATTEMPTS * POLL_INTERVAL))s."
+        echo "omni_refresh_result=timeout" >> "$GITHUB_OUTPUT"
+        exit 1
 
     - name: Health check - Dagster webserver
       uses: appleboy/ssh-action@v1.0.0
