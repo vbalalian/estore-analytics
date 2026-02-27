@@ -129,6 +129,29 @@ jobs:
         echo "omni_refresh_result=timeout" >> "$GITHUB_OUTPUT"
         exit 1
 
+    - name: Notify Slack - Omni Refresh Failed
+      if: steps.omni_refresh.outputs.omni_refresh_result == 'failed' || steps.omni_refresh.outputs.omni_refresh_result == 'timeout'
+      continue-on-error: true
+      uses: slackapi/slack-github-action@v2.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ secrets.SLACK_BOT_TOKEN }}
+        payload: |
+          channel: "#estore-alerts"
+          text: "Omni schema refresh ${{ steps.omni_refresh.outputs.omni_refresh_result }}"
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: ":warning: *Omni Schema Refresh ${{ steps.omni_refresh.outputs.omni_refresh_result == 'failed' && 'Failed' || 'Timed Out' }}*\n\n*Repo:* ${{ github.repository }}\n*Commit:* `${{ github.sha }}`\n*By:* ${{ github.actor }}"
+            - type: actions
+              elements:
+                - type: button
+                  text:
+                    type: plain_text
+                    text: View Run
+                  url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
     - name: Health check - Dagster webserver
       uses: appleboy/ssh-action@v1.0.0
       with:
