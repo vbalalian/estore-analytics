@@ -186,6 +186,13 @@ measures:
     description: Average revenue for sessions that resulted in at least one
       purchase. Excludes non-purchasing sessions from the average
 
+  bounce_rate:
+    sql: sum(case when ${omni_dbt_marts__fct_sessions.event_count} = 1 then 1 else 0
+      end) / count(*)
+    label: Bounce Rate
+    description: Percentage of sessions with only one event, indicating the user
+      left without further engagement
+
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
   name: fct_sessions
