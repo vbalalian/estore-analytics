@@ -57,7 +57,7 @@ dimensions:
 
   event_count:
     #This description was pulled from dbt.
-    description: Total number of events (page views, cart additions, purchases) that
+    description: Number of events (page views, cart additions, purchases) that
       occurred during the session
     hidden: true
 
