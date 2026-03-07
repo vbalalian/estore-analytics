@@ -90,12 +90,21 @@ jobs:
         fi
 
         echo "dbt model changes detected — refreshing Omni schema..."
-        RESPONSE=$(curl -sf -X POST \
+        RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
           "${{ secrets.OMNI_BASE_URL }}/api/v1/models/${{ secrets.OMNI_MODEL_ID }}/refresh" \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
 
-        JOB_ID=$(echo "$RESPONSE" | jq -r '.jobId')
+        HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+        BODY=$(echo "$RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+          echo "Omni API returned HTTP $HTTP_CODE: $BODY"
+          echo "omni_refresh_result=failed" >> "$GITHUB_OUTPUT"
+          exit 1
+        fi
+
+        JOB_ID=$(echo "$BODY" | jq -r '.jobId')
         if [ -z "$JOB_ID" ] || [ "$JOB_ID" = "null" ]; then
           echo "Failed to extract jobId from response: $RESPONSE"
           echo "omni_refresh_result=failed" >> "$GITHUB_OUTPUT"
@@ -106,10 +115,20 @@ jobs:
         MAX_ATTEMPTS=30
         POLL_INTERVAL=10
         for i in $(seq 1 $MAX_ATTEMPTS); do
-          STATUS_RESPONSE=$(curl -sf \
+          STATUS_RESPONSE=$(curl -s -w "\n%{http_code}" \
             "${{ secrets.OMNI_BASE_URL }}/api/v1/jobs/${JOB_ID}/status" \
             -H "Authorization: Bearer ${{ secrets.OMNI_API_KEY }}")
-          STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.status')
+          
+          STATUS_HTTP=$(echo "$STATUS_RESPONSE" | tail -1)
+          STATUS_BODY=$(echo "$STATUS_RESPONSE" | sed '$d')
+          
+          if [ "$STATUS_HTTP" -lt 200 ] || [ "$STATUS_HTTP" -ge 300 ]; then
+            echo "Omni status API returned HTTP $STATUS_HTTP: $STATUS_BODY"
+            echo "omni_refresh_result=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          
+          STATUS=$(echo "$STATUS_BODY" | jq -r '.status')
 
           if [ "$STATUS" = "COMPLETED" ]; then
             echo "Omni schema refresh completed successfully."
@@ -130,7 +149,10 @@ jobs:
         exit 1
 
     - name: Notify Slack - Omni Refresh Failed
-      if: steps.omni_refresh.outputs.omni_refresh_result == 'failed' || steps.omni_refresh.outputs.omni_refresh_result == 'timeout'
+      if: |
+        steps.omni_refresh.outcome == 'failure' ||
+        steps.omni_refresh.outputs.omni_refresh_result == 'failed' ||
+        steps.omni_refresh.outputs.omni_refresh_result == 'timeout'
       continue-on-error: true
       uses: slackapi/slack-github-action@v2.0.0
       with:
