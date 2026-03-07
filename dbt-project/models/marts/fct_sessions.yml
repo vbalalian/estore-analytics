@@ -41,7 +41,7 @@ models:
               expression: ">= session_start_time"
 
       - name: event_count
-        description: Total number of events (page views, cart additions, purchases) that occurred during
+        description: Number of events (page views, cart additions, purchases) that occurred during
           the session
         tests:
           - not_null
