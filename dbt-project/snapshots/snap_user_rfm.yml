@@ -36,3 +36,31 @@ snapshots:
         description: "Surrogate key for the snapshot record"
       - name: dbt_updated_at
         description: "Timestamp when the snapshot record was last updated"
+
+models:
+- name: snap_user_rfm
+  description: SCD Type 2 snapshot tracking changes to user RFM segments over time.
+    Enables segment migration analysis to understand how customers move between segments
+    (e.g., Champion → At Risk → Lost).
+  columns:
+  - name: dbt_scd_id
+    description: Surrogate key for the snapshot record
+  - name: dbt_updated_at
+    description: Timestamp when the snapshot record was last updated
+  - name: dbt_valid_from
+    description: Timestamp when this version of the record became valid
+  - name: dbt_valid_to
+    description: Timestamp when this version was superseded (null if current)
+  - name: frequency_score
+    description: Frequency score (1-5) based on purchase count
+  - name: monetary_score
+    description: Monetary score (1-5) based on total revenue
+  - name: recency_score
+    description: Recency score (1-5) based on days since last purchase
+  - name: rfm_score
+    description: Composite RFM score (sum of recency, frequency, monetary scores)
+  - name: rfm_segment
+    description: RFM segment classification (Champions, At Risk, Loyal Customers,
+      etc.)
+  - name: user_id
+    description: Unique identifier for each user

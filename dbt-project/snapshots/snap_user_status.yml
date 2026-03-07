@@ -35,3 +35,31 @@ snapshots:
         description: "Surrogate key for the snapshot record"
       - name: dbt_updated_at
         description: "Timestamp when the snapshot record was last updated"
+
+models:
+- name: snap_user_status
+  description: SCD Type 2 snapshot tracking changes to user activity status and churn
+    classification over time. Enables churn lifecycle analysis to understand how users
+    transition between active, declining, at_risk, and churned states.
+  columns:
+  - name: activity_status
+    description: User activity classification (active, declining, at_risk, churned,
+      prospect)
+  - name: customer_ltv
+    description: Customer lifetime value at time of snapshot
+  - name: days_since_last_purchase
+    description: Days since last purchase at time of snapshot
+  - name: dbt_scd_id
+    description: Surrogate key for the snapshot record
+  - name: dbt_updated_at
+    description: Timestamp when the snapshot record was last updated
+  - name: dbt_valid_from
+    description: Timestamp when this version of the record became valid
+  - name: dbt_valid_to
+    description: Timestamp when this version was superseded (null if current)
+  - name: is_churned
+    description: Binary flag indicating if user has churned
+  - name: purchase_count
+    description: Total purchases at time of snapshot
+  - name: user_id
+    description: Unique identifier for each user
