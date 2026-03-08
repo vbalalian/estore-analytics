@@ -43,7 +43,7 @@ A production-style data pipeline that processes 400M+ e-commerce events to gener
 - **Orchestration**: Dagster, asset-based paradigm, first-class dbt integration
 - **BI Layer**: Omni Analytics, semantic modeling with bi-directional dbt integration, custom measures/dimensions in YAML
 - **Infrastructure**: Google Cloud Platform, Terraform for IaC
-- **CI/CD**: GitHub Actions with slim CI (state-based dbt builds), automated rollback, Omni schema refresh on deploy
+- **CI/CD**: GitHub Actions with slim CI (state-based dbt builds), automated rollback, Omni schema refresh on deploy, Omni Content Validator checks on PRs
 
 ## Data Models
 
