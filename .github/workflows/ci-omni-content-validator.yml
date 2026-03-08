@@ -1,0 +1,144 @@
+name: CI - Omni
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'omni/**'
+      - 'dbt-project/models/**'
+      - '.github/workflows/ci-omni-content-validator.yml'
+
+  # Allow manual trigger (needed for initial history artifact seed)
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install omnicles
+        run: pip install git+https://github.com/ernestoongaro/omnicles.git
+
+      - name: Download history artifact
+        id: download_history
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: omni-content-validator-history
+          branch: main
+          workflow: ci-omni-content-validator.yml
+          if_no_artifact_found: warn
+          path: .omni-content-validator
+
+      - name: Run Content Validator
+        id: validate
+        env:
+          OMNI_BASE_URL: ${{ secrets.OMNI_BASE_URL }}
+          OMNI_MODEL_ID: ${{ secrets.OMNI_MODEL_ID }}
+          OMNI_API_KEY: ${{ secrets.OMNI_API_KEY }}
+        run: |
+          HISTORY_FLAG=""
+          if [ -f ".omni-content-validator/history.json" ]; then
+            echo "History artifact found. Using --fail-on-new-only."
+            HISTORY_FLAG="--fail-on-new-only"
+          else
+            echo "::warning::No history artifact found. All issues will be reported as new. Run this workflow manually on main to seed the history artifact."
+          fi
+
+          # Run the validator in report-only mode (|| true prevents workflow failure).
+          # Remove || true to make the check blocking.
+          omni-content-validator $HISTORY_FLAG || true
+
+      - name: Upload history artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omni-content-validator-history
+          path: .omni-content-validator/history.json
+          retention-days: 90
+          overwrite: true
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report;
+            try {
+              report = JSON.parse(fs.readFileSync('.omni-content-validator/report.json', 'utf8'));
+            } catch (e) {
+              report = null;
+            }
+
+            let body;
+            if (!report) {
+              body = '## Omni Content Validator Results\n\nContent Validator did not produce a report.';
+            } else {
+              const lines = [
+                '## Omni Content Validator Results\n',
+                `| Total | New | Existing | Resolved |`,
+                `|-------|-----|----------|----------|`,
+                `| ${report.total_issues} | ${report.new_issues} | ${report.existing_issues} | ${report.resolved_issues} |`,
+                '',
+              ];
+
+              if (report.new_issue_samples && report.new_issue_samples.length > 0) {
+                lines.push('### New Issues\n');
+                for (const issue of report.new_issue_samples) {
+                  lines.push(`- ${issue.summary}`);
+                }
+                if (report.new_issues > report.new_issue_samples.length) {
+                  lines.push(`\n_...and ${report.new_issues - report.new_issue_samples.length} more_`);
+                }
+                lines.push('');
+              }
+
+              if (report.resolved_issue_samples && report.resolved_issue_samples.length > 0) {
+                lines.push('### Resolved Issues\n');
+                for (const issue of report.resolved_issue_samples) {
+                  lines.push(`- ~~${issue.summary}~~`);
+                }
+                if (report.resolved_issues > report.resolved_issue_samples.length) {
+                  lines.push(`\n_...and ${report.resolved_issues - report.resolved_issue_samples.length} more_`);
+                }
+                lines.push('');
+              }
+
+              lines.push('<sub>Powered by [omnicles](https://github.com/ernestoongaro/omnicles)</sub>');
+              body = lines.join('\n');
+            }
+
+            // Find existing comment to update (avoid spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.body.includes('Omni Content Validator Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
