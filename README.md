@@ -71,6 +71,7 @@ The Omni Analytics semantic layer ([`omni/`](/omni/BigQuery/)) extends the dbt m
 - **Custom dimensions**: `rfm_segment_inclusive` (COALESCE to include non-purchasers), `session_quality_tier`, `customer_lifecycle_stage`, `session_length_bucket`
 - **Custom measures**: Conversion rates (view-to-cart, cart-to-purchase), churn rate, purchaser rate, revenue per session, avg LTV
 - **Bi-directional dbt sync**: Descriptions and metadata flow between dbt YAML and Omni on schema refresh (triggered automatically in CD pipeline)
+- **Content Validator CI**: PRs that touch dbt models or Omni YAML are automatically checked for broken content references using [omnicles](https://github.com/ernestoongaro/omnicles)
 
 See [Analysis & Visualizations](analysis/README.md) for workbook screenshots and detailed findings.
 
