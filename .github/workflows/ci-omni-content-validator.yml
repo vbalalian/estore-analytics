@@ -11,6 +11,9 @@ on:
   # Allow manual trigger (needed for initial history artifact seed)
   workflow_dispatch:
 
+permissions:
+  pull-requests: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
