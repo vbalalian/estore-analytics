@@ -3,6 +3,7 @@
 [![Terraform](https://github.com/vbalalian/estore-analytics/actions/workflows/terraform.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/terraform.yml)
 [![CI - dbt](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dbt.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dbt.yml)
 [![CI - Dagster](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dagster.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-dagster.yml)
+[![CI - Omni](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-omni-content-validator.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/ci-omni-content-validator.yml)
 [![CD](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml/badge.svg)](https://github.com/vbalalian/estore-analytics/actions/workflows/cd.yml)
 
 ## Overview
@@ -42,7 +43,7 @@ A production-style data pipeline that processes 400M+ e-commerce events to gener
 - **Orchestration**: Dagster, asset-based paradigm, first-class dbt integration
 - **BI Layer**: Omni Analytics, semantic modeling with bi-directional dbt integration, custom measures/dimensions in YAML
 - **Infrastructure**: Google Cloud Platform, Terraform for IaC
-- **CI/CD**: GitHub Actions with slim CI (state-based dbt builds), automated rollback, Omni schema refresh on deploy
+- **CI/CD**: GitHub Actions with slim CI (state-based dbt builds), automated rollback, Omni schema refresh on deploy, Omni Content Validator checks on PRs
 
 ## Data Models
 
@@ -70,6 +71,7 @@ The Omni Analytics semantic layer ([`omni/`](/omni/BigQuery/)) extends the dbt m
 - **Custom dimensions**: `rfm_segment_inclusive` (COALESCE to include non-purchasers), `session_quality_tier`, `customer_lifecycle_stage`, `session_length_bucket`
 - **Custom measures**: Conversion rates (view-to-cart, cart-to-purchase), churn rate, purchaser rate, revenue per session, avg LTV
 - **Bi-directional dbt sync**: Descriptions and metadata flow between dbt YAML and Omni on schema refresh (triggered automatically in CD pipeline)
+- **Content Validator CI**: PRs that touch dbt models or Omni YAML are automatically checked for broken content references using [omnicles](https://github.com/ernestoongaro/omnicles)
 
 See [Analysis & Visualizations](analysis/README.md) for workbook screenshots and detailed findings.
 
