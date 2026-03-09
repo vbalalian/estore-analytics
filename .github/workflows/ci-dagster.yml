@@ -20,10 +20,13 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Install dependencies
       run: |
         cd dagster-project
-        pip install -e ".[dev]"
+        uv pip install -e ".[dev]" --system
 
     - name: Run tests
       run: |
@@ -42,8 +45,11 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Install ruff
-      run: pip install ruff
+      run: uv pip install ruff --system
 
     - name: Lint with ruff
       run: |
@@ -62,10 +68,13 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Install dependencies
       run: |
         cd dagster-project
-        pip install -e .
+        uv pip install -e . --system
 
     - name: Create keyfile
       run: |
