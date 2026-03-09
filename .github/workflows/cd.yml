@@ -192,8 +192,8 @@ jobs:
           fi
           echo "Dagster webserver is running."
 
-          MAX_RETRIES=5
-          RETRY_DELAY=3
+          MAX_RETRIES=12
+          RETRY_DELAY=5
 
           for i in $(seq 1 $MAX_RETRIES); do
             if curl -sf http://localhost:3000/server_info > /dev/null 2>&1; then
