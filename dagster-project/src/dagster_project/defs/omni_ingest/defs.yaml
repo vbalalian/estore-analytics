@@ -6,3 +6,5 @@ attributes:
     api_key: "{{ env.OMNI_API_KEY }}"
   translation:
     group_name: omni
+  defs_state:
+    management_type: LOCAL_FILESYSTEM
