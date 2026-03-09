@@ -87,7 +87,7 @@ See [Analysis & Visualizations](analysis/README.md) for workbook screenshots and
 
 ### Prerequisites
 
-- **Python** 3.9 - 3.13
+- **Python** 3.10 - 3.13
 - **Terraform** >= 1.0
 - **gcloud CLI** authenticated with your GCP project
 - **GCP Project** with BigQuery and Cloud Storage APIs enabled
