@@ -54,3 +54,27 @@ def test_resources_load():
     assert gcs_resource is not None
     assert bq_resource is not None
     assert slack_resource is not None
+
+
+def test_omni_component_yaml():
+    """Verify the Omni component defs.yaml is valid and well-structured."""
+    from pathlib import Path
+    import yaml
+
+    defs_yaml = (
+        Path(__file__).parent.parent
+        / "src"
+        / "dagster_project"
+        / "defs"
+        / "omni_ingest"
+        / "defs.yaml"
+    )
+    assert defs_yaml.exists(), "omni_ingest/defs.yaml not found"
+
+    with open(defs_yaml) as f:
+        config = yaml.safe_load(f)
+
+    assert config["type"] == "dagster_omni.OmniComponent"
+    assert "workspace" in config["attributes"]
+    assert "base_url" in config["attributes"]["workspace"]
+    assert "api_key" in config["attributes"]["workspace"]
