@@ -1,5 +1,9 @@
 version: 2
 
+# These exposures document Omni workbook dependencies on dbt models for dbt's DAG.
+# Omni workbooks are also represented as Dagster assets via dagster-omni
+# (see dagster-project/src/dagster_project/defs/omni_ingest/).
+
 exposures:
 
   - name: conversion_funnel_workbook
