@@ -54,29 +54,26 @@ jobs:
           cd ${{ vars.DEPLOY_PATH }}/dagster-project
           
           echo "Checking for dependency changes..."
+          DEPS_CHANGED=false
           if git diff --name-only HEAD@{1} HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
             echo "Dependencies changed — upgrading environment..."
             ~/.local/bin/uv pip install --upgrade -e .[dev]
+            DEPS_CHANGED=true
+          fi
 
+          dagster-dbt project prepare-and-package --components .
+
+          echo "Refreshing component state..."
+          OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
+          OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
+            dg utils refresh-defs-state
+
+          if [ "$DEPS_CHANGED" = true ]; then
             echo "Restarting Dagster services..."
-            dagster-dbt project prepare-and-package --components .
-
-            echo "Refreshing Omni component state..."
-            OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
-            OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
-              dg utils refresh-component-state dagster_project.defs.omni_ingest
-
             sudo systemctl restart dagster-webserver
             sudo systemctl restart dagster
           else
-            echo "No dependency changes detected — reloading code definitions only..."
-            dagster-dbt project prepare-and-package --components .
-
-            echo "Refreshing Omni component state..."
-            OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
-            OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
-              dg utils refresh-component-state dagster_project.defs.omni_ingest
-
+            echo "Reloading code definitions..."
             curl -X POST \
               -H "Content-Type: application/json" \
               -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
