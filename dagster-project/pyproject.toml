@@ -5,11 +5,11 @@ version = "0.1.0"
 dependencies = [
     "dagster==1.12.18",
     "dagster-dbt==0.28.18",
-    "dagster-webserver==1.12.15",
+    "dagster-webserver==1.12.18",
     "dbt-bigquery==1.10.2",
-    "dagster-gcp==0.28.15",
+    "dagster-gcp==0.28.18",
     "google-cloud-bigquery==3.38.0",
-    "dagster-slack==0.28.15"
+    "dagster-slack==0.28.18"
 ]
 
 [project.optional-dependencies]
