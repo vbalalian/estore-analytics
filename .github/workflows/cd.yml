@@ -60,11 +60,23 @@ jobs:
 
             echo "Restarting Dagster services..."
             dagster-dbt project prepare-and-package --components .
+
+            echo "Refreshing Omni component state..."
+            OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
+            OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
+              dg utils refresh-component-state dagster_project.defs.omni_ingest
+
             sudo systemctl restart dagster-webserver
             sudo systemctl restart dagster
           else
             echo "No dependency changes detected — reloading code definitions only..."
             dagster-dbt project prepare-and-package --components .
+
+            echo "Refreshing Omni component state..."
+            OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
+            OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
+              dg utils refresh-component-state dagster_project.defs.omni_ingest
+
             curl -X POST \
               -H "Content-Type: application/json" \
               -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
