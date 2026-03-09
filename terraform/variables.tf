@@ -37,3 +37,14 @@ variable "slack_bot_token" {
   description = "Slack bot token for pipeline notifications."
   sensitive   = true
 }
+
+variable "omni_api_key" {
+  type        = string
+  description = "Omni Analytics API key for dagster-omni component state refresh."
+  sensitive   = true
+}
+
+variable "omni_base_url" {
+  type        = string
+  description = "Omni Analytics base URL (e.g. https://your-org.omniapp.co)."
+}
