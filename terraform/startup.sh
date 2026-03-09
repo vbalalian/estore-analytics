@@ -32,6 +32,10 @@ log "Installing system dependencies..."
 apt-get update
 apt-get install -y python3 python3-venv python3-pip git
 
+# 2b. Install uv
+log "Installing uv..."
+sudo -u "$DEPLOY_USER" sh -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+
 # 3. Clone repository
 if [ ! -d "$PROJECT_DIR" ]; then
     log "Cloning repository..."
@@ -44,8 +48,7 @@ fi
 # 4. Create virtualenv and install dependencies
 log "Setting up Python virtual environment..."
 sudo -u "$DEPLOY_USER" python3 -m venv "$VENV_DIR"
-sudo -u "$DEPLOY_USER" "$VENV_DIR/bin/pip" install --upgrade pip
-sudo -u "$DEPLOY_USER" "$VENV_DIR/bin/pip" install -e "$PROJECT_DIR/dagster-project[dev]"
+sudo -u "$DEPLOY_USER" "$HOME_DIR/.local/bin/uv" pip install -e "$PROJECT_DIR/dagster-project[dev]"
 
 # 5. Create dagster.yaml
 log "Creating dagster.yaml..."
