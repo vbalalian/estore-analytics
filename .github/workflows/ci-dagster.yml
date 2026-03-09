@@ -104,6 +104,9 @@ jobs:
         dbt compile
 
     - name: Validate Dagster definitions
+      env:
+        OMNI_API_KEY: ${{ secrets.OMNI_API_KEY }}
+        OMNI_BASE_URL: ${{ secrets.OMNI_BASE_URL }}
       run: |
         cd dagster-project
         dagster definitions validate

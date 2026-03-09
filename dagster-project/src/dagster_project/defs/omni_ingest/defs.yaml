@@ -1,0 +1,8 @@
+type: dagster_omni.OmniComponent
+
+attributes:
+  workspace:
+    base_url: "{{ env.OMNI_BASE_URL }}"
+    api_key: "{{ env.OMNI_API_KEY }}"
+  translation:
+    group_name: omni

@@ -9,7 +9,8 @@ dependencies = [
     "dbt-bigquery==1.10.2",
     "dagster-gcp==0.28.18",
     "google-cloud-bigquery==3.38.0",
-    "dagster-slack==0.28.18"
+    "dagster-slack==0.28.18",
+    "dagster-omni==0.28.18"
 ]
 
 [project.optional-dependencies]

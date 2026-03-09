@@ -6,6 +6,8 @@
 project         = "your-gcp-project-id"
 gcs_bucket_name = "your-unique-bucket-name"
 slack_bot_token = "xoxb-your-slack-bot-token"
+omni_api_key    = "your-omni-api-key"
+omni_base_url   = "https://your-org.omniapp.co"
 
 # Optional (have defaults)
 # deploy_user = "dagster"

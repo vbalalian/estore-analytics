@@ -77,6 +77,8 @@ resource "google_compute_instance" "vm_instance" {
     deploy_user     = var.deploy_user
     gcp_project_id  = var.project
     slack_bot_token = var.slack_bot_token
+    omni_api_key    = var.omni_api_key
+    omni_base_url   = var.omni_base_url
     repo_url        = var.repo_url
   })
 }

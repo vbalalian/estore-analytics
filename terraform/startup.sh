@@ -9,6 +9,8 @@ set -euo pipefail
 DEPLOY_USER="${deploy_user}"
 GCP_PROJECT="${gcp_project_id}"
 SLACK_TOKEN="${slack_bot_token}"
+OMNI_API_KEY="${omni_api_key}"
+OMNI_BASE_URL="${omni_base_url}"
 REPO_URL="${repo_url}"
 
 HOME_DIR="/home/$DEPLOY_USER"
@@ -121,12 +123,21 @@ Environment="DBT_PROFILES_DIR=$PROJECT_DIR/dbt-project"
 WantedBy=multi-user.target
 EOF
 
-# 10. Create override for secrets (Slack token)
-log "Creating systemd override for secrets..."
+# 10. Create overrides for secrets
+log "Creating systemd overrides for secrets..."
 mkdir -p /etc/systemd/system/dagster.service.d
 cat > /etc/systemd/system/dagster.service.d/override.conf << EOF
 [Service]
 Environment=SLACK_BOT_TOKEN=$SLACK_TOKEN
+Environment=OMNI_API_KEY=$OMNI_API_KEY
+Environment=OMNI_BASE_URL=$OMNI_BASE_URL
+EOF
+
+mkdir -p /etc/systemd/system/dagster-webserver.service.d
+cat > /etc/systemd/system/dagster-webserver.service.d/override.conf << EOF
+[Service]
+Environment=OMNI_API_KEY=$OMNI_API_KEY
+Environment=OMNI_BASE_URL=$OMNI_BASE_URL
 EOF
 
 # 11. Enable and start services

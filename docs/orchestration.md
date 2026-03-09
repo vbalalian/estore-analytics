@@ -229,6 +229,21 @@ The VM and services are provisioned via Terraform. See `terraform/startup.sh` fo
 - Sets up the Python virtualenv
 - Installs and enables systemd services
 
+## Omni Integration
+
+The `dagster-omni` package represents Omni Analytics workbooks as Dagster assets via the `OmniComponent`, a `StateBackedComponent` that fetches workspace metadata from the Omni API and materializes it as asset specs.
+
+**Location**: `dagster-project/src/dagster_project/defs/omni_ingest/defs.yaml`
+
+**How it works**:
+1. `OmniComponent` connects to Omni using `OMNI_BASE_URL` and `OMNI_API_KEY` environment variables
+2. It fetches the list of documents (workbooks/dashboards) from the Omni workspace
+3. Each document becomes a Dagster asset, providing visibility into BI layer dependencies in the Dagster lineage graph
+
+**State refresh**: Component state is refreshed during CD deployments via `dg utils refresh-component-state`. This keeps Dagster's view of Omni assets in sync with the actual workspace.
+
+**Relationship to dbt exposures**: The dbt exposures in `dbt-project/models/exposures.yml` serve a complementary purpose — they document which dbt models each Omni workbook depends on, visible in dbt's DAG. The dagster-omni assets provide the same visibility within Dagster's asset graph.
+
 ## Future Improvements
 
 The following issues document potential enhancements that would be appropriate at production scale:
