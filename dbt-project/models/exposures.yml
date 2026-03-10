@@ -3,6 +3,8 @@ version: 2
 # These exposures document Omni workbook dependencies on dbt models for dbt's DAG.
 # Omni workbooks are also represented as Dagster assets via dagster-omni
 # (see dagster-project/src/dagster_project/defs/omni_ingest/).
+# Lineage is also visible in Dagster via the CustomOmniComponent, which
+# connects Omni workbook assets to their upstream dbt model assets.
 
 exposures:
 
