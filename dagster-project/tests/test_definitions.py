@@ -80,8 +80,8 @@ def test_omni_component_yaml():
     assert "api_key" in config["attributes"]["workspace"]
 
 
-def test_custom_omni_key_extraction():
-    """Verify table name extraction matches dbt model keys."""
+def test_custom_omni_table_name_extraction():
+    """Verify table name extraction from Omni table names."""
     test_cases = [
         ("BigQuery_omni_dbt_marts__fct_sessions", "fct_sessions"),
         ("BigQuery_omni_dbt_marts__dim_users", "dim_users"),
@@ -95,3 +95,24 @@ def test_custom_omni_key_extraction():
         parts = omni_name.split("__")
         result = parts[-1] if len(parts) > 1 else parts[0]
         assert result == expected, f"Expected {expected}, got {result} for {omni_name}"
+
+
+def test_custom_omni_dbt_key_lookup():
+    """Verify dbt manifest lookup produces correct asset keys with schema prefix."""
+    from dagster import AssetKey
+    from dagster_project.components.custom_omni import _build_dbt_key_lookup
+    from pathlib import Path
+
+    manifest_path = Path(__file__).parent.parent.parent / "dbt-project" / "target" / "manifest.json"
+    if not manifest_path.exists():
+        import pytest
+        pytest.skip("dbt manifest not available")
+
+    lookup = _build_dbt_key_lookup(manifest_path)
+
+    assert lookup["fct_sessions"] == AssetKey(["marts", "fct_sessions"])
+    assert lookup["dim_users"] == AssetKey(["marts", "dim_users"])
+    assert lookup["fct_events"] == AssetKey(["marts", "fct_events"])
+    assert lookup["dim_products"] == AssetKey(["marts", "dim_products"])
+    assert lookup["dim_user_rfm"] == AssetKey(["marts", "dim_user_rfm"])
+    assert lookup["snap_user_rfm"] == AssetKey(["snapshots", "snap_user_rfm"])
