@@ -3,6 +3,7 @@
 logs/
 .tmp*
 dbt-project/profiles.yml
+defs_state/
 
 # Terraform
 terraform/.terraform/
