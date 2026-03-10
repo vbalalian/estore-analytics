@@ -1,4 +1,4 @@
-type: dagster_omni.OmniComponent
+type: dagster_project.components.custom_omni.CustomOmniComponent
 
 attributes:
   workspace:
