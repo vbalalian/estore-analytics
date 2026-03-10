@@ -74,7 +74,24 @@ def test_omni_component_yaml():
     with open(defs_yaml) as f:
         config = yaml.safe_load(f)
 
-    assert config["type"] == "dagster_omni.OmniComponent"
+    assert config["type"] == "dagster_project.components.custom_omni.CustomOmniComponent"
     assert "workspace" in config["attributes"]
     assert "base_url" in config["attributes"]["workspace"]
     assert "api_key" in config["attributes"]["workspace"]
+
+
+def test_custom_omni_key_extraction():
+    """Verify table name extraction matches dbt model keys."""
+    test_cases = [
+        ("BigQuery_omni_dbt_marts__fct_sessions", "fct_sessions"),
+        ("BigQuery_omni_dbt_marts__dim_users", "dim_users"),
+        ("BigQuery_omni_dbt_marts__dim_user_rfm", "dim_user_rfm"),
+        ("BigQuery_omni_dbt_marts__fct_events", "fct_events"),
+        ("BigQuery_omni_dbt_marts__dim_products", "dim_products"),
+        ("BigQuery_omni_dbt_snapshots__snap_user_rfm", "snap_user_rfm"),
+        ("simple_table", "simple_table"),
+    ]
+    for omni_name, expected in test_cases:
+        parts = omni_name.split("__")
+        result = parts[-1] if len(parts) > 1 else parts[0]
+        assert result == expected, f"Expected {expected}, got {result} for {omni_name}"
