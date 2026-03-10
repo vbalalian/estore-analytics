@@ -6,7 +6,7 @@ from pathlib import Path
 import dagster as dg
 from dagster_dbt.asset_utils import default_asset_key_fn
 from dagster_omni import OmniComponent
-from dagster_omni.objects import OmniQuery, OmniWorkspaceData
+from dagster_omni.objects import OmniQuery
 from dagster_omni.translation import OmniTranslatorData
 
 
