@@ -80,21 +80,47 @@ def test_omni_component_yaml():
     assert "api_key" in config["attributes"]["workspace"]
 
 
-def test_custom_omni_table_name_extraction():
-    """Verify table name extraction from Omni table names."""
-    test_cases = [
-        ("BigQuery_omni_dbt_marts__fct_sessions", "fct_sessions"),
-        ("BigQuery_omni_dbt_marts__dim_users", "dim_users"),
-        ("BigQuery_omni_dbt_marts__dim_user_rfm", "dim_user_rfm"),
-        ("BigQuery_omni_dbt_marts__fct_events", "fct_events"),
-        ("BigQuery_omni_dbt_marts__dim_products", "dim_products"),
-        ("BigQuery_omni_dbt_snapshots__snap_user_rfm", "snap_user_rfm"),
-        ("simple_table", "simple_table"),
-    ]
-    for omni_name, expected in test_cases:
-        parts = omni_name.split("__")
-        result = parts[-1] if len(parts) > 1 else parts[0]
-        assert result == expected, f"Expected {expected}, got {result} for {omni_name}"
+def test_topic_yaml_parsing():
+    """Verify topic YAML parsing extracts correct join dependencies."""
+    from dagster_project.components.custom_omni import _build_topic_deps
+    from pathlib import Path
+
+    omni_dir = Path(__file__).parent.parent.parent / "omni" / "BigQuery"
+    if not omni_dir.exists():
+        import pytest
+        pytest.skip("Omni topic files not available")
+
+    topic_deps = _build_topic_deps(omni_dir)
+
+    # Sessions topic: base + dim_users + dim_user_rfm
+    assert "fct_sessions" in topic_deps
+    assert set(topic_deps["fct_sessions"]) == {"fct_sessions", "dim_users", "dim_user_rfm"}
+
+    # Customers topic: base + dim_user_rfm
+    assert "dim_users" in topic_deps
+    assert set(topic_deps["dim_users"]) == {"dim_users", "dim_user_rfm"}
+
+    # Events topic: base + dim_users + dim_user_rfm + dim_products
+    assert "fct_events" in topic_deps
+    assert set(topic_deps["fct_events"]) == {"fct_events", "dim_users", "dim_user_rfm", "dim_products"}
+
+
+def test_extract_join_views_nested():
+    """Verify recursive join extraction works for nested joins."""
+    from dagster_project.components.custom_omni import _extract_join_views
+
+    joins = {
+        "omni_dbt_marts__dim_users": {
+            "omni_dbt_marts__dim_user_rfm": {}
+        },
+        "omni_dbt_marts__dim_products": {}
+    }
+    views = _extract_join_views(joins)
+    assert set(views) == {
+        "omni_dbt_marts__dim_users",
+        "omni_dbt_marts__dim_user_rfm",
+        "omni_dbt_marts__dim_products"
+    }
 
 
 def test_custom_omni_dbt_key_lookup():
