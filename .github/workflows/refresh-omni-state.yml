@@ -1,0 +1,60 @@
+name: Refresh Omni State
+
+on:
+  # schedule:
+  #   - cron: '0 8 * * *'  # Uncomment to enable daily refresh
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Refresh Omni component state
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          set -e
+
+          cd ${{ vars.DEPLOY_PATH }}
+          source .venv/bin/activate
+          cd ${{ vars.DEPLOY_PATH }}/dagster-project
+
+          echo "Refreshing Omni component state..."
+          OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
+          OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
+            dg utils refresh-defs-state
+
+          echo "Reloading code definitions..."
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"query": "mutation { reloadWorkspace { __typename } }"}' \
+            http://localhost:3000/graphql
+
+          echo "Omni state refresh complete."
+
+    - name: Notify Slack - Refresh Failed
+      if: failure()
+      continue-on-error: true
+      uses: slackapi/slack-github-action@v2.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ secrets.SLACK_BOT_TOKEN }}
+        payload: |
+          channel: "#estore-alerts"
+          text: "Omni state refresh failed"
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: ":warning: *Scheduled Omni State Refresh Failed*\n\n*Repo:* ${{ github.repository }}"
+            - type: actions
+              elements:
+                - type: button
+                  text:
+                    type: plain_text
+                    text: View Run
+                  url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
