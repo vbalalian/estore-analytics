@@ -2,11 +2,18 @@ name: CD
 
 on:
   workflow_dispatch:
+    inputs:
+      force_full_rebuild:
+        description: 'Run all phases unconditionally (skip change detection)'
+        required: false
+        type: boolean
+        default: true
   push:
     branches: [ main ]
     paths:
       - 'dbt-project/**'
       - 'dagster-project/**'
+      - 'omni/**'
       - '.github/workflows/cd.yml'
 
 jobs:
