@@ -378,7 +378,6 @@ jobs:
           cd ${{ vars.DEPLOY_PATH }}/dbt-project
           dbt clean
           dbt deps
-          dbt parse
           dbt compile
 
           cd ${{ vars.DEPLOY_PATH }}/dagster-project
