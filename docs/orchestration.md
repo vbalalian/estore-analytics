@@ -243,7 +243,7 @@ The `dagster-omni` package represents Omni Analytics workbooks as Dagster assets
 
 **State refresh**: Component state is refreshed during CD deployments via `dg utils refresh-defs-state`. This keeps Dagster's view of Omni assets in sync with the actual workspace.
 
-**Relationship to dbt exposures**: The dbt exposures in `dbt-project/models/exposures.yml` serve a complementary purpose — they document which dbt models each Omni workbook depends on, visible in dbt's DAG. The dagster-omni assets provide the same lineage within Dagster's asset graph, with actual upstream/downstream connections.
+**Relationship to dbt exposures**: The dbt exposures in `dbt-project/models/exposures.yml` serve a complementary purpose — they document which dbt models each Omni workbook depends on, visible in dbt's DAG. The dagster-omni assets provide the same visibility within Dagster's asset graph, including topic join dependencies parsed from `omni/BigQuery/*.topic.yaml`.
 
 ## Future Improvements
 
