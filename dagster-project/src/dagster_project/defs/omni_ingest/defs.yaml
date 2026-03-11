@@ -5,6 +5,7 @@ attributes:
     base_url: "{{ env.OMNI_BASE_URL }}"
     api_key: "{{ env.OMNI_API_KEY }}"
   translation:
+    group_name: omni_analytics
     tags:
       layer: bi
   defs_state:
