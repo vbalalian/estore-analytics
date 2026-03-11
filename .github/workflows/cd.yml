@@ -47,6 +47,7 @@ jobs:
         script: |
           set -e
           DEPLOY_START=$(date +%s)
+          FORCE="${{ github.event.inputs.force_full_rebuild }}"
 
           cd ${{ vars.DEPLOY_PATH }}
 
@@ -57,51 +58,78 @@ jobs:
 
           source .venv/bin/activate
 
-          cd ${{ vars.DEPLOY_PATH }}/dbt-project
+          echo "=== Change detection ==="
+          DBT_CHANGED=false
+          OMNI_STATE_CHANGED=false
 
-          echo "=== PHASE: dbt clean ==="
-          PHASE_START=$(date +%s)
-          dbt clean
-          echo "TIMING: dbt_clean=$(($(date +%s) - PHASE_START))s"
+          if [ "$FORCE" = "true" ]; then
+            echo "force_full_rebuild=true — running all phases"
+            DBT_CHANGED=true
+            OMNI_STATE_CHANGED=true
+          else
+            if git diff --name-only HEAD~1 HEAD | grep -q '^dbt-project/'; then
+              DBT_CHANGED=true
+              echo "dbt files changed"
+            fi
+            if git diff --name-only HEAD~1 HEAD | grep -qE '^(dagster-project/src/dagster_project/defs/omni_ingest/|dagster-project/src/dagster_project/components/|dbt-project/models/|omni/BigQuery/)'; then
+              OMNI_STATE_CHANGED=true
+              echo "Omni-related files changed"
+            fi
+          fi
+          echo "CHANGE_DETECTION: dbt=$DBT_CHANGED omni_state=$OMNI_STATE_CHANGED force=$FORCE"
 
-          echo "=== PHASE: dbt deps ==="
-          PHASE_START=$(date +%s)
-          dbt deps
-          echo "TIMING: dbt_deps=$(($(date +%s) - PHASE_START))s"
+          if [ "$DBT_CHANGED" = true ]; then
+            cd ${{ vars.DEPLOY_PATH }}/dbt-project
 
-          echo "=== PHASE: dbt parse ==="
-          PHASE_START=$(date +%s)
-          dbt parse
-          echo "TIMING: dbt_parse=$(($(date +%s) - PHASE_START))s"
+            echo "=== PHASE: dbt clean ==="
+            PHASE_START=$(date +%s)
+            dbt clean
+            echo "TIMING: dbt_clean=$(($(date +%s) - PHASE_START))s"
 
-          echo "=== PHASE: dbt compile ==="
-          PHASE_START=$(date +%s)
-          dbt compile
-          echo "TIMING: dbt_compile=$(($(date +%s) - PHASE_START))s"
+            echo "=== PHASE: dbt deps ==="
+            PHASE_START=$(date +%s)
+            dbt deps
+            echo "TIMING: dbt_deps=$(($(date +%s) - PHASE_START))s"
+
+            echo "=== PHASE: dbt compile ==="
+            PHASE_START=$(date +%s)
+            dbt compile
+            echo "TIMING: dbt_compile=$(($(date +%s) - PHASE_START))s"
+          else
+            echo "No dbt changes — skipping dbt pipeline"
+          fi
 
           cd ${{ vars.DEPLOY_PATH }}/dagster-project
 
           echo "=== PHASE: dependency check ==="
           PHASE_START=$(date +%s)
           DEPS_CHANGED=false
-          if git diff --name-only HEAD@{1} HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
+          if git diff --name-only HEAD~1 HEAD | grep -E '(^|/)pyproject.toml$|(^|/)requirements.txt$'; then
             echo "Dependencies changed — upgrading environment..."
             ~/.local/bin/uv pip install --upgrade -e .[dev]
             DEPS_CHANGED=true
           fi
           echo "TIMING: dep_check_install=$(($(date +%s) - PHASE_START))s (deps_changed=$DEPS_CHANGED)"
 
-          echo "=== PHASE: dagster-dbt prepare-and-package ==="
-          PHASE_START=$(date +%s)
-          dagster-dbt project prepare-and-package --components .
-          echo "TIMING: prepare_and_package=$(($(date +%s) - PHASE_START))s"
+          if [ "$DBT_CHANGED" = true ]; then
+            echo "=== PHASE: dagster-dbt prepare-and-package ==="
+            PHASE_START=$(date +%s)
+            dagster-dbt project prepare-and-package --components .
+            echo "TIMING: prepare_and_package=$(($(date +%s) - PHASE_START))s"
+          else
+            echo "No dbt changes — skipping prepare-and-package"
+          fi
 
-          echo "=== PHASE: refresh-defs-state ==="
-          PHASE_START=$(date +%s)
-          OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
-          OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
-            dg utils refresh-defs-state
-          echo "TIMING: refresh_defs_state=$(($(date +%s) - PHASE_START))s"
+          if [ "$OMNI_STATE_CHANGED" = true ]; then
+            echo "=== PHASE: refresh-defs-state ==="
+            PHASE_START=$(date +%s)
+            OMNI_API_KEY="${{ secrets.OMNI_API_KEY }}" \
+            OMNI_BASE_URL="${{ secrets.OMNI_BASE_URL }}" \
+              dg utils refresh-defs-state
+            echo "TIMING: refresh_defs_state=$(($(date +%s) - PHASE_START))s"
+          else
+            echo "No Omni-related changes — skipping refresh-defs-state"
+          fi
 
           echo "=== PHASE: service reload ==="
           PHASE_START=$(date +%s)
@@ -118,12 +146,16 @@ jobs:
           fi
           echo "TIMING: service_reload=$(($(date +%s) - PHASE_START))s"
 
-          echo "=== PHASE: upload manifest ==="
-          PHASE_START=$(date +%s)
-          gcloud auth activate-service-account --key-file=${{ vars.DEPLOY_PATH }}/.gcp/keyfile.json
-          gcloud storage cp ${{ vars.DEPLOY_PATH }}/dbt-project/target/manifest.json \
-            gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
-          echo "TIMING: upload_manifest=$(($(date +%s) - PHASE_START))s"
+          if [ "$DBT_CHANGED" = true ]; then
+            echo "=== PHASE: upload manifest ==="
+            PHASE_START=$(date +%s)
+            gcloud auth activate-service-account --key-file=${{ vars.DEPLOY_PATH }}/.gcp/keyfile.json
+            gcloud storage cp ${{ vars.DEPLOY_PATH }}/dbt-project/target/manifest.json \
+              gs://${{ secrets.GCS_ARTIFACTS_BUCKET }}/dbt/manifest.json
+            echo "TIMING: upload_manifest=$(($(date +%s) - PHASE_START))s"
+          else
+            echo "No dbt changes — skipping manifest upload"
+          fi
 
           echo ""
           echo "=== TIMING SUMMARY ==="
