@@ -133,6 +133,11 @@ class CustomOmniComponent(OmniComponent):
         if isinstance(data.obj, OmniQuery):
             return None
 
+        # Exclude documents with no queries — they have no data lineage
+        # and would appear as unconnected nodes that break group layout.
+        if isinstance(data.obj, OmniDocument) and not data.obj.queries:
+            return None
+
         spec = super().get_asset_spec(context, data)
 
         if spec is None:
