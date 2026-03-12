@@ -1,5 +1,5 @@
-"""Custom OmniComponent that remaps Omni query asset keys to match dbt model keys
-and adds topic join dependencies that the Omni API doesn't expose."""
+"""Custom OmniComponent that builds document deps from topic YAML files
+instead of relying on the parent class's query-based dep resolution."""
 
 import json
 from pathlib import Path
@@ -78,14 +78,16 @@ def _build_dbt_key_lookup(manifest_path: Path) -> dict[str, dg.AssetKey]:
 
 
 class CustomOmniComponent(OmniComponent):
-    """Extends OmniComponent to:
-    1. Remap Omni query asset keys to match dbt model asset keys
-    2. Add topic join dependencies the Omni API doesn't expose
+    """Extends OmniComponent to build document deps from topic YAML files.
 
-    The default OmniComponent only sees each query's base table. Topic joins
-    (e.g. fct_events -> dim_products) are invisible to the API. This subclass
-    parses the Omni topic YAML files to discover join dependencies and adds
-    them to the workbook asset specs.
+    The default OmniComponent creates AssetSpec objects for each query and
+    passes them as deps to the document spec. This subclass returns None for
+    queries (preventing the parent from creating query-level AssetSpecs) and
+    instead builds all deps from topic YAML files, which include both the
+    base table and all joined tables — a superset of the API-reported deps.
+
+    This avoids creating intermediate AssetSpec objects with remapped keys
+    that could confuse the Dagster UI's group layout algorithm.
     """
 
     _dbt_key_lookup: dict[str, dg.AssetKey] | None = None
@@ -125,23 +127,21 @@ class CustomOmniComponent(OmniComponent):
     def get_asset_spec(
         self, context: dg.ComponentLoadContext, data: OmniTranslatorData
     ) -> dg.AssetSpec | None:
+        # Return None for queries — prevents the parent class from creating
+        # AssetSpec objects that would be passed as deps to document specs.
+        # All deps are built from topic YAML files in the document handler below.
+        if isinstance(data.obj, OmniQuery):
+            return None
+
         spec = super().get_asset_spec(context, data)
 
         if spec is None:
             return None
 
-        if isinstance(data.obj, OmniQuery):
-            table_name = data.obj.query_config.table
-            extracted_name = _extract_table_name(table_name)
-            return spec.replace_attributes(
-                key=self._resolve_key(extracted_name, context),
-            )
-
-        # For document assets (workbooks), add topic join deps
         if isinstance(data.obj, OmniDocument):
             topic_deps = self._get_topic_deps(context)
-            existing_dep_keys = {dep.asset_key for dep in spec.deps}
-            additional_deps = []
+            dep_keys: set[dg.AssetKey] = set()
+            deps: list[dg.AssetDep] = []
 
             for query in data.obj.queries:
                 base_table = _extract_table_name(query.query_config.table)
@@ -149,13 +149,10 @@ class CustomOmniComponent(OmniComponent):
 
                 for table in all_tables:
                     key = self._resolve_key(table, context)
-                    if key not in existing_dep_keys:
-                        additional_deps.append(dg.AssetDep(key))
-                        existing_dep_keys.add(key)
+                    if key not in dep_keys:
+                        deps.append(dg.AssetDep(key))
+                        dep_keys.add(key)
 
-            if additional_deps:
-                return spec.replace_attributes(
-                    deps=[*spec.deps, *additional_deps],
-                )
+            return spec.replace_attributes(deps=deps)
 
         return spec
