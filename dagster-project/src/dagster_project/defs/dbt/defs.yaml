@@ -3,4 +3,4 @@ type: dagster_dbt.DbtProjectComponent
 attributes:
   project: '{{ project_root }}/../dbt-project'
   translation:
-    group_name: dbt_models
+    group_name: "{% if node.get('resource_type') == 'snapshot' %}dbt_snapshots{% else %}dbt_models{% endif %}"
