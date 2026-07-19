@@ -287,4 +287,4 @@ dbt:
     )
 
     select * from final_events
-  referenced_by: [ dim_users, dim_categories, fct_sessions, dim_products ]
+  referenced_by: [ dim_categories, dim_products, dim_users, fct_sessions ]
