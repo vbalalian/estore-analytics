@@ -45,3 +45,12 @@ exposures:
   owner:
     name: "Vinnie Balalian"
     email: "vincent@omni.co"
+- name: "RFM_Simulator"
+  label: "RFM Simulator"
+  type: "application"
+  url: "https://devrel.omniapp.co/apps/cb31b552"
+  depends_on:
+  - "ref('dim_users')"
+  owner:
+    name: "Vinnie Balalian"
+    email: "vincent@omni.co"
