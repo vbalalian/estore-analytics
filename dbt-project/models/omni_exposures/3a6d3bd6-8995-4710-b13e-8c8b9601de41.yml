@@ -5,7 +5,7 @@ exposures:
 - name: "Champions_Segment_Deep_Dive"
   label: "Champions Segment Deep Dive"
   type: "dashboard"
-  url: "https://vbalalian.omniapp.co/dashboards/4316fd36"
+  url: "https://devrel.omniapp.co/dashboards/4316fd36"
   depends_on:
   - "ref('dim_user_rfm')"
   - "ref('dim_users')"
@@ -15,7 +15,7 @@ exposures:
 - name: "Conversion_Funnel_by_Customer_Segment"
   label: "Conversion Funnel by Customer Segment"
   type: "dashboard"
-  url: "https://vbalalian.omniapp.co/dashboards/78851700"
+  url: "https://devrel.omniapp.co/dashboards/78851700"
   depends_on:
   - "ref('dim_user_rfm')"
   - "ref('dim_users')"
@@ -26,7 +26,7 @@ exposures:
 - name: "Customer_Segmentation_Deep_Dive"
   label: "Customer Segmentation Deep Dive"
   type: "dashboard"
-  url: "https://vbalalian.omniapp.co/dashboards/223e5400"
+  url: "https://devrel.omniapp.co/dashboards/223e5400"
   depends_on:
   - "ref('dim_user_rfm')"
   - "ref('dim_users')"
@@ -36,7 +36,7 @@ exposures:
 - name: "Daily_E_Commerce_KPIs"
   label: "Daily E-Commerce KPIs"
   type: "dashboard"
-  url: "https://vbalalian.omniapp.co/dashboards/25762adb"
+  url: "https://devrel.omniapp.co/dashboards/25762adb"
   depends_on:
   - "ref('dim_products')"
   - "ref('dim_users')"
