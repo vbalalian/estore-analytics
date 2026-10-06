@@ -9,10 +9,14 @@ table_name: fct_events
 
 dimensions:
   event_time:
+    # Demo data shifted forward 2345 days (335 weeks) so it reads as recent. Raw data ends 2020-04-30.
+    sql: TIMESTAMP_ADD(event_time, INTERVAL 2345 DAY)
     #This description was pulled from dbt.
     description: Timestamp when the event occurred
 
   event_date:
+    # Demo data shifted forward 2345 days (335 weeks) so it reads as recent. Raw data ends 2020-04-30.
+    sql: DATE_ADD(event_date, INTERVAL 2345 DAY)
     #This description was pulled from dbt.
     description: Date when the event occurred
 

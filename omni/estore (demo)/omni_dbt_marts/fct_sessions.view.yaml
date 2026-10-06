@@ -73,6 +73,7 @@ dimensions:
     description: Duration of the session in seconds
 
   funnel_stage:
+    #This description was pulled from dbt.
     description: "Indicates the furthest stage reached in the conversion funnel
       during the session. Values: 'view' (product viewed), 'cart' (item added to
       cart), 'purchase' (transaction completed), or 'no_activity' for sessions
