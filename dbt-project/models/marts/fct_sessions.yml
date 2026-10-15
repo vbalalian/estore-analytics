@@ -30,15 +30,17 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_users')
-              field: user_id
+              arguments:
+                to: ref('dim_users')
+                field: user_id
 
       - name: session_end_time
         description: "Timestamp of the last event in the session"
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: ">= session_start_time"
+              arguments:
+                expression: ">= session_start_time"
 
       - name: event_count
         description: Number of events (page views, cart additions, purchases) that occurred during
